@@ -1,60 +1,77 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 interface QuickNavProps {
-  // 总数量
   total: number;
-  // 当前活跃的序号 (1-based)
   activeIndex: number;
-  // 点击回调
   onSelect: (index: number) => void;
-  // 可见范围 (用于大数据量时显示局部)
-  visibleRange?: number;
 }
 
 /**
  * 快速导航条组件
- * 多邻国风格：胶囊按钮横向滚动
+ * 点击数字时，该数字会居中显示在导航条中
  */
-export function QuickNav({
-  total,
-  activeIndex,
-  onSelect,
-  visibleRange = 10,
-}: QuickNavProps) {
+export function QuickNav({ total, activeIndex, onSelect }: QuickNavProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeButtonRef = useRef<HTMLButtonElement>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [displayActiveIndex, setDisplayActiveIndex] = useState(activeIndex);
+  const isManualClickRef = useRef(false);
 
-  // 滚动到活跃按钮
+  // 同步外部 activeIndex，但如果是手动点击则延迟同步
   useEffect(() => {
-    if (activeButtonRef.current && containerRef.current) {
-      const container = containerRef.current;
-      const button = activeButtonRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const buttonRect = button.getBoundingClientRect();
-
-      const scrollLeft =
-        button.offsetLeft -
-        containerRect.width / 2 +
-        buttonRect.width / 2;
-
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth',
-      });
+    if (isManualClickRef.current) {
+      // 手动点击期间，不同步外部的 activeIndex
+      return;
     }
+    setDisplayActiveIndex(activeIndex);
   }, [activeIndex]);
 
-  // 监听滚动实现 sticky 效果
+  // 当 displayActiveIndex 变化时，滚动到对应按钮
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const button = container.querySelector(`[data-index="${displayActiveIndex}"]`) as HTMLElement;
+    if (!button) return;
+
+    const containerWidth = container.clientWidth;
+    const buttonWidth = button.clientWidth;
+    const buttonLeft = button.offsetLeft;
+
+    // 计算滚动位置，使按钮居中
+    const scrollLeft = buttonLeft - containerWidth / 2 + buttonWidth / 2;
+
+    container.scrollTo({
+      left: Math.max(0, scrollLeft),
+      behavior: isManualClickRef.current ? 'auto' : 'smooth',
+    });
+  }, [displayActiveIndex]);
+
+  // 监听窗口滚动实现 sticky 效果
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 150);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // 处理点击
+  const handleClick = useCallback(
+    (index: number) => {
+      if (index === displayActiveIndex) return;
+
+      isManualClickRef.current = true;
+      setDisplayActiveIndex(index);
+      onSelect(index);
+
+      // 300ms 后恢复自动同步
+      setTimeout(() => {
+        isManualClickRef.current = false;
+      }, 300);
+    },
+    [displayActiveIndex, onSelect]
+  );
 
   const numbers = Array.from({ length: total }, (_, i) => i + 1);
 
@@ -63,32 +80,31 @@ export function QuickNav({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       className={`
-        sticky top-[60px] z-30 py-2 px-4
+        sticky top-[72px] z-30 py-3 px-4
         transition-all duration-300
         ${isSticky ? 'bg-background/95 backdrop-blur-sm shadow-sm' : ''}
       `}
     >
       <div
         ref={containerRef}
-        className="flex gap-1.5 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+        className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1 px-1"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
         }}
       >
         {numbers.map((num) => {
-          const isActive = num === activeIndex;
+          const isActive = num === displayActiveIndex;
 
           return (
-            <motion.button
+            <button
               key={num}
-              ref={isActive ? activeButtonRef : null}
-              onClick={() => onSelect(num)}
-              whileTap={{ scale: 0.9 }}
+              data-index={num}
+              onClick={() => handleClick(num)}
               className={`
-                relative flex-shrink-0 w-9 h-9 rounded-full
+                relative flex-shrink-0 w-8 h-8 rounded-full
                 flex items-center justify-center
-                text-sm font-bold snap-center
+                text-sm font-bold
                 transition-all duration-200
                 ${
                   isActive
@@ -98,16 +114,10 @@ export function QuickNav({
               `}
             >
               {num}
-
-              {/* 活跃指示器动画 */}
               {isActive && (
-                <motion.div
-                  layoutId="activeNavIndicator"
-                  className="absolute inset-0 rounded-full border-2 border-primary"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
+                <span className="absolute inset-0 rounded-full border-2 border-primary" />
               )}
-            </motion.button>
+            </button>
           );
         })}
       </div>
@@ -121,7 +131,6 @@ export function QuickNav({
 
 /**
  * 快速跳转浮球 (备选方案)
- * 点击展开数字网格
  */
 export function QuickNavFab({
   total,
@@ -132,7 +141,6 @@ export function QuickNavFab({
 
   return (
     <div className="fixed bottom-24 right-4 z-50">
-      {/* 展开的网格 */}
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -142,13 +150,12 @@ export function QuickNavFab({
         >
           <div className="grid grid-cols-5 gap-2">
             {Array.from({ length: total }, (_, i) => i + 1).map((num) => (
-              <motion.button
+              <button
                 key={num}
                 onClick={() => {
                   onSelect(num);
                   setIsOpen(false);
                 }}
-                whileTap={{ scale: 0.9 }}
                 className={`
                   w-8 h-8 rounded-lg text-xs font-bold
                   transition-colors
@@ -160,21 +167,19 @@ export function QuickNavFab({
                 `}
               >
                 {num}
-              </motion.button>
+              </button>
             ))}
           </div>
         </motion.div>
       )}
 
-      {/* 触发按钮 */}
-      <motion.button
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        whileTap={{ scale: 0.9 }}
         className="w-12 h-12 rounded-full bg-primary text-white shadow-lg
-                   flex items-center justify-center text-lg font-bold"
+                   flex items-center justify-center text-lg font-bold active:scale-90 transition-transform"
       >
         {isOpen ? '✕' : activeIndex}
-      </motion.button>
+      </button>
     </div>
   );
 }

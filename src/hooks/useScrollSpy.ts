@@ -74,7 +74,7 @@ export function useScrollSpy(
 }
 
 /**
- * 平滑滚动到指定元素
+ * 立即滚动到指定元素（无动画）
  */
 export function scrollToElement(elementId: string, offset: number = 80) {
   const element = document.getElementById(elementId);
@@ -85,6 +85,6 @@ export function scrollToElement(elementId: string, offset: number = 80) {
 
   window.scrollTo({
     top: offsetPosition,
-    behavior: 'smooth',
+    behavior: 'auto',
   });
 }

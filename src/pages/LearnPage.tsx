@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Flame } from 'lucide-react';
 import { PatternCard } from '@/components/pattern';
@@ -12,6 +12,8 @@ import { useScrollSpy, scrollToElement } from '@/hooks/useScrollSpy';
 export function LearnPage() {
   const { streakDays } = useStatsStore();
   const { query, results, handleSearch } = useSearch(patterns);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const isClickingRef = useRef(false);
 
   const displayPatterns = query.trim() ? results : patterns;
 
@@ -28,19 +30,29 @@ export function LearnPage() {
   });
 
   // 解析当前活跃序号 (1-based)
-  const activeIndex = useMemo(() => {
+  const scrollActiveIndex = useMemo(() => {
     if (!activePatternId) return 1;
     const match = activePatternId.match(/pattern-(\d+)/);
     return match ? parseInt(match[1], 10) : 1;
   }, [activePatternId]);
 
+  // 优先使用点击选中的索引，否则使用滚动检测的索引
+  const activeIndex = selectedIndex ?? scrollActiveIndex;
+
   // 处理导航点击
   const handleNavSelect = useCallback(
     (index: number) => {
+      isClickingRef.current = true;
+      setSelectedIndex(index);
       const pattern = displayPatterns[index - 1];
       if (pattern) {
         scrollToElement(`pattern-${pattern.id}`, 140);
       }
+      // 点击动画完成后重置
+      setTimeout(() => {
+        isClickingRef.current = false;
+        setSelectedIndex(null);
+      }, 300);
     },
     [displayPatterns]
   );
