@@ -1,0 +1,2456 @@
+{
+  "patterns": [
+    {
+      "id": "pattern-1",
+      "emoji": "👤",
+      "title": "I'm a ____",
+      "translation": "我是一名……",
+      "examples": [
+        {
+          "id": "ex-1-1",
+          "en": "I'm a basketball player.",
+          "zh": "我是一名篮球运动员"
+        },
+        {
+          "id": "ex-1-2",
+          "en": "I'm a teacher.",
+          "zh": "我是一名老师"
+        },
+        {
+          "id": "ex-1-3",
+          "en": "I'm an athlete.",
+          "zh": "我是一名运动员"
+        },
+        {
+          "id": "ex-1-4",
+          "en": "I'm a doctor and I work in a hospital.",
+          "zh": "我是一名医生，我在医院工作"
+        },
+        {
+          "id": "ex-1-5",
+          "en": "I'm a chef and I enjoy cooking.",
+          "zh": "我是一名厨师，我很享受做饭"
+        }
+      ]
+    },
+    {
+      "id": "pattern-2",
+      "emoji": "💪",
+      "title": "I'm good at ____",
+      "translation": "我擅长……",
+      "examples": [
+        {
+          "id": "ex-2-1",
+          "en": "I'm good at soccer.",
+          "zh": "我擅长足球"
+        },
+        {
+          "id": "ex-2-2",
+          "en": "I'm good at playing video games.",
+          "zh": "我擅长玩电子游戏"
+        },
+        {
+          "id": "ex-2-3",
+          "en": "I'm good at math.",
+          "zh": "我擅长数学"
+        },
+        {
+          "id": "ex-2-4",
+          "en": "I'm good at cooking Chinese food.",
+          "zh": "我擅长做中餐"
+        },
+        {
+          "id": "ex-2-5",
+          "en": "I'm good at teaching people spoken English.",
+          "zh": "我擅长教大家英语口语"
+        }
+      ]
+    },
+    {
+      "id": "pattern-3",
+      "emoji": "🛒",
+      "title": "I'm getting ____",
+      "translation": "我要去……",
+      "examples": [
+        {
+          "id": "ex-3-1",
+          "en": "I'm getting food.",
+          "zh": "我要去买吃的"
+        },
+        {
+          "id": "ex-3-2",
+          "en": "I'm getting lunch.",
+          "zh": "我要去吃午餐"
+        },
+        {
+          "id": "ex-3-3",
+          "en": "I'm getting a job.",
+          "zh": "我要去找一份工作"
+        },
+        {
+          "id": "ex-3-4",
+          "en": "I'm getting a drink.",
+          "zh": "我要去拿一杯喝的"
+        },
+        {
+          "id": "ex-3-5",
+          "en": "I'm getting coffee.",
+          "zh": "我要去买咖啡"
+        },
+        {
+          "id": "ex-3-6",
+          "en": "I'm getting a beef jerky.",
+          "zh": "我要去拿一个牛肉干"
+        }
+      ]
+    },
+    {
+      "id": "pattern-4",
+      "emoji": "💭",
+      "title": "I want to (wanna) ____",
+      "translation": "我想要……",
+      "examples": [
+        {
+          "id": "ex-4-1",
+          "en": "I want to go home.",
+          "zh": "我想要回家"
+        },
+        {
+          "id": "ex-4-2",
+          "en": "I want to ask.",
+          "zh": "我想要问"
+        },
+        {
+          "id": "ex-4-3",
+          "en": "I want to know.",
+          "zh": "我想要知道"
+        }
+      ]
+    },
+    {
+      "id": "pattern-5",
+      "emoji": "🛠️",
+      "title": "I need to ____",
+      "translation": "我需要……",
+      "examples": [
+        {
+          "id": "ex-5-1",
+          "en": "I need to drink some water.",
+          "zh": "我需要喝点水"
+        },
+        {
+          "id": "ex-5-2",
+          "en": "I need to study.",
+          "zh": "我需要学习"
+        },
+        {
+          "id": "ex-5-3",
+          "en": "I need to work.",
+          "zh": "我需要工作"
+        }
+      ]
+    },
+    {
+      "id": "pattern-6",
+      "emoji": "🚀",
+      "title": "I'm gonna (going to) ____",
+      "translation": "我将要……",
+      "examples": [
+        {
+          "id": "ex-6-1",
+          "en": "I'm gonna keep trying.",
+          "zh": "我将要一直尝试"
+        },
+        {
+          "id": "ex-6-2",
+          "en": "I'm gonna go home.",
+          "zh": "我将要回家"
+        },
+        {
+          "id": "ex-6-3",
+          "en": "I'm gonna take a break from work.",
+          "zh": "我将要从工作中休息一下"
+        },
+        {
+          "id": "ex-6-4",
+          "en": "I'm gonna start learning English.",
+          "zh": "我将要开始学英语"
+        },
+        {
+          "id": "ex-6-5",
+          "en": "I'm gonna meet my friends tonight.",
+          "zh": "我将要见我的朋友们在今晚"
+        }
+      ]
+    },
+    {
+      "id": "pattern-7",
+      "emoji": "😕",
+      "title": "I'm not used to ____",
+      "translation": "我不习惯……",
+      "examples": [
+        {
+          "id": "ex-7-1",
+          "en": "I'm not used to this weather.",
+          "zh": "我不习惯这个天气"
+        },
+        {
+          "id": "ex-7-2",
+          "en": "I'm not used to being loved.",
+          "zh": "我不习惯被爱"
+        },
+        {
+          "id": "ex-7-3",
+          "en": "I'm not used to you.",
+          "zh": "我不习惯你"
+        },
+        {
+          "id": "ex-7-4",
+          "en": "I'm not used to living with you.",
+          "zh": "我不习惯和你住在一起"
+        },
+        {
+          "id": "ex-7-5",
+          "en": "I'm not used to this.",
+          "zh": "我不习惯这个"
+        },
+        {
+          "id": "ex-7-6",
+          "en": "I'm not used to the cold weather here.",
+          "zh": "我不习惯这里的冷天气"
+        },
+        {
+          "id": "ex-7-7",
+          "en": "I'm not used to speaking in public.",
+          "zh": "我不习惯在公共场合说话"
+        },
+        {
+          "id": "ex-7-8",
+          "en": "I'm not used to the new technology.",
+          "zh": "我不习惯这个新的科技"
+        },
+        {
+          "id": "ex-7-9",
+          "en": "I'm not used to driving on the left side of the road.",
+          "zh": "我不习惯在路的左边开车"
+        }
+      ]
+    },
+    {
+      "id": "pattern-8",
+      "emoji": "❓",
+      "title": "I'm not sure if ____",
+      "translation": "我不确定……是否……",
+      "examples": [
+        {
+          "id": "ex-8-1",
+          "en": "I'm not sure if he'll come.",
+          "zh": "我不确定他是否会来"
+        },
+        {
+          "id": "ex-8-2",
+          "en": "I'm not sure if he understood what I was saying.",
+          "zh": "我不确定他是否理解我在说什么"
+        },
+        {
+          "id": "ex-8-3",
+          "en": "I'm not sure if this is a good idea.",
+          "zh": "我不确定这是否是个好主意"
+        },
+        {
+          "id": "ex-8-4",
+          "en": "I'm not sure if he is telling the truth about his resume.",
+          "zh": "我不确定他是否在说真话关于他的简历"
+        },
+        {
+          "id": "ex-8-5",
+          "en": "I'm not sure if he is the right person for our company.",
+          "zh": "我不确定他是否是合适的人选对于我们的公司"
+        },
+        {
+          "id": "ex-8-6",
+          "en": "I'm not sure if I will regret this.",
+          "zh": "我不确定我是否会后悔这件事"
+        },
+        {
+          "id": "ex-8-7",
+          "en": "I'm not sure if I am qualified for this new position.",
+          "zh": "我不确定我是否符合这个新岗位的要求"
+        },
+        {
+          "id": "ex-8-8",
+          "en": "I'm not sure if I am making the right decision.",
+          "zh": "我不确定我是否在做对的决定"
+        },
+        {
+          "id": "ex-8-9",
+          "en": "I'm not sure if I have the skills to complete this project.",
+          "zh": "我不确定我是否有足够的技能来完成这个项目"
+        },
+        {
+          "id": "ex-8-10",
+          "en": "I'm not sure if they received my email.",
+          "zh": "我不确定他们是否接受到了我的电子邮件"
+        },
+        {
+          "id": "ex-8-11",
+          "en": "I'm not sure if they will come to the meeting.",
+          "zh": "我不确定他们是否会来会议"
+        },
+        {
+          "id": "ex-8-12",
+          "en": "I'm not sure if they understand the decision.",
+          "zh": "我不确定他们是否理解这个决定"
+        },
+        {
+          "id": "ex-8-13",
+          "en": "I'm not sure if they will be able to finish the project on time.",
+          "zh": "我不确定他们是否能按时完成项目"
+        }
+      ]
+    },
+    {
+      "id": "pattern-9",
+      "emoji": "🎉",
+      "title": "I'm looking forward to ____",
+      "translation": "我很期待……",
+      "examples": [
+        {
+          "id": "ex-9-1",
+          "en": "I'm looking forward to your party.",
+          "zh": "我很期待你的聚会"
+        },
+        {
+          "id": "ex-9-2",
+          "en": "I'm looking forward to this.",
+          "zh": "我很期待这个"
+        },
+        {
+          "id": "ex-9-3",
+          "en": "I'm looking forward to my vacation next month.",
+          "zh": "我很期待下个月的度假"
+        },
+        {
+          "id": "ex-9-4",
+          "en": "I'm looking forward to learning a new language.",
+          "zh": "我很期待学一个新的语言"
+        },
+        {
+          "id": "ex-9-5",
+          "en": "I'm looking forward to this weekend, as I have some fun plans with friends.",
+          "zh": "我很期待这个周末，我有跟朋友们很好玩的计划"
+        },
+        {
+          "id": "ex-9-6",
+          "en": "I'm looking forward to visiting a new country this summer.",
+          "zh": "我很期待参观一个新的国家，在这个夏天"
+        }
+      ]
+    },
+    {
+      "id": "pattern-10",
+      "emoji": "💻",
+      "title": "I'm working on ____",
+      "translation": "我正在做……",
+      "examples": [
+        {
+          "id": "ex-10-1",
+          "en": "I'm working on my homework.",
+          "zh": "我正在做我的家庭作业"
+        },
+        {
+          "id": "ex-10-2",
+          "en": "I'm working on my website.",
+          "zh": "我正在做我的网站"
+        },
+        {
+          "id": "ex-10-3",
+          "en": "I'm working on this project.",
+          "zh": "我正在做这个项目"
+        },
+        {
+          "id": "ex-10-4",
+          "en": "I'm working on a side hustle to earn extra income.",
+          "zh": "我正在做一个副业想挣一些额外的钱"
+        },
+        {
+          "id": "ex-10-5",
+          "en": "I'm working on this app.",
+          "zh": "我正在做这个手机软件"
+        },
+        {
+          "id": "ex-10-6",
+          "en": "I'm working on a research paper.",
+          "zh": "我正在做一个研究论文"
+        }
+      ]
+    },
+    {
+      "id": "pattern-11",
+      "emoji": "🤔",
+      "title": "I'm thinking about ____",
+      "translation": "我在考虑……",
+      "examples": [
+        {
+          "id": "ex-11-1",
+          "en": "I'm thinking about giving up.",
+          "zh": "我在考虑放弃"
+        },
+        {
+          "id": "ex-11-2",
+          "en": "I'm thinking about our marriage.",
+          "zh": "我在考虑我们的婚姻"
+        },
+        {
+          "id": "ex-11-3",
+          "en": "I'm thinking about taking a vacation.",
+          "zh": "我在考虑度一个假"
+        },
+        {
+          "id": "ex-11-4",
+          "en": "I'm thinking about starting a business.",
+          "zh": "我在考虑创建一个生意"
+        },
+        {
+          "id": "ex-11-5",
+          "en": "I'm thinking about going back to school.",
+          "zh": "我在考虑回去学校"
+        },
+        {
+          "id": "ex-11-6",
+          "en": "I'm thinking about getting a new haircut/hairstyle.",
+          "zh": "我在考虑换一个新发型"
+        },
+        {
+          "id": "ex-11-7",
+          "en": "I'm thinking about moving to a new city.",
+          "zh": "我在考虑搬去一个新的城市"
+        },
+        {
+          "id": "ex-11-8",
+          "en": "I'm thinking about seeing her.",
+          "zh": "我在考虑见她"
+        },
+        {
+          "id": "ex-11-9",
+          "en": "I'm thinking about learning French.",
+          "zh": "我在考虑学法语"
+        },
+        {
+          "id": "ex-11-10",
+          "en": "I'm thinking about buying a new car.",
+          "zh": "我在考虑买一辆新车"
+        },
+        {
+          "id": "ex-11-11",
+          "en": "I'm thinking about writing a book.",
+          "zh": "我在考虑写一本书"
+        }
+      ]
+    },
+    {
+      "id": "pattern-12",
+      "emoji": "🔥",
+      "title": "I'm dying to ____",
+      "translation": "我非常想……",
+      "examples": [
+        {
+          "id": "ex-12-1",
+          "en": "I'm dying to see you.",
+          "zh": "我非常想见你"
+        },
+        {
+          "id": "ex-12-2",
+          "en": "I'm dying to give up.",
+          "zh": "我非常想放弃"
+        },
+        {
+          "id": "ex-12-3",
+          "en": "I'm dying to try Japanese food.",
+          "zh": "我非常想尝试日本菜"
+        },
+        {
+          "id": "ex-12-4",
+          "en": "I'm dying to improve my English.",
+          "zh": "我非常想提高我的英语"
+        },
+        {
+          "id": "ex-12-5",
+          "en": "I'm dying to buy a new car.",
+          "zh": "我非常想买辆新车"
+        },
+        {
+          "id": "ex-12-6",
+          "en": "I'm dying to go travel.",
+          "zh": "我非常想去旅行"
+        },
+        {
+          "id": "ex-12-7",
+          "en": "I'm dying to see/watch Jay Chou's concert.",
+          "zh": "我非常想去看周杰伦的演唱会"
+        },
+        {
+          "id": "ex-12-8",
+          "en": "I'm dying to try skydiving.",
+          "zh": "我非常想尝试跳伞"
+        },
+        {
+          "id": "ex-12-9",
+          "en": "I'm dying to visit Paris.",
+          "zh": "我非常想参观巴黎"
+        },
+        {
+          "id": "ex-12-10",
+          "en": "I'm dying to watch this movie.",
+          "zh": "我非常想去看这部电影"
+        }
+      ]
+    },
+    {
+      "id": "pattern-13",
+      "emoji": "😰",
+      "title": "I'm afraid I ____",
+      "translation": "我恐怕是……",
+      "examples": [
+        {
+          "id": "ex-13-1",
+          "en": "I'm afraid I can't accept it.",
+          "zh": "我恐怕是不能接受它"
+        },
+        {
+          "id": "ex-13-2",
+          "en": "I'm afraid I lost my phone.",
+          "zh": "我恐怕是弄丢了我的手机"
+        },
+        {
+          "id": "ex-13-3",
+          "en": "I'm afraid I can't finish this project on time.",
+          "zh": "我恐怕是没法按时完成这个项目"
+        },
+        {
+          "id": "ex-13-4",
+          "en": "I'm afraid I can't lend you the money.",
+          "zh": "我恐怕是没法借给你钱"
+        },
+        {
+          "id": "ex-13-5",
+          "en": "I'm afraid I can't give you an answer.",
+          "zh": "我恐怕是没法给你一个答案"
+        },
+        {
+          "id": "ex-13-6",
+          "en": "I'm afraid I have to cancel our plan.",
+          "zh": "我恐怕是必须得取消掉我们的计划"
+        },
+        {
+          "id": "ex-13-7",
+          "en": "I'm afraid I can't show up to the meeting.",
+          "zh": "我恐怕是没法出席会议"
+        },
+        {
+          "id": "ex-13-8",
+          "en": "I'm afraid I can't lend you my car.",
+          "zh": "我恐怕是不能把车借给你"
+        },
+        {
+          "id": "ex-13-9",
+          "en": "I'm afraid I don't have the skills that you're looking for.",
+          "zh": "我恐怕是没有你正在寻找的技能"
+        }
+      ]
+    },
+    {
+      "id": "pattern-14",
+      "emoji": "✅",
+      "title": "I have to ____",
+      "translation": "我必须……",
+      "examples": [
+        {
+          "id": "ex-14-1",
+          "en": "I have to go to school.",
+          "zh": "我必须去上学"
+        },
+        {
+          "id": "ex-14-2",
+          "en": "I have to ask you.",
+          "zh": "我必须问你"
+        },
+        {
+          "id": "ex-14-3",
+          "en": "I have to study for my exam.",
+          "zh": "我必须为考试学习"
+        }
+      ]
+    },
+    {
+      "id": "pattern-15",
+      "emoji": "⏳",
+      "title": "I have been ____",
+      "translation": "我一直都在……",
+      "examples": [
+        {
+          "id": "ex-15-1",
+          "en": "I have been asking you.",
+          "zh": "我一直都在问你"
+        },
+        {
+          "id": "ex-15-2",
+          "en": "I have been wondering.",
+          "zh": "我一直都在疑惑"
+        },
+        {
+          "id": "ex-15-3",
+          "en": "I have been watching this TV show.",
+          "zh": "我一直都在看这部电视剧"
+        },
+        {
+          "id": "ex-15-4",
+          "en": "I have been saving money.",
+          "zh": "我一直都在存钱"
+        },
+        {
+          "id": "ex-15-5",
+          "en": "I have been working out.",
+          "zh": "我一直都在健身"
+        },
+        {
+          "id": "ex-15-6",
+          "en": "I have been living in this country.",
+          "zh": "我一直都在这个国家生活"
+        },
+        {
+          "id": "ex-15-7",
+          "en": "I have been trying to improve my English.",
+          "zh": "我一直都在试着提高我的英语"
+        }
+      ]
+    },
+    {
+      "id": "pattern-16",
+      "emoji": "⏪",
+      "title": "I used to ____",
+      "translation": "我以前……",
+      "examples": [
+        {
+          "id": "ex-16-1",
+          "en": "I used to like him.",
+          "zh": "我以前喜欢他"
+        },
+        {
+          "id": "ex-16-2",
+          "en": "I used to study here.",
+          "zh": "我以前在这里学习"
+        },
+        {
+          "id": "ex-16-3",
+          "en": "I used to play basketball everyday.",
+          "zh": "我以前每天打篮球"
+        }
+      ]
+    },
+    {
+      "id": "pattern-17",
+      "emoji": "🙂",
+      "title": "I would like to ____",
+      "translation": "我想要……",
+      "examples": [
+        {
+          "id": "ex-17-1",
+          "en": "I would like to see him.",
+          "zh": "我想要见他"
+        },
+        {
+          "id": "ex-17-2",
+          "en": "I would like to eat here.",
+          "zh": "我想要在这里吃饭"
+        },
+        {
+          "id": "ex-17-3",
+          "en": "I would like to travel to Japan.",
+          "zh": "我想要去日本旅游"
+        },
+        {
+          "id": "ex-17-4",
+          "en": "I would like to learn how to play guitar.",
+          "zh": "我想要学弹吉他"
+        },
+        {
+          "id": "ex-17-5",
+          "en": "I would like to read more books.",
+          "zh": "我想要看更多的书"
+        }
+      ]
+    },
+    {
+      "id": "pattern-18",
+      "emoji": "⏭️",
+      "title": "I'm about to ____",
+      "translation": "我正要去……",
+      "examples": [
+        {
+          "id": "ex-18-1",
+          "en": "I'm about to take a walk.",
+          "zh": "我正要去散步"
+        },
+        {
+          "id": "ex-18-2",
+          "en": "I'm about to go eat.",
+          "zh": "我正要去吃东西"
+        },
+        {
+          "id": "ex-18-3",
+          "en": "I'm about to work out.",
+          "zh": "我正要去健身"
+        },
+        {
+          "id": "ex-18-4",
+          "en": "I'm about to take a shower.",
+          "zh": "我正要去洗澡"
+        },
+        {
+          "id": "ex-18-5",
+          "en": "I'm about to watch a movie.",
+          "zh": "我正要去看电影"
+        },
+        {
+          "id": "ex-18-6",
+          "en": "I'm about to ask him.",
+          "zh": "我正要去问他"
+        },
+        {
+          "id": "ex-18-7",
+          "en": "I'm about to go to the mall.",
+          "zh": "我正要去商场"
+        },
+        {
+          "id": "ex-18-8",
+          "en": "I'm about to go to the grocery store.",
+          "zh": "我正要去超市"
+        }
+      ]
+    },
+    {
+      "id": "pattern-19",
+      "emoji": "🙏",
+      "title": "I didn't mean to ____",
+      "translation": "我不是故意要……",
+      "examples": [
+        {
+          "id": "ex-19-1",
+          "en": "I didn't mean to hurt you.",
+          "zh": "我不是故意要伤害你"
+        },
+        {
+          "id": "ex-19-2",
+          "en": "I didn't mean to ask.",
+          "zh": "我不是故意要问"
+        },
+        {
+          "id": "ex-19-3",
+          "en": "I didn't mean to bother you.",
+          "zh": "我不是故意要打扰你的"
+        },
+        {
+          "id": "ex-19-4",
+          "en": "I didn't mean to say that.",
+          "zh": "我不是故意说那个的"
+        },
+        {
+          "id": "ex-19-5",
+          "en": "I didn't mean to offend you.",
+          "zh": "我不是故意要冒犯你的"
+        },
+        {
+          "id": "ex-19-6",
+          "en": "I didn't mean to be late.",
+          "zh": "我不是故意要迟到的"
+        },
+        {
+          "id": "ex-19-7",
+          "en": "I didn't mean to forget about your birthday.",
+          "zh": "我不是故意要忘记你的生日的"
+        },
+        {
+          "id": "ex-19-8",
+          "en": "I didn't mean to ignore you.",
+          "zh": "我不是故意要忽视你的"
+        },
+        {
+          "id": "ex-19-9",
+          "en": "I didn't mean to hurt your feelings.",
+          "zh": "我不是故意要伤害你的感受的"
+        }
+      ]
+    },
+    {
+      "id": "pattern-20",
+      "emoji": "⏰",
+      "title": "I don't have time to ____",
+      "translation": "我没有时间……",
+      "examples": [
+        {
+          "id": "ex-20-1",
+          "en": "I don't have time to cook.",
+          "zh": "我没有时间做饭"
+        },
+        {
+          "id": "ex-20-2",
+          "en": "I don't have time to do my homework.",
+          "zh": "我没有时间写我的作业"
+        },
+        {
+          "id": "ex-20-3",
+          "en": "I don't have time to read this book.",
+          "zh": "我没有时间看这本书"
+        },
+        {
+          "id": "ex-20-4",
+          "en": "I don't have time to work out.",
+          "zh": "我没有时间健身"
+        },
+        {
+          "id": "ex-20-5",
+          "en": "I don't have time to take a vacation.",
+          "zh": "我没有时间去度假"
+        }
+      ]
+    },
+    {
+      "id": "pattern-21",
+      "emoji": "❔",
+      "title": "I don't know how to ____",
+      "translation": "我不知道如何……",
+      "examples": [
+        {
+          "id": "ex-21-1",
+          "en": "I don't know how to cook.",
+          "zh": "我不知道如何做饭"
+        },
+        {
+          "id": "ex-21-2",
+          "en": "I don't know how to study.",
+          "zh": "我不知道如何学习"
+        },
+        {
+          "id": "ex-21-3",
+          "en": "I don't know how to ask you.",
+          "zh": "我不知道如何问你"
+        },
+        {
+          "id": "ex-21-4",
+          "en": "I don't know how to speak English.",
+          "zh": "我不知道如何说英语"
+        }
+      ]
+    },
+    {
+      "id": "pattern-22",
+      "emoji": "😌",
+      "title": "I feel like ____ing",
+      "translation": "我想……",
+      "examples": [
+        {
+          "id": "ex-22-1",
+          "en": "I feel like going fishing.",
+          "zh": "我想去钓鱼"
+        },
+        {
+          "id": "ex-22-2",
+          "en": "I feel like giving up.",
+          "zh": "我想放弃"
+        },
+        {
+          "id": "ex-22-3",
+          "en": "I feel like crying right now.",
+          "zh": "我现在想哭"
+        },
+        {
+          "id": "ex-22-4",
+          "en": "I feel like watching a movie tonight.",
+          "zh": "我想看部电影今晚"
+        },
+        {
+          "id": "ex-22-5",
+          "en": "I feel like eating something spicy tonight.",
+          "zh": "我想吃点辣的今晚"
+        },
+        {
+          "id": "ex-22-6",
+          "en": "I feel like playing video games.",
+          "zh": "我想玩电子游戏"
+        },
+        {
+          "id": "ex-22-7",
+          "en": "I feel like taking a nap.",
+          "zh": "我想睡午觉"
+        },
+        {
+          "id": "ex-22-8",
+          "en": "I feel like listening to some rap music.",
+          "zh": "我想听一些说唱音乐"
+        }
+      ]
+    },
+    {
+      "id": "pattern-23",
+      "emoji": "❤️",
+      "title": "I want you to ____",
+      "translation": "我想要你……",
+      "examples": [
+        {
+          "id": "ex-23-1",
+          "en": "I want you to understand.",
+          "zh": "我想要你明白"
+        },
+        {
+          "id": "ex-23-2",
+          "en": "I want you to come home with me.",
+          "zh": "我想要你跟我回家"
+        },
+        {
+          "id": "ex-23-3",
+          "en": "I want you to be happy.",
+          "zh": "我想要你开心"
+        },
+        {
+          "id": "ex-23-4",
+          "en": "I want you to feel comfortable and safe.",
+          "zh": "我想要你感到舒服和安全"
+        },
+        {
+          "id": "ex-23-5",
+          "en": "I want you to know how much I love you.",
+          "zh": "我想要你知道我有多爱你"
+        },
+        {
+          "id": "ex-23-6",
+          "en": "I want you to be honest with me.",
+          "zh": "我想要你跟我实话实说"
+        },
+        {
+          "id": "ex-23-7",
+          "en": "I want you to know I trust you.",
+          "zh": "我想要你知道我相信你"
+        },
+        {
+          "id": "ex-23-8",
+          "en": "I want you to feel loved.",
+          "zh": "我想要你感到被爱"
+        }
+      ]
+    },
+    {
+      "id": "pattern-24",
+      "emoji": "😔",
+      "title": "I should've (should have) ____",
+      "translation": "我本该……",
+      "examples": [
+        {
+          "id": "ex-24-1",
+          "en": "I should've asked.",
+          "zh": "我本该问的"
+        },
+        {
+          "id": "ex-24-2",
+          "en": "I should've known.",
+          "zh": "我本该知道的"
+        },
+        {
+          "id": "ex-24-3",
+          "en": "I should've listened to her.",
+          "zh": "我本该听她的"
+        },
+        {
+          "id": "ex-24-4",
+          "en": "I should've studied more for that test.",
+          "zh": "我本该多学习一点为了这个考试"
+        },
+        {
+          "id": "ex-24-5",
+          "en": "I should've saved more money.",
+          "zh": "我本该存更多钱的"
+        },
+        {
+          "id": "ex-24-6",
+          "en": "I should've told you.",
+          "zh": "我本该告诉你的"
+        },
+        {
+          "id": "ex-24-7",
+          "en": "I should've read the instructions.",
+          "zh": "我本该看指南的"
+        },
+        {
+          "id": "ex-24-8",
+          "en": "I should've said no.",
+          "zh": "我本该说不的"
+        }
+      ]
+    },
+    {
+      "id": "pattern-25",
+      "emoji": "😆",
+      "title": "I can't wait to ____",
+      "translation": "我等不及……了",
+      "examples": [
+        {
+          "id": "ex-25-1",
+          "en": "I can't wait to go home.",
+          "zh": "我等不及回家了"
+        },
+        {
+          "id": "ex-25-2",
+          "en": "I can't wait to work.",
+          "zh": "我等不及工作了"
+        },
+        {
+          "id": "ex-25-3",
+          "en": "I can't wait to tell her.",
+          "zh": "我等不及告诉她了"
+        },
+        {
+          "id": "ex-25-4",
+          "en": "I can't wait to see my family.",
+          "zh": "我等不及见我的家人了"
+        },
+        {
+          "id": "ex-25-5",
+          "en": "I can't wait to watch this movie.",
+          "zh": "我等不及看这部电影了"
+        },
+        {
+          "id": "ex-25-6",
+          "en": "I can't wait to finish this project.",
+          "zh": "我等不及完成这个项目了"
+        },
+        {
+          "id": "ex-25-7",
+          "en": "I can't wait to move to a new city.",
+          "zh": "我等不及搬去一个新的城市了"
+        },
+        {
+          "id": "ex-25-8",
+          "en": "I can't wait to graduate from high school.",
+          "zh": "我等不及高中毕业了"
+        },
+        {
+          "id": "ex-25-9",
+          "en": "I can't wait to buy a new car.",
+          "zh": "我等不及买辆新车了"
+        },
+        {
+          "id": "ex-25-10",
+          "en": "I can't wait to spend the weekend with my girlfriend.",
+          "zh": "我等不及跟我女朋友一起过周末了"
+        },
+        {
+          "id": "ex-25-11",
+          "en": "I can't wait to meet Jay Chou.",
+          "zh": "我等不及见周杰伦了"
+        },
+        {
+          "id": "ex-25-12",
+          "en": "I can't wait to try this food.",
+          "zh": "我等不及尝这个食物了"
+        },
+        {
+          "id": "ex-25-13",
+          "en": "I can't wait to learn boxing.",
+          "zh": "我等不及学拳击了"
+        }
+      ]
+    },
+    {
+      "id": "pattern-26",
+      "emoji": "🤷‍♂️",
+      "title": "I have no idea ____",
+      "translation": "我完全不知道……",
+      "examples": [
+        {
+          "id": "ex-26-1",
+          "en": "I have no idea.",
+          "zh": "我完全不知道"
+        },
+        {
+          "id": "ex-26-2",
+          "en": "I had no idea.",
+          "zh": "我完全不知道（过去式）"
+        },
+        {
+          "id": "ex-26-3",
+          "en": "I have no idea he's here.",
+          "zh": "我完全不知道他在这里"
+        },
+        {
+          "id": "ex-26-4",
+          "en": "I have no idea how to play guitar.",
+          "zh": "我完全不知道怎么弹吉他"
+        },
+        {
+          "id": "ex-26-5",
+          "en": "I have no idea what to say.",
+          "zh": "我完全不知道说什么"
+        },
+        {
+          "id": "ex-26-6",
+          "en": "I have no idea what's wrong.",
+          "zh": "我完全不知道什么出错了"
+        },
+        {
+          "id": "ex-26-7",
+          "en": "I have no idea where to go.",
+          "zh": "我完全不知道去哪里"
+        },
+        {
+          "id": "ex-26-8",
+          "en": "I have no idea how to answer.",
+          "zh": "我完全不知道怎么回答"
+        },
+        {
+          "id": "ex-26-9",
+          "en": "I have no idea where to start.",
+          "zh": "我完全不知道从哪里开始"
+        },
+        {
+          "id": "ex-26-10",
+          "en": "I have no idea what to tell them.",
+          "zh": "我完全不知道跟他们说什么"
+        }
+      ]
+    },
+    {
+      "id": "pattern-27",
+      "emoji": "🤨",
+      "title": "I wonder if ____",
+      "translation": "我想知道……",
+      "examples": [
+        {
+          "id": "ex-27-1",
+          "en": "I wonder if he can jump higher than me.",
+          "zh": "我想知道他能不能跳的比我高"
+        },
+        {
+          "id": "ex-27-2",
+          "en": "I wonder if you knew.",
+          "zh": "我想知道你之前知不知道"
+        },
+        {
+          "id": "ex-27-3",
+          "en": "I wonder if it will rain today.",
+          "zh": "我想知道今天会不会下雨"
+        },
+        {
+          "id": "ex-27-4",
+          "en": "I wonder if I will find my true love.",
+          "zh": "我想知道我会不会找到我的真爱"
+        },
+        {
+          "id": "ex-27-5",
+          "en": "I wonder if I should take that job offer.",
+          "zh": "我想知道我该不该拿这个工作offer"
+        },
+        {
+          "id": "ex-27-6",
+          "en": "I wonder if he agrees with my decision.",
+          "zh": "我想知道他赞不赞成我的决定"
+        },
+        {
+          "id": "ex-27-7",
+          "en": "I wonder if my parents will like my new girlfriend.",
+          "zh": "我想知道我父母会不会喜欢我的新女友"
+        },
+        {
+          "id": "ex-27-8",
+          "en": "I wonder if my ex still thinks about me sometimes.",
+          "zh": "我想知道我的前任还会不会偶尔想起我"
+        },
+        {
+          "id": "ex-27-9",
+          "en": "I wonder if they know my secret.",
+          "zh": "我想知道他们知不知道我的秘密"
+        }
+      ]
+    },
+    {
+      "id": "pattern-28",
+      "emoji": "🔄",
+      "title": "I've been ____ing",
+      "translation": "我一直在……",
+      "examples": [
+        {
+          "id": "ex-28-1",
+          "en": "I've been waiting for you.",
+          "zh": "我一直在等你"
+        },
+        {
+          "id": "ex-28-2",
+          "en": "I've been trying.",
+          "zh": "我一直在试"
+        },
+        {
+          "id": "ex-28-3",
+          "en": "I've been wondering.",
+          "zh": "我一直在好奇"
+        },
+        {
+          "id": "ex-28-4",
+          "en": "I've been saving money for university.",
+          "zh": "我一直在存钱为了上大学"
+        },
+        {
+          "id": "ex-28-5",
+          "en": "I've been working on this project.",
+          "zh": "我一直在做这个项目"
+        },
+        {
+          "id": "ex-28-6",
+          "en": "I've been watching the same TV show.",
+          "zh": "我一直在看同一部电视剧"
+        },
+        {
+          "id": "ex-28-7",
+          "en": "I've been learning how to make pizza.",
+          "zh": "我一直在学怎么做披萨"
+        },
+        {
+          "id": "ex-28-8",
+          "en": "I've been meditating everyday for 20 minutes.",
+          "zh": "我一直在每天冥想20分钟"
+        },
+        {
+          "id": "ex-28-9",
+          "en": "I've been listening to Jay Chou's music lately.",
+          "zh": "我一直在听周杰伦的歌，最近"
+        },
+        {
+          "id": "ex-28-10",
+          "en": "I've been trying to quit smoking.",
+          "zh": "我一直在尝试去戒烟"
+        }
+      ]
+    },
+    {
+      "id": "pattern-29",
+      "emoji": "⏱️",
+      "title": "I've been ____ing for ____",
+      "translation": "我……已经……了",
+      "examples": [
+        {
+          "id": "ex-29-1",
+          "en": "I've been learning English for ten years.",
+          "zh": "我学英语已经10年了"
+        },
+        {
+          "id": "ex-29-2",
+          "en": "I've been watching Alan's videos for 3 years.",
+          "zh": "我看Alan的视频已经3年了"
+        },
+        {
+          "id": "ex-29-3",
+          "en": "I've been playing piano for 5 years.",
+          "zh": "我弹钢琴已经5年了"
+        },
+        {
+          "id": "ex-29-4",
+          "en": "I've been loving you for 20 years.",
+          "zh": "我爱你已经20年了"
+        },
+        {
+          "id": "ex-29-5",
+          "en": "I've been studying Japanese for 2 years.",
+          "zh": "我学日语已经2年了"
+        },
+        {
+          "id": "ex-29-6",
+          "en": "I've been working for this company for 6 months.",
+          "zh": "我为这个公司工作已经6个月了"
+        },
+        {
+          "id": "ex-29-7",
+          "en": "I've been practicing yoga every day for 6 months.",
+          "zh": "我每天练习瑜伽已经6个月了"
+        },
+        {
+          "id": "ex-29-8",
+          "en": "I've been writing this novel for 5 years.",
+          "zh": "我写这本小说已经5年了"
+        },
+        {
+          "id": "ex-29-9",
+          "en": "I've been traveling the world for a year.",
+          "zh": "我环游世界已经1年了"
+        },
+        {
+          "id": "ex-29-10",
+          "en": "I've been a driver for 2 years.",
+          "zh": "我做司机已经2年了"
+        },
+        {
+          "id": "ex-29-11",
+          "en": "I've been a content creator for 5 years.",
+          "zh": "我做视频博主已经5年了"
+        },
+        {
+          "id": "ex-29-12",
+          "en": "I've been an alcoholic for 3 years.",
+          "zh": "我酗酒已经3年了"
+        },
+        {
+          "id": "ex-29-13",
+          "en": "I've been a teacher for 6 months.",
+          "zh": "我做老师已经6个月了"
+        }
+      ]
+    },
+    {
+      "id": "pattern-30",
+      "emoji": "💭",
+      "title": "I've been meaning to ____",
+      "translation": "我一直想……来着",
+      "examples": [
+        {
+          "id": "ex-30-1",
+          "en": "I've been meaning to learn English with Alan.",
+          "zh": "我一直想跟Alan学英语来着"
+        },
+        {
+          "id": "ex-30-2",
+          "en": "I've been meaning to ask you.",
+          "zh": "我一直想问你来着"
+        },
+        {
+          "id": "ex-30-3",
+          "en": "I've been meaning to watch this movie.",
+          "zh": "我一直想看这部电影来着"
+        },
+        {
+          "id": "ex-30-4",
+          "en": "I've been meaning to call my grandparents.",
+          "zh": "我一直想打给我的爷爷奶奶来着"
+        },
+        {
+          "id": "ex-30-5",
+          "en": "I've been meaning to apologize to Jeff.",
+          "zh": "我一直想给Jeff道歉来着"
+        },
+        {
+          "id": "ex-30-6",
+          "en": "I've been meaning to go to this school.",
+          "zh": "我一直想去这所学校来着"
+        },
+        {
+          "id": "ex-30-7",
+          "en": "I've been meaning to read more books.",
+          "zh": "我一直想看更多的书来着"
+        },
+        {
+          "id": "ex-30-8",
+          "en": "I've been meaning to start a business.",
+          "zh": "我一直想创业来着"
+        },
+        {
+          "id": "ex-30-9",
+          "en": "I've been meaning to spend more time with my parents.",
+          "zh": "我一直想多陪陪父母来着"
+        }
+      ]
+    },
+    {
+      "id": "pattern-31",
+      "emoji": "✍️",
+      "title": "I've decided to ____",
+      "translation": "我决定要……了",
+      "examples": [
+        {
+          "id": "ex-31-1",
+          "en": "I've decided to study harder.",
+          "zh": "我决定要学习的更努力了"
+        },
+        {
+          "id": "ex-31-2",
+          "en": "I've decided to quit.",
+          "zh": "我决定要放弃了"
+        },
+        {
+          "id": "ex-31-3",
+          "en": "I've decided to adopt a dog.",
+          "zh": "我决定要收养一条狗了"
+        },
+        {
+          "id": "ex-31-4",
+          "en": "I've decided to quit my job.",
+          "zh": "我决定要辞职了"
+        },
+        {
+          "id": "ex-31-5",
+          "en": "I've decided to learn how to swim.",
+          "zh": "我决定要学游泳了"
+        },
+        {
+          "id": "ex-31-6",
+          "en": "I've decided to quit smoking.",
+          "zh": "我决定要戒烟了"
+        },
+        {
+          "id": "ex-31-7",
+          "en": "I've decided to learn a new language.",
+          "zh": "我决定要学一门新语言了"
+        }
+      ]
+    },
+    {
+      "id": "pattern-32",
+      "emoji": "🗣️",
+      "title": "I've heard that ____",
+      "translation": "我听说……",
+      "examples": [
+        {
+          "id": "ex-32-1",
+          "en": "I've heard that he made 3 million dollars last year.",
+          "zh": "我听说他去年挣了3百万美元"
+        },
+        {
+          "id": "ex-32-2",
+          "en": "I've heard that this movie is really good.",
+          "zh": "我听说这部电影非常好看"
+        },
+        {
+          "id": "ex-32-3",
+          "en": "I've heard that Jeff is getting married.",
+          "zh": "我听说Jeff要结婚了"
+        },
+        {
+          "id": "ex-32-4",
+          "en": "I've heard that yoga can reduce stress.",
+          "zh": "我听说瑜伽可以减轻压力"
+        },
+        {
+          "id": "ex-32-5",
+          "en": "I've heard that drinking green tea is good for your body.",
+          "zh": "我听说喝绿茶对你身体好"
+        },
+        {
+          "id": "ex-32-6",
+          "en": "I've heard that the movie \"titanic\" is amazing.",
+          "zh": "我听说“泰坦尼克号”这部电影非常棒"
+        },
+        {
+          "id": "ex-32-7",
+          "en": "I've heard that listening to jazz music makes you calmer.",
+          "zh": "我听说听爵士音乐能让你更冷静"
+        },
+        {
+          "id": "ex-32-8",
+          "en": "I've heard that drinking more water can improve your skin health.",
+          "zh": "我听说多喝水能帮助提升你的肌肤健康"
+        }
+      ]
+    },
+    {
+      "id": "pattern-33",
+      "emoji": "😩",
+      "title": "I've had enough of ____",
+      "translation": "我已经受够了……",
+      "examples": [
+        {
+          "id": "ex-33-1",
+          "en": "I've had enough of American food.",
+          "zh": "我已经受够了美国菜"
+        },
+        {
+          "id": "ex-33-2",
+          "en": "I've had enough of you.",
+          "zh": "我已经受够了你"
+        },
+        {
+          "id": "ex-33-3",
+          "en": "I've had enough of this.",
+          "zh": "我已经受够了这个"
+        },
+        {
+          "id": "ex-33-4",
+          "en": "I've had enough of Jeff.",
+          "zh": "我已经受够了Jeff"
+        },
+        {
+          "id": "ex-33-5",
+          "en": "I've had enough of my English teacher.",
+          "zh": "我已经受够了我的英语老师"
+        },
+        {
+          "id": "ex-33-6",
+          "en": "I've had enough of loud people.",
+          "zh": "我已经受够了很吵的人们"
+        },
+        {
+          "id": "ex-33-7",
+          "en": "I've had enough of rap music.",
+          "zh": "我已经受够了说唱音乐"
+        },
+        {
+          "id": "ex-33-8",
+          "en": "I've had enough of this traffic.",
+          "zh": "我已经受够了这个交通量"
+        },
+        {
+          "id": "ex-33-9",
+          "en": "I've had enough!",
+          "zh": "我已经受够了！"
+        }
+      ]
+    },
+    {
+      "id": "pattern-34",
+      "emoji": "🙏",
+      "title": "I'd (I would) like you to ____",
+      "translation": "我希望你能……",
+      "examples": [
+        {
+          "id": "ex-34-1",
+          "en": "I'd like you to know.",
+          "zh": "我希望你能知道"
+        },
+        {
+          "id": "ex-34-2",
+          "en": "I'd like you to answer my questions.",
+          "zh": "我希望你能回答我的问题"
+        },
+        {
+          "id": "ex-34-3",
+          "en": "I'd like you to be here.",
+          "zh": "我希望你能在这里"
+        },
+        {
+          "id": "ex-34-4",
+          "en": "I'd like you to help me with my homework.",
+          "zh": "我希望你能帮我，关于我的家庭作业"
+        },
+        {
+          "id": "ex-34-5",
+          "en": "I'd like you to give me some advice.",
+          "zh": "我希望你能给我一些建议"
+        },
+        {
+          "id": "ex-34-6",
+          "en": "I'd like you to say sorry.",
+          "zh": "我希望你能道歉"
+        },
+        {
+          "id": "ex-34-7",
+          "en": "I'd like you to consider this offer.",
+          "zh": "我希望你能考虑这个offer"
+        },
+        {
+          "id": "ex-34-8",
+          "en": "I'd like you finish your homework before watching TV.",
+          "zh": "我希望你能先写完作业在看电视前"
+        },
+        {
+          "id": "ex-34-9",
+          "en": "I'd like you to give me your honest opinion.",
+          "zh": "我希望你能给我你真实的意见"
+        },
+        {
+          "id": "ex-34-10",
+          "en": "I'd like you to have more patience.",
+          "zh": "我希望你能多一些耐心"
+        },
+        {
+          "id": "ex-34-11",
+          "en": "I'd like you to pay attention.",
+          "zh": "我希望你能专心"
+        },
+        {
+          "id": "ex-34-12",
+          "en": "I'd like you to be more open-minded.",
+          "zh": "我希望你能更思想开明一点"
+        },
+        {
+          "id": "ex-34-13",
+          "en": "I'd like you to work for me.",
+          "zh": "我希望你能为我工作"
+        },
+        {
+          "id": "ex-34-14",
+          "en": "I'd like you to follow the rules.",
+          "zh": "我希望你能遵守规则"
+        },
+        {
+          "id": "ex-34-15",
+          "en": "I'd like you to tell me the truth.",
+          "zh": "我希望你能告诉我真相"
+        }
+      ]
+    },
+    {
+      "id": "pattern-35",
+      "emoji": "🙏",
+      "title": "I'd be grateful if you can/could ____",
+      "translation": "如果你能……，我会感激不尽",
+      "examples": [
+        {
+          "id": "ex-35-1",
+          "en": "I'd be grateful if you can drive me to the airport.",
+          "zh": "如果你能送我去机场，我会感激不尽"
+        },
+        {
+          "id": "ex-35-2",
+          "en": "I'd be grateful if you can stop asking.",
+          "zh": "如果你能别问了，我会感激不尽"
+        },
+        {
+          "id": "ex-35-3",
+          "en": "I'd be grateful if you can help me move.",
+          "zh": "如果你能帮我搬家，我会感激不尽"
+        },
+        {
+          "id": "ex-35-4",
+          "en": "I'd be grateful if you can teach me English.",
+          "zh": "如果你能教我英语，我会感激不尽"
+        },
+        {
+          "id": "ex-35-5",
+          "en": "I'd be grateful if you can give me a job.",
+          "zh": "如果你能给我一份工作，我会感激不尽"
+        },
+        {
+          "id": "ex-35-6",
+          "en": "I'd be grateful if you can help me fix this car.",
+          "zh": "如果你能帮我修这辆车，我会感激不尽"
+        },
+        {
+          "id": "ex-35-7",
+          "en": "I'd be grateful if you can give me some feedback.",
+          "zh": "如果你能给我一些反馈，我会感激不尽"
+        },
+        {
+          "id": "ex-35-8",
+          "en": "I'd be grateful if you could lend me some money.",
+          "zh": "如果你能借给我一些钱，我会感激不尽"
+        },
+        {
+          "id": "ex-35-9",
+          "en": "I'd be grateful if you could recommend me a good movie.",
+          "zh": "如果你能给我推荐一部好电影，我会感激不尽"
+        }
+      ]
+    },
+    {
+      "id": "pattern-36",
+      "emoji": "🙋‍♂️",
+      "title": "Can I ____?",
+      "translation": "我能……吗？",
+      "examples": [
+        {
+          "id": "ex-36-1",
+          "en": "Can I call you?",
+          "zh": "我能打电话给你吗？"
+        },
+        {
+          "id": "ex-36-2",
+          "en": "Can I ask?",
+          "zh": "我能问吗？"
+        },
+        {
+          "id": "ex-36-3",
+          "en": "Can I borrow your pen?",
+          "zh": "我能借你的笔吗？"
+        },
+        {
+          "id": "ex-36-4",
+          "en": "Can I help you?",
+          "zh": "我能帮你吗？"
+        },
+        {
+          "id": "ex-36-5",
+          "en": "Can I use your computer?",
+          "zh": "我能用你的电脑吗？"
+        },
+        {
+          "id": "ex-36-6",
+          "en": "Can I have a glass of water?",
+          "zh": "我能要一杯水吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-37",
+      "emoji": "🙇‍♂️",
+      "title": "Could I ____?",
+      "translation": "我能……吗？（更礼貌）",
+      "examples": [
+        {
+          "id": "ex-37-1",
+          "en": "Could I ask?",
+          "zh": "我能问吗？"
+        },
+        {
+          "id": "ex-37-2",
+          "en": "Could I go home?",
+          "zh": "我能回家吗？"
+        },
+        {
+          "id": "ex-37-3",
+          "en": "Could I get your number?",
+          "zh": "我能要你的号码吗？"
+        },
+        {
+          "id": "ex-37-4",
+          "en": "Could I schedule an appointment?",
+          "zh": "我能预约一个appointment吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-38",
+      "emoji": "🤝",
+      "title": "Let me ____",
+      "translation": "让我……",
+      "examples": [
+        {
+          "id": "ex-38-1",
+          "en": "Let me help you.",
+          "zh": "让我帮你"
+        },
+        {
+          "id": "ex-38-2",
+          "en": "Let me in.",
+          "zh": "让我进来"
+        },
+        {
+          "id": "ex-38-3",
+          "en": "Let me know if you need help.",
+          "zh": "让我知道如果你需要帮助"
+        },
+        {
+          "id": "ex-38-4",
+          "en": "Let me take care of you.",
+          "zh": "让我照顾你"
+        },
+        {
+          "id": "ex-38-5",
+          "en": "Let me show you the way.",
+          "zh": "让我来给你引路"
+        },
+        {
+          "id": "ex-38-6",
+          "en": "Let me know if you have any questions.",
+          "zh": "让我知道如果你有任何疑问的话"
+        },
+        {
+          "id": "ex-38-7",
+          "en": "Let me buy you a coffee.",
+          "zh": "让我给你买杯咖啡"
+        },
+        {
+          "id": "ex-38-8",
+          "en": "Let me give you a gift.",
+          "zh": "让我给你一个礼物"
+        },
+        {
+          "id": "ex-38-9",
+          "en": "Let me check if there are any seats left.",
+          "zh": "让我检查下还有没有剩余座位"
+        }
+      ]
+    },
+    {
+      "id": "pattern-39",
+      "emoji": "👀",
+      "title": "Are you ____?",
+      "translation": "你……吗？",
+      "examples": [
+        {
+          "id": "ex-39-1",
+          "en": "Are you American?",
+          "zh": "你美国人吗？"
+        },
+        {
+          "id": "ex-39-2",
+          "en": "Are you crazy?",
+          "zh": "你疯了吗？"
+        },
+        {
+          "id": "ex-39-3",
+          "en": "Are you Jack?",
+          "zh": "你是Jack吗？"
+        },
+        {
+          "id": "ex-39-4",
+          "en": "Are you ready?",
+          "zh": "你准备好了吗？"
+        },
+        {
+          "id": "ex-39-5",
+          "en": "Are you interested?",
+          "zh": "你感兴趣吗？"
+        },
+        {
+          "id": "ex-39-6",
+          "en": "Are you happy?",
+          "zh": "你开心吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-40",
+      "emoji": "🧗‍♂️",
+      "title": "Are you trying to ____?",
+      "translation": "你是在尝试……吗？",
+      "examples": [
+        {
+          "id": "ex-40-1",
+          "en": "Are you trying to call him?",
+          "zh": "你是在尝试打给他吗？"
+        },
+        {
+          "id": "ex-40-2",
+          "en": "Are you trying to win?",
+          "zh": "你是在尝试赢吗？"
+        },
+        {
+          "id": "ex-40-3",
+          "en": "Are you trying to lose weight?",
+          "zh": "你是在尝试减肥吗？"
+        },
+        {
+          "id": "ex-40-4",
+          "en": "Are you trying to learn a new language?",
+          "zh": "你是在尝试学一个新语言吗？"
+        },
+        {
+          "id": "ex-40-5",
+          "en": "Are you trying to fix that car?",
+          "zh": "你是在尝试修那辆车吗？"
+        },
+        {
+          "id": "ex-40-6",
+          "en": "Are you trying to save money?",
+          "zh": "你是在尝试存钱吗？"
+        },
+        {
+          "id": "ex-40-7",
+          "en": "Are you trying to quit smoking?",
+          "zh": "你是在尝试戒烟吗？"
+        },
+        {
+          "id": "ex-40-8",
+          "en": "Are you trying to avoid him?",
+          "zh": "你是在尝试回避他吗？"
+        },
+        {
+          "id": "ex-40-9",
+          "en": "Are you trying to overcome your fear?",
+          "zh": "你是在尝试克服你的恐惧吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-41",
+      "emoji": "🙋‍♀️",
+      "title": "Do you ____?",
+      "translation": "你……吗？",
+      "examples": [
+        {
+          "id": "ex-41-1",
+          "en": "Do you understand?",
+          "zh": "你懂了吗？"
+        },
+        {
+          "id": "ex-41-2",
+          "en": "Do you know?",
+          "zh": "你知道吗？"
+        },
+        {
+          "id": "ex-41-3",
+          "en": "Do you agree?",
+          "zh": "你同意吗？"
+        },
+        {
+          "id": "ex-41-4",
+          "en": "Do you hear me?",
+          "zh": "你听到我了吗？"
+        },
+        {
+          "id": "ex-41-5",
+          "en": "Do you have any pets?",
+          "zh": "你有宠物吗？"
+        },
+        {
+          "id": "ex-41-6",
+          "en": "Do you have any plans for the weekend?",
+          "zh": "你有计划吗？这周末"
+        },
+        {
+          "id": "ex-41-7",
+          "en": "Do you enjoy watching TV?",
+          "zh": "你享受看电视吗？"
+        },
+        {
+          "id": "ex-41-8",
+          "en": "Do you have any siblings?",
+          "zh": "你有任何亲兄弟姐妹吗？"
+        },
+        {
+          "id": "ex-41-9",
+          "en": "Do you have a plan?",
+          "zh": "你有个计划吗？"
+        },
+        {
+          "id": "ex-41-10",
+          "en": "Do you know how to speak English?",
+          "zh": "你知道怎么说英语吗？"
+        },
+        {
+          "id": "ex-41-11",
+          "en": "Do you like to travel?",
+          "zh": "你喜欢旅行吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-42",
+      "emoji": "🤝",
+      "title": "Do you mind if I ____?",
+      "translation": "你介意我……吗？",
+      "examples": [
+        {
+          "id": "ex-42-1",
+          "en": "Do you mind if I come in?",
+          "zh": "你介意我进来吗？"
+        },
+        {
+          "id": "ex-42-2",
+          "en": "Do you mind if I ask?",
+          "zh": "你介意我问吗？"
+        },
+        {
+          "id": "ex-42-3",
+          "en": "Do you mind if I borrow your phone?",
+          "zh": "你介意我借你手机吗？"
+        },
+        {
+          "id": "ex-42-4",
+          "en": "Do you mind if I take a picture with you?",
+          "zh": "你介意我和你照张相吗？"
+        },
+        {
+          "id": "ex-42-5",
+          "en": "Do you mind if I bring a friend to the party?",
+          "zh": "你介意我带个朋友来party吗？"
+        },
+        {
+          "id": "ex-42-6",
+          "en": "Do you mind if I join you?",
+          "zh": "你介意我加入你吗？"
+        },
+        {
+          "id": "ex-42-7",
+          "en": "Do you mind if I ask you a personal question?",
+          "zh": "你介意我问你一个私人的问题吗？"
+        },
+        {
+          "id": "ex-42-8",
+          "en": "Do you mind if I go home?",
+          "zh": "你介意我回家吗？"
+        },
+        {
+          "id": "ex-42-9",
+          "en": "Do you mind if I borrow your car for the weekend?",
+          "zh": "你介意借你车用一周末吗？"
+        },
+        {
+          "id": "ex-42-10",
+          "en": "Do you mind if I turn down the volume?",
+          "zh": "你介意我关小声一点吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-43",
+      "emoji": "😋",
+      "title": "Do you feel like ____ing?",
+      "translation": "你想……吗？",
+      "examples": [
+        {
+          "id": "ex-43-1",
+          "en": "Do you feel like going outside?",
+          "zh": "你想出去外面吗？"
+        },
+        {
+          "id": "ex-43-2",
+          "en": "Do you feel like eating?",
+          "zh": "你想吃饭吗？"
+        },
+        {
+          "id": "ex-43-3",
+          "en": "Do you feel like crying?",
+          "zh": "你想哭吗？"
+        },
+        {
+          "id": "ex-43-4",
+          "en": "Do you feel like a watching a movie?",
+          "zh": "你想看部电影吗？"
+        },
+        {
+          "id": "ex-43-5",
+          "en": "Do you feel like going to the gym?",
+          "zh": "你想去健身房吗？"
+        },
+        {
+          "id": "ex-43-6",
+          "en": "Do you feel like ordering pizza for dinner?",
+          "zh": "你想点披萨作为晚餐吗？"
+        },
+        {
+          "id": "ex-43-7",
+          "en": "Do you feel like going home?",
+          "zh": "你想回家吗？"
+        },
+        {
+          "id": "ex-43-8",
+          "en": "Do you feel like listening to jazz music?",
+          "zh": "你想听爵士音乐吗？"
+        },
+        {
+          "id": "ex-43-9",
+          "en": "Do you feel like trying a new flavor?",
+          "zh": "你想尝试一个新口味吗？"
+        },
+        {
+          "id": "ex-43-10",
+          "en": "Do you feel like taking a nap?",
+          "zh": "你想睡个午觉吗？"
+        },
+        {
+          "id": "ex-43-11",
+          "en": "Do you feel like trying a new hairstyle/haircut?",
+          "zh": "你想换一个新发型吗？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-44",
+      "emoji": "⏪",
+      "title": "Did you use to ____?",
+      "translation": "你以前是不是……？",
+      "examples": [
+        {
+          "id": "ex-44-1",
+          "en": "Did you use to work here?",
+          "zh": "你以前是不是在这里上班？"
+        },
+        {
+          "id": "ex-44-2",
+          "en": "Did you use to play basketball?",
+          "zh": "你以前是不是打篮球？"
+        },
+        {
+          "id": "ex-44-3",
+          "en": "Did you use to have a BMW?",
+          "zh": "你以前是不是有辆宝马？"
+        },
+        {
+          "id": "ex-44-4",
+          "en": "Did you use to work at KFC?",
+          "zh": "你以前是不是在肯德基工作？"
+        },
+        {
+          "id": "ex-44-5",
+          "en": "Did you use to go to an international high school?",
+          "zh": "你以前是不是上一个国际高中"
+        },
+        {
+          "id": "ex-44-6",
+          "en": "Did you use to cry a lot?",
+          "zh": "你以前是不是经常哭？"
+        },
+        {
+          "id": "ex-44-7",
+          "en": "Did you use to be more outgoing?",
+          "zh": "你以前是不是更外向？"
+        },
+        {
+          "id": "ex-44-8",
+          "en": "Did you use to cut your own hair?",
+          "zh": "你以前是不是给自己剪头发？"
+        },
+        {
+          "id": "ex-44-9",
+          "en": "Did you use to walk to school?",
+          "zh": "你以前是不是走去学校？"
+        },
+        {
+          "id": "ex-44-10",
+          "en": "Did you use to work out a lot?",
+          "zh": "你以前是不是经常健身？"
+        },
+        {
+          "id": "ex-44-11",
+          "en": "Did you use to have a six pack?",
+          "zh": "你以前是不是有六块腹肌？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-45",
+      "emoji": "🌍",
+      "title": "Have you ever ____?",
+      "translation": "你有没有……？",
+      "examples": [
+        {
+          "id": "ex-45-1",
+          "en": "Have you ever been to China?",
+          "zh": "你有没有去过中国？"
+        },
+        {
+          "id": "ex-45-2",
+          "en": "Have you ever wondered?",
+          "zh": "你有没有好奇过？"
+        },
+        {
+          "id": "ex-45-3",
+          "en": "Have you ever met her?",
+          "zh": "你见过她吗？"
+        },
+        {
+          "id": "ex-45-4",
+          "en": "Have you ever traveled to a different country?",
+          "zh": "你有没有去过其他国家旅游过？"
+        },
+        {
+          "id": "ex-45-5",
+          "en": "Have you ever been to a concert?",
+          "zh": "你有没有去过一个演唱会？"
+        },
+        {
+          "id": "ex-45-6",
+          "en": "Have you ever met a famous person?",
+          "zh": "你有没有见过名人？"
+        },
+        {
+          "id": "ex-45-7",
+          "en": "Have you ever bought a course on douyin?",
+          "zh": "你有没有在抖音上买过课？"
+        },
+        {
+          "id": "ex-45-8",
+          "en": "Have you ever swum in an ocean?",
+          "zh": "你有没有在海里游过泳？"
+        },
+        {
+          "id": "ex-45-9",
+          "en": "Have you ever tried Japanese food?",
+          "zh": "你有没有试过日本菜？"
+        },
+        {
+          "id": "ex-45-10",
+          "en": "Have you ever watched a horror movie?",
+          "zh": "你有没有看过恐怖片？"
+        },
+        {
+          "id": "ex-45-11",
+          "en": "Have you ever watched a Korean show?",
+          "zh": "你有没有看过韩剧？"
+        }
+      ]
+    },
+    {
+      "id": "pattern-46",
+      "emoji": "😔",
+      "title": "You could’ve (could have) ____",
+      "translation": "你本可以……的",
+      "examples": [
+        {
+          "id": "ex-46-1",
+          "en": "You could’ve told me earlier.",
+          "zh": "你本可以早一点告诉我的"
+        },
+        {
+          "id": "ex-46-2",
+          "en": "You could’ve saved her.",
+          "zh": "你本可以救她的"
+        },
+        {
+          "id": "ex-46-3",
+          "en": "You could’ve left.",
+          "zh": "你本可以离开的"
+        },
+        {
+          "id": "ex-46-4",
+          "en": "You could’ve called me when you needed help.",
+          "zh": "你本可以打给我的 当你需要帮助的时候"
+        },
+        {
+          "id": "ex-46-5",
+          "en": "You could’ve saved more money.",
+          "zh": "你本可以存更多钱的"
+        },
+        {
+          "id": "ex-46-6",
+          "en": "You could’ve learned how to swim.",
+          "zh": "你本可以学会游泳的"
+        },
+        {
+          "id": "ex-46-7",
+          "en": "You could’ve made more money.",
+          "zh": "你本可以赚更多钱的"
+        },
+        {
+          "id": "ex-46-8",
+          "en": "You could’ve made a different choice.",
+          "zh": "你本可以做一个不一样的选择的"
+        },
+        {
+          "id": "ex-46-9",
+          "en": "You could’ve apologized.",
+          "zh": "你本可以道歉的"
+        },
+        {
+          "id": "ex-46-10",
+          "en": "You could’ve avoided my mom.",
+          "zh": "你本可以避开我妈的"
+        },
+        {
+          "id": "ex-46-11",
+          "en": "You could’ve studied more before the test.",
+          "zh": "你本可以考试前学更多的"
+        }
+      ]
+    },
+    {
+      "id": "pattern-47",
+      "emoji": "🎯",
+      "title": "You have to ____ in order to ____",
+      "translation": "为了……你必须……",
+      "examples": [
+        {
+          "id": "ex-47-1",
+          "en": "You have to work hard in order to succeed.",
+          "zh": "为了成功 你必须努力工作"
+        },
+        {
+          "id": "ex-47-2",
+          "en": "You have to eat less in order to lose weight.",
+          "zh": "为了减肥 你必须少吃点"
+        },
+        {
+          "id": "ex-47-3",
+          "en": "You have to study hard in order to pass your exam.",
+          "zh": "为了通过考试 你必须努力学习"
+        },
+        {
+          "id": "ex-47-4",
+          "en": "You have to save money in order to buy a house.",
+          "zh": "为了买房 你必须存钱"
+        },
+        {
+          "id": "ex-47-5",
+          "en": "You have to be patient in order to achieve your goals.",
+          "zh": "为了完成你的目标 你必须耐心"
+        },
+        {
+          "id": "ex-47-6",
+          "en": "You have to practice more in order to improve your skill.",
+          "zh": "为了提升你的技术 你必须训练的更多"
+        },
+        {
+          "id": "ex-47-7",
+          "en": "You have to learn from your mistakes in order to grow.",
+          "zh": "为了成长 你必须从你的错误中学习"
+        },
+        {
+          "id": "ex-47-8",
+          "en": "You have to believe in yourself in order to be happy.",
+          "zh": "为了快乐 你必须相信自己"
+        }
+      ]
+    },
+    {
+      "id": "pattern-48",
+      "emoji": "📏",
+      "title": "You’re supposed to ____",
+      "translation": "你是应该……的",
+      "examples": [
+        {
+          "id": "ex-48-1",
+          "en": "You’re supposed to wait for me.",
+          "zh": "你是应该等我的"
+        },
+        {
+          "id": "ex-48-2",
+          "en": "You’re supposed to trust me.",
+          "zh": "你是应该相信我的"
+        },
+        {
+          "id": "ex-48-3",
+          "en": "You’re supposed to help.",
+          "zh": "你是应该帮忙的"
+        },
+        {
+          "id": "ex-48-4",
+          "en": "You’re supposed to be here.",
+          "zh": "你是应该在这里的"
+        },
+        {
+          "id": "ex-48-5",
+          "en": "You’re supposed to follow the rules.",
+          "zh": "你是应该遵守规则的"
+        },
+        {
+          "id": "ex-48-6",
+          "en": "You’re supposed to say, \"thank you\".",
+          "zh": "你是应该说 “谢谢 “的"
+        },
+        {
+          "id": "ex-48-7",
+          "en": "You’re supposed to turn off your phone.",
+          "zh": "你是应该关掉手机的"
+        },
+        {
+          "id": "ex-48-8",
+          "en": "You’re supposed to wear a mask.",
+          "zh": "你是应该带口罩的"
+        },
+        {
+          "id": "ex-48-9",
+          "en": "You’re supposed to follow me.",
+          "zh": "你是应该跟着我的"
+        },
+        {
+          "id": "ex-48-10",
+          "en": "You’re supposed to take your shoes off.",
+          "zh": "你是应该脱鞋的"
+        },
+        {
+          "id": "ex-48-11",
+          "en": "You’re supposed to wash your hands.",
+          "zh": "你是应该洗手的"
+        }
+      ]
+    },
+    {
+      "id": "pattern-49",
+      "emoji": "⚠️",
+      "title": "You’d better / You better ____",
+      "translation": "你最好……",
+      "examples": [
+        {
+          "id": "ex-49-1",
+          "en": "You’d better help.",
+          "zh": "你最好帮忙"
+        },
+        {
+          "id": "ex-49-2",
+          "en": "You’d better listen.",
+          "zh": "你最好听着"
+        },
+        {
+          "id": "ex-49-3",
+          "en": "You’d better hurry.",
+          "zh": "你最好快一点"
+        },
+        {
+          "id": "ex-49-4",
+          "en": "You better wear a jacket.",
+          "zh": "你最好穿件夹克"
+        },
+        {
+          "id": "ex-49-5",
+          "en": "You better apologize to me.",
+          "zh": "你最好给我道个歉"
+        },
+        {
+          "id": "ex-49-6",
+          "en": "You better save some money.",
+          "zh": "你最好存点钱"
+        },
+        {
+          "id": "ex-49-7",
+          "en": "You better study hard.",
+          "zh": "你最好努力点学习"
+        },
+        {
+          "id": "ex-49-8",
+          "en": "You better check the expiration date.",
+          "zh": "你最好检查一下过期日期"
+        },
+        {
+          "id": "ex-49-9",
+          "en": "You better get some rest.",
+          "zh": "你最好休息一下"
+        },
+        {
+          "id": "ex-49-10",
+          "en": "You better be careful.",
+          "zh": "你最好小心一点"
+        }
+      ]
+    },
+    {
+      "id": "pattern-50",
+      "emoji": "💡",
+      "title": "If I were you, I would ____",
+      "translation": "如果我是你的话 我会……",
+      "examples": [
+        {
+          "id": "ex-50-1",
+          "en": "If I were you, I would go to college.",
+          "zh": "如果我是你的话 我会去上大学"
+        },
+        {
+          "id": "ex-50-2",
+          "en": "If I were you, I would take a break.",
+          "zh": "如果我是你的话 我会休息一下"
+        },
+        {
+          "id": "ex-50-3",
+          "en": "If I were you, I would save some money.",
+          "zh": "如果我是你的话 我会存一些钱"
+        },
+        {
+          "id": "ex-50-4",
+          "en": "If I were you, I would marry her.",
+          "zh": "如果我是你的话 我会娶她"
+        },
+        {
+          "id": "ex-50-5",
+          "en": "If I were you, I would apologize to her.",
+          "zh": "如果我是你的话 我会跟她道歉"
+        },
+        {
+          "id": "ex-50-6",
+          "en": "If I were you, I would take my time.",
+          "zh": "如果我是你的话，我会不着急 慢慢来"
+        },
+        {
+          "id": "ex-50-7",
+          "en": "If I were you, I would learn English.",
+          "zh": "如果我是你的话，我会学英语"
+        },
+        {
+          "id": "ex-50-8",
+          "en": "If I were you, I would forgive them.",
+          "zh": "如果我是你的话 我会原谅他们"
+        },
+        {
+          "id": "ex-50-9",
+          "en": "If I were you, I would spend more time with my parents.",
+          "zh": "如果我是你的话 我会多花时间陪陪父母"
+        },
+        {
+          "id": "ex-50-10",
+          "en": "If I were you, I would read more books.",
+          "zh": "如果我是你的话 我会多看书"
+        }
+      ]
+    }
+  ],
+  "hotSearchTags": [
+    "cooking",
+    "soccer",
+    "teacher",
+    "doctor",
+    "basketball"
+  ]
+}
