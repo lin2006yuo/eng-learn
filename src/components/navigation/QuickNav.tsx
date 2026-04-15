@@ -13,7 +13,6 @@ interface QuickNavProps {
  */
 export function QuickNav({ total, activeIndex, onSelect }: QuickNavProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isSticky, setIsSticky] = useState(false);
   const [displayActiveIndex, setDisplayActiveIndex] = useState(activeIndex);
   const isManualClickRef = useRef(false);
 
@@ -47,14 +46,7 @@ export function QuickNav({ total, activeIndex, onSelect }: QuickNavProps) {
     });
   }, [displayActiveIndex]);
 
-  // 监听窗口滚动实现 sticky 效果
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 150);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
 
   // 处理点击
   const handleClick = useCallback(
@@ -79,11 +71,7 @@ export function QuickNav({ total, activeIndex, onSelect }: QuickNavProps) {
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`
-        sticky top-[72px] z-30 py-3 px-4
-        transition-all duration-300
-        ${isSticky ? 'bg-background/95 backdrop-blur-sm shadow-sm' : ''}
-      `}
+      className="relative py-3 px-4 bg-background"
     >
       <div
         ref={containerRef}

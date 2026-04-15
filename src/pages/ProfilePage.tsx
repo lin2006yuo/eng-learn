@@ -1,18 +1,22 @@
 import { motion } from 'framer-motion';
-import { Copy, Bell, ClipboardList } from 'lucide-react';
+import { Copy, Bell, ClipboardList, Heart } from 'lucide-react';
 import { Card, Button } from '@/components/ui';
 import { ProgressRing, StatCard } from '@/components/stats';
 import { useStatsStore } from '@/stores/statsStore';
 import { useAppStore } from '@/stores/appStore';
+import { useFavoriteStore } from '@/stores/favoriteStore';
 import { patterns, getAllExamples } from '@/data/patterns';
 import { copyToClipboard } from '@/utils/copy';
 
 export function ProfilePage() {
   const { copyCount, streakDays } = useStatsStore();
   const showToast = useAppStore((state) => state.showToast);
+  const setCurrentTab = useAppStore((state) => state.setCurrentTab);
+  const favorites = useFavoriteStore((state) => state.favorites);
   
   const totalPatterns = patterns.length;
   const totalExamples = getAllExamples().length;
+  const totalFavorites = favorites.length;
 
   const handleCopyAll = async () => {
     let text = '';
@@ -84,6 +88,22 @@ export function ProfilePage() {
           transition={{ delay: 0.3 }}
         >
           <Button
+            onClick={() => setCurrentTab('favorites')}
+            variant="ghost"
+            className="w-full justify-start bg-white hover:bg-gray-50 rounded-2xl py-4 px-5 shadow-card"
+            icon={<Heart size={20} className="text-red-500" />}
+          >
+            <span className="flex-1 text-left">收藏管理</span>
+            <span className="text-sm text-text-secondary">{totalFavorites}个</span>
+          </Button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Button
             onClick={handleCopyAll}
             variant="ghost"
             className="w-full justify-start bg-white hover:bg-gray-50 rounded-2xl py-4 px-5 shadow-card"
@@ -96,7 +116,7 @@ export function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
         >
           <Button
             variant="ghost"

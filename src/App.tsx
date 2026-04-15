@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/stores/appStore';
 import { TabBar, Toast } from '@/components/ui';
-import { LearnPage, DiscoverPage, ProfilePage } from '@/pages';
+import { LearnPage, DiscoverPage, ProfilePage, FavoritesPage } from '@/pages';
 import type { TabType } from '@/types';
 
 const pageVariants = {
@@ -42,6 +42,8 @@ function App() {
         return <DiscoverPage />;
       case 'profile':
         return <ProfilePage />;
+      case 'favorites':
+        return <FavoritesPage />;
       default:
         return <LearnPage />;
     }
