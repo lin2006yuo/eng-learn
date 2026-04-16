@@ -47,11 +47,9 @@ export function NoteCard({ note, index, onClick, onDelete }: NoteCardProps) {
       onClick={onClick}
       className="bg-white rounded-2xl p-5 shadow-card relative cursor-pointer hover:shadow-lg transition-shadow border-2 border-transparent hover:border-[#58CC71]/20"
     >
-      <div className="pr-16">
-        <p className="text-text-primary whitespace-pre-wrap leading-relaxed">
-          {note.content}
-        </p>
-      </div>
+      <p className="text-text-primary whitespace-pre-wrap leading-relaxed">
+        {note.content}
+      </p>
 
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
         <span className="text-sm text-text-secondary">
