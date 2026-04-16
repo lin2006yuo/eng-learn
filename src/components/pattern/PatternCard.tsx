@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui';
 import { ExampleItem } from './ExampleItem';
 import { FavoriteButton } from '@/components/favorite';
-import { useCopy } from '@/hooks/useCopy';
+import { CommentPreview } from '@/components/comments/CommentPreview';
+import { useCommentStore } from '@/stores/commentStore';
 import type { Pattern } from '@/types';
 
 interface PatternCardProps {
@@ -13,18 +15,23 @@ interface PatternCardProps {
 }
 
 export function PatternCard({ pattern, index }: PatternCardProps) {
-  const { copy, isCopied } = useCopy();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // 获取评论统计
+  const { getCommentStats } = useCommentStore();
+  const { count: commentCount, preview: commentPreview } = getCommentStats(pattern.id);
 
   // 从 pattern.id 解析序号，如 "pattern-5" -> "5"
   const patternNumber = pattern.id.replace('pattern-', '');
 
-  const handleCopyAll = () => {
-    const allText = pattern.examples.map((ex) => `${ex.en}\n${ex.zh}`).join('\n\n');
-    copy(allText, `pattern-${pattern.id}`);
+  const handleCommentClick = () => {
+    // 导航到评论页，并保存当前位置作为背景
+    navigate(`/pattern/${pattern.id}/comments`, {
+      state: { backgroundLocation: location }
+    });
   };
-
-  const copied = isCopied(`pattern-${pattern.id}`);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -73,28 +80,26 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
               ))}
             </div>
 
-            {/* 操作栏：收藏 + 复制 */}
+            {/* 操作栏：收藏 + 评论 */}
             <div className="flex gap-3 mt-4">
               <FavoriteButton patternId={pattern.id} />
-              
+
+              {/* 评论按钮 */}
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={handleCopyAll}
-                className={`
-                  flex-1 py-3 px-4 rounded-xl font-medium
-                  flex items-center justify-center gap-2
-                  transition-all duration-200
-                  ${
-                    copied
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-50 text-text-primary hover:bg-gray-100'
-                  }
-                `}
+                onClick={handleCommentClick}
+                className="flex-1 py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 bg-gray-50 text-text-primary hover:bg-gray-100 transition-all duration-200"
               >
-                <Copy size={18} />
-                {copied ? '已复制' : '复制本句型'}
+                <MessageCircle size={18} />
+                评论{commentCount > 0 ? `+${commentCount}` : ''}
               </motion.button>
             </div>
+
+            {/* 评论预览 */}
+            <CommentPreview 
+              comments={commentPreview} 
+              onClick={handleCommentClick}
+            />
           </motion.div>
         )}
       </AnimatePresence>
