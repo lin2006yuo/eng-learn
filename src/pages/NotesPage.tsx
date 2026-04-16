@@ -147,13 +147,13 @@ interface DeleteConfirmModalProps {
 
 function DeleteConfirmModal({ onConfirm, onCancel }: DeleteConfirmModalProps) {
   return (
-    <div className="fixed inset-0 z-[300]">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 w-[85%] max-w-sm"
+        className="relative bg-white rounded-2xl p-6 w-full max-w-sm"
       >
         <h3 className="text-xl font-bold text-text-primary mb-3">确认删除</h3>
         <p className="text-text-secondary mb-6">
