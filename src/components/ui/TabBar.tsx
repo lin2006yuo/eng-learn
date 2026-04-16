@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
-import { Flame, Search, Trophy } from 'lucide-react';
+import { Flame, Search, FileText, Trophy } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import type { TabType } from '@/types';
 
 const tabs: { id: TabType; label: string; icon: typeof Flame }[] = [
   { id: 'learn', label: '学习', icon: Flame },
   { id: 'discover', label: '发现', icon: Search },
+  { id: 'notes', label: '记录', icon: FileText },
   { id: 'profile', label: '我的', icon: Trophy },
 ];
 

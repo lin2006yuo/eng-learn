@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/stores/appStore';
 import { TabBar, Toast } from '@/components/ui';
-import { LearnPage, DiscoverPage, ProfilePage, FavoritesPage } from '@/pages';
+import { LearnPage, DiscoverPage, NotesPage, ProfilePage, FavoritesPage } from '@/pages';
 import type { TabType } from '@/types';
 
 const pageVariants = {
@@ -25,7 +25,7 @@ const pageTransition = {
   damping: 30,
 };
 
-const tabOrder: TabType[] = ['learn', 'discover', 'profile'];
+const tabOrder: TabType[] = ['learn', 'discover', 'notes', 'profile'];
 
 function App() {
   const { currentTab } = useAppStore();
@@ -40,6 +40,8 @@ function App() {
         return <LearnPage />;
       case 'discover':
         return <DiscoverPage />;
+      case 'notes':
+        return <NotesPage />;
       case 'profile':
         return <ProfilePage />;
       case 'favorites':

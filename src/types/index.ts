@@ -12,7 +12,7 @@ export interface Pattern {
   examples: Example[];
 }
 
-export type TabType = 'learn' | 'discover' | 'profile' | 'favorites';
+export type TabType = 'learn' | 'discover' | 'notes' | 'profile' | 'favorites';
 
 export interface ToastState {
   message: string;
