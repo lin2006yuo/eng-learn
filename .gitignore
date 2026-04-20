@@ -4,3 +4,33 @@ node_modules/
 .trae/
 dist/
 docs/
+playwright-report/
+test-results/
+.next/
+.my/
+.private/
+.env.local
+.env
+.env*.local
+
+# SQLite 数据库文件
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+local.db*
+sqlite.db
+
+# TypeScript 构建缓存
+*.tsbuildinfo
+
+# 临时测试脚本
+db-*.mjs
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 其他
+cookies.txt
+check-db.ts
