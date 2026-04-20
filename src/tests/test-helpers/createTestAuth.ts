@@ -1,8 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { username } from 'better-auth/plugins';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from '@/lib/db/schema';
 
 const CREATE_TABLES_SQL = `
@@ -57,12 +57,12 @@ const CREATE_TABLES_SQL = `
 `;
 
 export function createTestAuth() {
-  const sqlite = new Database(':memory:');
-  sqlite.pragma('journal_mode = WAL');
-  sqlite.pragma('foreign_keys = ON');
-  sqlite.exec(CREATE_TABLES_SQL);
+  const client = createClient({
+    url: ':memory:',
+  });
+  client.execute(CREATE_TABLES_SQL);
 
-  const db = drizzle(sqlite, { schema });
+  const db = drizzle(client, { schema });
 
   const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -104,9 +104,9 @@ export function createTestAuth() {
   return {
     auth,
     db,
-    sqlite,
+    client,
     cleanup: () => {
-      sqlite.close();
+      client.close();
     },
   };
 }

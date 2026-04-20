@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, beforeEach } from 'vitest';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import { eq, and, count } from 'drizzle-orm';
 import * as patternsSchema from '@/lib/db/patterns-schema';
 import * as schema from '@/lib/db/schema';
@@ -8,16 +8,16 @@ import * as schema from '@/lib/db/schema';
 const combinedSchema = { ...patternsSchema, ...schema };
 
 describe('数据库集成测试 - 评论系统', () => {
-  let sqlite: Database.Database;
+  let client: ReturnType<typeof createClient>;
   let db: ReturnType<typeof drizzle<typeof combinedSchema>>;
 
   beforeEach(() => {
-    sqlite = new Database(':memory:');
-    db = drizzle(sqlite, { schema: combinedSchema });
+    client = createClient({ url: ':memory:' });
+    db = drizzle(client, { schema: combinedSchema });
   });
 
   afterEach(() => {
-    sqlite.close();
+    client.close();
   });
 
   describe('comments表', () => {

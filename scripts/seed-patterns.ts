@@ -1,11 +1,13 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import { patterns, examples, studyPlans } from '../src/lib/db/patterns-schema';
 import patternsData from '../src/data/patterns.json';
 
 const dbPath = process.env.DATABASE_URL?.replace('file:', '') || './local.db';
-const sqlite = new Database(dbPath);
-const db = drizzle(sqlite);
+const client = createClient({
+  url: `file:${dbPath}`,
+});
+const db = drizzle(client);
 
 async function seed() {
   console.log('清空已有数据...');
@@ -64,5 +66,5 @@ seed()
     process.exit(1);
   })
   .finally(() => {
-    sqlite.close();
+    client.close();
   });

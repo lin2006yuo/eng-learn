@@ -1,19 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 describe('Database Schema (memory SQLite)', () => {
   let db: ReturnType<typeof drizzle<typeof schema>>;
-  let sqlite: Database.Database;
+  let client: ReturnType<typeof createClient>;
 
   beforeEach(() => {
-    sqlite = new Database(':memory:');
-    sqlite.pragma('journal_mode = WAL');
-    sqlite.pragma('foreign_keys = ON');
+    client = createClient({ url: ':memory:' });
 
-    sqlite.exec(`
+    client.execute(`
       CREATE TABLE user (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -64,7 +62,7 @@ describe('Database Schema (memory SQLite)', () => {
       );
     `);
 
-    db = drizzle(sqlite, { schema });
+    db = drizzle(client, { schema });
   });
 
   it('可以插入和查询用户', () => {

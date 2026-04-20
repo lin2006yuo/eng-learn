@@ -1,13 +1,11 @@
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 
 const dbPath = './local.db';
-const db = new Database(dbPath);
+const client = createClient({
+  url: `file:${dbPath}`,
+});
 
-// WAL mode and foreign keys
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
-
-db.exec(`
+await client.execute(`
   CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY NOT NULL,
     username TEXT NOT NULL UNIQUE,
@@ -24,5 +22,5 @@ db.exec(`
   );
 `);
 
-db.close();
+client.close();
 console.log('Database initialized successfully');
