@@ -1,4 +1,4 @@
-import type { Pattern } from '@/types';
+import type { Pattern } from '@/shared/types';
 import patternsData from './patterns.json';
 
 export const patterns: Pattern[] = patternsData.patterns;

@@ -5,6 +5,9 @@
       "emoji": "👤",
       "title": "I'm a ____",
       "translation": "我是一名……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-1-1",
@@ -38,6 +41,9 @@
       "emoji": "💪",
       "title": "I'm good at ____",
       "translation": "我擅长……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-2-1",
@@ -71,6 +77,9 @@
       "emoji": "🛒",
       "title": "I'm getting ____",
       "translation": "我要去……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-3-1",
@@ -109,6 +118,9 @@
       "emoji": "💭",
       "title": "I want to (wanna) ____",
       "translation": "我想要……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-4-1",
@@ -132,6 +144,9 @@
       "emoji": "🛠️",
       "title": "I need to ____",
       "translation": "我需要……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-5-1",
@@ -155,6 +170,9 @@
       "emoji": "🚀",
       "title": "I'm gonna (going to) ____",
       "translation": "我将要……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-6-1",
@@ -188,6 +206,9 @@
       "emoji": "😕",
       "title": "I'm not used to ____",
       "translation": "我不习惯……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-7-1",
@@ -241,6 +262,9 @@
       "emoji": "❓",
       "title": "I'm not sure if ____",
       "translation": "我不确定……是否……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-8-1",
@@ -314,6 +338,9 @@
       "emoji": "🎉",
       "title": "I'm looking forward to ____",
       "translation": "我很期待……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-9-1",
@@ -352,6 +379,9 @@
       "emoji": "💻",
       "title": "I'm working on ____",
       "translation": "我正在做……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-10-1",
@@ -390,6 +420,9 @@
       "emoji": "🤔",
       "title": "I'm thinking about ____",
       "translation": "我在考虑……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-11-1",
@@ -453,6 +486,9 @@
       "emoji": "🔥",
       "title": "I'm dying to ____",
       "translation": "我非常想……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-12-1",
@@ -511,6 +547,9 @@
       "emoji": "😰",
       "title": "I'm afraid I ____",
       "translation": "我恐怕是……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-13-1",
@@ -564,6 +603,9 @@
       "emoji": "✅",
       "title": "I have to ____",
       "translation": "我必须……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-14-1",
@@ -587,6 +629,9 @@
       "emoji": "⏳",
       "title": "I have been ____",
       "translation": "我一直都在……",
+      "metadata": {
+        "study_day": 1
+      },
       "examples": [
         {
           "id": "ex-15-1",
@@ -630,6 +675,9 @@
       "emoji": "⏪",
       "title": "I used to ____",
       "translation": "我以前……",
+      "metadata": {
+        "study_day": 2
+      },
       "examples": [
         {
           "id": "ex-16-1",
