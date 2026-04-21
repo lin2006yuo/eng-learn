@@ -13,6 +13,7 @@ interface CommentsModalProps {
   targetId?: string;
   rootType?: RootType;
   title?: string;
+  focusCommentId?: string;
 }
 
 const rootTitleMap: Record<RootType, string> = {
@@ -33,6 +34,7 @@ export function CommentsModal({
   targetId: propTargetId,
   rootType = 'pattern',
   title,
+  focusCommentId,
 }: CommentsModalProps = {}) {
   const router = useRouter();
   const { comments, loading, fetchComments } = useCommentStore();
@@ -41,6 +43,13 @@ export function CommentsModal({
   const storeKey = targetId ? `${rootType}-${targetId}` : '';
 
   const targetComments = storeKey ? comments[storeKey] || [] : [];
+  const orderedComments = focusCommentId
+    ? [...targetComments].sort((left, right) => {
+        if (left.id === focusCommentId) return -1;
+        if (right.id === focusCommentId) return 1;
+        return 0;
+      })
+    : targetComments;
 
   const pattern = rootType === 'pattern' ? patterns.find((p) => p.id === targetId) : undefined;
 
@@ -96,14 +105,15 @@ export function CommentsModal({
             </div>
           )}
 
-          {!loading && targetComments.length > 0 && (
+          {!loading && orderedComments.length > 0 && (
             <div className="bg-white rounded-subtle-card px-4 shadow-sm">
-              {targetComments.map((comment) => (
+              {orderedComments.map((comment) => (
                 <CommentItem
                   key={comment.id}
                   comment={comment}
                   targetId={targetId!}
                   rootType={rootType}
+                  isFocused={comment.id === focusCommentId}
                 />
               ))}
             </div>

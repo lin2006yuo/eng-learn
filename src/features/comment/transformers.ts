@@ -1,4 +1,4 @@
-import { Comment } from './types';
+import type { Comment, CommentAnchorStatus, RootType } from './types';
 
 interface CommentRow {
   id: string;
@@ -13,6 +13,38 @@ interface CommentRow {
   content: string;
   createdAt: Date;
   parentUserName?: string | null;
+  anchorId?: string | null;
+  anchorRootType?: string | null;
+  anchorRootId?: string | null;
+  blockId?: string | null;
+  selectedText?: string | null;
+  startOffset?: number | null;
+  endOffset?: number | null;
+  prefixText?: string | null;
+  suffixText?: string | null;
+  anchorStatus?: string | null;
+  anchorCreatedAt?: Date | null;
+  anchorUpdatedAt?: Date | null;
+}
+
+function buildCommentAnchor(row: CommentRow) {
+  if (!row.anchorId || !row.blockId || !row.selectedText) return undefined;
+
+  return {
+    id: row.anchorId,
+    commentId: row.id,
+    rootType: (row.anchorRootType || row.rootType) as RootType,
+    rootId: row.anchorRootId || row.rootId,
+    blockId: row.blockId,
+    selectedText: row.selectedText,
+    startOffset: row.startOffset || 0,
+    endOffset: row.endOffset || 0,
+    prefixText: row.prefixText || '',
+    suffixText: row.suffixText || '',
+    anchorStatus: (row.anchorStatus || 'active') as CommentAnchorStatus,
+    createdAt: row.anchorCreatedAt?.toISOString(),
+    updatedAt: row.anchorUpdatedAt?.toISOString(),
+  };
 }
 
 export function buildComment(
@@ -34,6 +66,7 @@ export function buildComment(
     likes: likesCountMap.get(row.id) || 0,
     isLiked: !!likedByCurrentUserMap.get(row.id),
     replyToUserName: row.targetType === 'comment' ? (row.parentUserName || undefined) : undefined,
+    anchor: buildCommentAnchor(row),
   };
 }
 

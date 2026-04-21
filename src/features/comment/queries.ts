@@ -1,6 +1,6 @@
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
-import { comments, commentLikes, patterns, notifications } from '@/lib/db/patterns-schema';
+import { comments, commentAnchors, commentLikes, patterns, notifications } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, desc, asc, sql, and, lt } from 'drizzle-orm';
 import type { RootType } from './types';
@@ -18,6 +18,18 @@ interface CommentRaw {
   content: string;
   createdAt: Date;
   parentUserName?: string | null;
+  anchorId?: string | null;
+  anchorRootType?: string | null;
+  anchorRootId?: string | null;
+  blockId?: string | null;
+  selectedText?: string | null;
+  startOffset?: number | null;
+  endOffset?: number | null;
+  prefixText?: string | null;
+  suffixText?: string | null;
+  anchorStatus?: string | null;
+  anchorCreatedAt?: Date | null;
+  anchorUpdatedAt?: Date | null;
 }
 
 export async function fetchCommentsByRoot(
@@ -45,9 +57,22 @@ export async function fetchCommentsByRoot(
       userName: users.name,
       userAvatar: users.image,
       nickname: users.nickname,
+      anchorId: commentAnchors.id,
+      anchorRootType: commentAnchors.rootType,
+      anchorRootId: commentAnchors.rootId,
+      blockId: commentAnchors.blockId,
+      selectedText: commentAnchors.selectedText,
+      startOffset: commentAnchors.startOffset,
+      endOffset: commentAnchors.endOffset,
+      prefixText: commentAnchors.prefixText,
+      suffixText: commentAnchors.suffixText,
+      anchorStatus: commentAnchors.anchorStatus,
+      anchorCreatedAt: commentAnchors.createdAt,
+      anchorUpdatedAt: commentAnchors.updatedAt,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
     .where(
       and(
         eq(comments.rootType, rootType),
@@ -84,9 +109,22 @@ export async function fetchReplies(rootType: RootType, rootId: string) {
       userName: users.name,
       userAvatar: users.image,
       nickname: users.nickname,
+      anchorId: commentAnchors.id,
+      anchorRootType: commentAnchors.rootType,
+      anchorRootId: commentAnchors.rootId,
+      blockId: commentAnchors.blockId,
+      selectedText: commentAnchors.selectedText,
+      startOffset: commentAnchors.startOffset,
+      endOffset: commentAnchors.endOffset,
+      prefixText: commentAnchors.prefixText,
+      suffixText: commentAnchors.suffixText,
+      anchorStatus: commentAnchors.anchorStatus,
+      anchorCreatedAt: commentAnchors.createdAt,
+      anchorUpdatedAt: commentAnchors.updatedAt,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
     .where(
       and(
         eq(comments.rootType, rootType),
@@ -148,9 +186,22 @@ export async function fetchCommentsByUser(
       userName: users.name,
       userAvatar: users.image,
       nickname: users.nickname,
+      anchorId: commentAnchors.id,
+      anchorRootType: commentAnchors.rootType,
+      anchorRootId: commentAnchors.rootId,
+      blockId: commentAnchors.blockId,
+      selectedText: commentAnchors.selectedText,
+      startOffset: commentAnchors.startOffset,
+      endOffset: commentAnchors.endOffset,
+      prefixText: commentAnchors.prefixText,
+      suffixText: commentAnchors.suffixText,
+      anchorStatus: commentAnchors.anchorStatus,
+      anchorCreatedAt: commentAnchors.createdAt,
+      anchorUpdatedAt: commentAnchors.updatedAt,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
     .where(and(eq(comments.userId, userId), cursorCondition))
     .orderBy(desc(comments.createdAt))
     .limit(limit + 1);

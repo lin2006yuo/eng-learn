@@ -6,6 +6,7 @@ import { useCommentStore, formatRelativeTime } from '@/features/comment/store/co
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { CommentInput } from './CommentInput';
+import { CommentAnchorSummary } from './CommentAnchorSummary';
 import { ReplyItem } from './ReplyItem';
 import type { Comment, RootType } from '@/features/comment/types';
 
@@ -13,9 +14,10 @@ interface CommentItemProps {
   comment: Comment;
   targetId: string;
   rootType: RootType;
+  isFocused?: boolean;
 }
 
-export function CommentItem({ comment, targetId, rootType }: CommentItemProps) {
+export function CommentItem({ comment, targetId, rootType, isFocused = false }: CommentItemProps) {
   const { toggleLike, deleteComment } = useCommentStore();
   const { user } = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -48,7 +50,7 @@ export function CommentItem({ comment, targetId, rootType }: CommentItemProps) {
       <div
         className={`py-4 border-b border-gray-50 last:border-b-0 ${
           isDeleting ? 'opacity-50' : ''
-        }`}
+        } ${isFocused ? 'rounded-subtle-card bg-primary/5 px-2' : ''}`}
       >
         <div className="flex items-center gap-3 mb-2">
           <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -81,6 +83,8 @@ export function CommentItem({ comment, targetId, rootType }: CommentItemProps) {
             </span>
           </div>
         </div>
+
+        <CommentAnchorSummary comment={comment} />
 
         <p className="text-text-primary text-sm leading-relaxed pl-12">
           {comment.content}

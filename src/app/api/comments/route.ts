@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
-import { comments, notifications, patterns } from '@/lib/db/patterns-schema';
+import { commentAnchors, comments, notifications, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
@@ -16,10 +16,14 @@ import {
   countCommentsByUser,
 } from '@/features/comment/queries';
 import { buildNestedComments, buildFlatComments } from '@/features/comment/transformers';
-import type { RootType } from '@/features/comment/types';
+import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
 
 function generateId(): string {
   return `c-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+function generateAnchorId(): string {
+  return `ca-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 function parseQueryParams(request: NextRequest) {
@@ -99,6 +103,25 @@ function validateParams(params: {
   if ((params.rootType && !params.rootId) || (!params.rootType && params.rootId)) {
     return { valid: false, error: 'rootType 和 rootId 必须同时传' };
   }
+  return { valid: true };
+}
+
+function validateAnchor(
+  anchor: CreateCommentAnchorRequest | undefined,
+  rootType: RootType,
+  rootId: string,
+) {
+  if (!anchor) return { valid: true };
+
+  const hasText = anchor.selectedText.trim().length > 0;
+  const hasBlock = anchor.blockId.trim().length > 0;
+  const offsetsValid = anchor.startOffset >= 0 && anchor.endOffset > anchor.startOffset;
+  const rootMatched = anchor.rootType === rootType && anchor.rootId === rootId;
+
+  if (!hasText || !hasBlock || !offsetsValid || !rootMatched) {
+    return { valid: false, error: '锚点参数错误' };
+  }
+
   return { valid: true };
 }
 
@@ -244,7 +267,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { targetType, targetId, rootType, rootId, content, replyToUserId } = body;
+  const { targetType, targetId, rootType, rootId, content, replyToUserId, anchor } = body;
 
   if (!targetType || !targetId || !rootType || !rootId || !content || typeof content !== 'string') {
     return NextResponse.json({ error: '参数错误' }, { status: 400 });
@@ -253,6 +276,11 @@ export async function POST(request: NextRequest) {
   const trimmedContent = content.trim();
   if (trimmedContent.length === 0 || trimmedContent.length > 300) {
     return NextResponse.json({ error: '评论内容长度必须在1-300之间' }, { status: 400 });
+  }
+
+  const anchorValidation = validateAnchor(anchor, rootType, rootId);
+  if (!anchorValidation.valid) {
+    return NextResponse.json({ error: anchorValidation.error }, { status: 400 });
   }
 
   const targetExists = await validateTargetExists(targetType, targetId);
@@ -278,6 +306,24 @@ export async function POST(request: NextRequest) {
   };
 
   await db.insert(comments).values(newComment);
+
+  if (anchor) {
+    await db.insert(commentAnchors).values({
+      id: generateAnchorId(),
+      commentId: newComment.id,
+      rootType: anchor.rootType,
+      rootId: anchor.rootId,
+      blockId: anchor.blockId,
+      selectedText: anchor.selectedText.trim(),
+      startOffset: anchor.startOffset,
+      endOffset: anchor.endOffset,
+      prefixText: anchor.prefixText,
+      suffixText: anchor.suffixText,
+      anchorStatus: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  }
 
   if (targetType === 'comment') {
     const [parentComment] = await db
@@ -316,9 +362,22 @@ export async function POST(request: NextRequest) {
       userName: users.name,
       userAvatar: users.image,
       nickname: users.nickname,
+      anchorId: commentAnchors.id,
+      anchorRootType: commentAnchors.rootType,
+      anchorRootId: commentAnchors.rootId,
+      blockId: commentAnchors.blockId,
+      selectedText: commentAnchors.selectedText,
+      startOffset: commentAnchors.startOffset,
+      endOffset: commentAnchors.endOffset,
+      prefixText: commentAnchors.prefixText,
+      suffixText: commentAnchors.suffixText,
+      anchorStatus: commentAnchors.anchorStatus,
+      anchorCreatedAt: commentAnchors.createdAt,
+      anchorUpdatedAt: commentAnchors.updatedAt,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
     .where(eq(comments.id, newComment.id))
     .limit(1);
 
@@ -354,7 +413,23 @@ export async function POST(request: NextRequest) {
       likes: 0,
       isLiked: false,
       replyToUserName,
+      anchor: createdComment!.anchorId
+        ? {
+            id: createdComment!.anchorId,
+            commentId: createdComment!.id,
+            rootType: createdComment!.anchorRootType as RootType,
+            rootId: createdComment!.anchorRootId,
+            blockId: createdComment!.blockId,
+            selectedText: createdComment!.selectedText,
+            startOffset: createdComment!.startOffset,
+            endOffset: createdComment!.endOffset,
+            prefixText: createdComment!.prefixText,
+            suffixText: createdComment!.suffixText,
+            anchorStatus: createdComment!.anchorStatus,
+            createdAt: createdComment!.anchorCreatedAt?.toISOString(),
+            updatedAt: createdComment!.anchorUpdatedAt?.toISOString(),
+          }
+        : undefined,
     },
   });
 }
-

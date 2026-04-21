@@ -49,6 +49,25 @@ export const comments = sqliteTable('comments', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });
 
+export const commentAnchors = sqliteTable('comment_anchors', {
+  id: text('id').primaryKey(),
+  commentId: text('comment_id')
+    .notNull()
+    .unique()
+    .references(() => comments.id, { onDelete: 'cascade' }),
+  rootType: text('root_type').notNull(),
+  rootId: text('root_id').notNull(),
+  blockId: text('block_id').notNull(),
+  selectedText: text('selected_text').notNull(),
+  startOffset: integer('start_offset').notNull(),
+  endOffset: integer('end_offset').notNull(),
+  prefixText: text('prefix_text').notNull().default(''),
+  suffixText: text('suffix_text').notNull().default(''),
+  anchorStatus: text('anchor_status').notNull().default('active'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+});
+
 export const notifications = sqliteTable('notifications', {
   id: text('id').primaryKey(),
   userId: text('user_id')
@@ -102,7 +121,12 @@ export const patternLikesRelations = relations(patternLikes, ({ one }) => ({
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
   user: one(users, { fields: [comments.userId], references: [users.id] }),
+  anchor: one(commentAnchors, { fields: [comments.id], references: [commentAnchors.commentId] }),
   likes: many(commentLikes),
+}));
+
+export const commentAnchorsRelations = relations(commentAnchors, ({ one }) => ({
+  comment: one(comments, { fields: [commentAnchors.commentId], references: [comments.id] }),
 }));
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
@@ -123,6 +147,7 @@ export type Pattern = typeof patterns.$inferSelect;
 export type Example = typeof examples.$inferSelect;
 export type PatternLike = typeof patternLikes.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
+export type CommentAnchor = typeof commentAnchors.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type CommentLike = typeof commentLikes.$inferSelect;
 export type StudyPlan = typeof studyPlans.$inferSelect;

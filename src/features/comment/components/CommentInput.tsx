@@ -3,13 +3,14 @@
 import { useState, useRef } from 'react';
 import { Send } from 'lucide-react';
 import { useCommentStore } from '@/features/comment/store/commentStore';
-import type { RootType } from '@/features/comment/types';
+import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
 
 interface CommentInputProps {
   rootId: string;
   rootType: RootType;
   replyToCommentId?: string;
   replyToUserId?: string;
+  anchor?: CreateCommentAnchorRequest;
   onReplySuccess?: () => void;
 }
 
@@ -20,7 +21,8 @@ const placeholderMap: Record<RootType, string> = {
   note: '写下你的想法...',
 };
 
-export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId, onReplySuccess }: CommentInputProps) {
+export function CommentInput(props: CommentInputProps) {
+  const { rootId, rootType, replyToCommentId, replyToUserId, anchor, onReplySuccess } = props;
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,7 @@ export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId
       rootId,
       content: content.trim(),
       replyToUserId: replyToUserId,
+      anchor,
     });
 
     if (success) {
@@ -70,6 +73,11 @@ export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId
 
   return (
     <div className="bg-white border-t border-gray-100 p-4 safe-area-bottom">
+      {anchor ? (
+        <div className="mb-3 rounded-subtle-card bg-primary/10 px-3 py-2 text-sm text-text-primary">
+          评论片段: "{anchor.selectedText}"
+        </div>
+      ) : null}
       <div className="flex gap-3 items-end">
         <div className="flex-1 relative">
           <input

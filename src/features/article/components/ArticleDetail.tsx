@@ -1,6 +1,7 @@
 import { Card } from '@/shared/components';
 import type { ArticleDetailData } from '../types';
 import { ArticleMeta } from './ArticleMeta';
+import { ArticleSelectableBody } from './ArticleSelectableBody';
 
 interface ArticleDetailProps {
   article: ArticleDetailData;
@@ -27,9 +28,7 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
       </Card>
 
       <Card className="article-detail-body">
-        <div className="article-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary">
-          {article.content}
-        </div>
+        <ArticleSelectableBody articleId={article.id} content={article.content} />
       </Card>
     </div>
   );
