@@ -1,5 +1,6 @@
 import { getDb } from '@/lib/db';
-import { comments, commentLikes, patterns, notifications } from '@/lib/db/patterns-schema';
+import { articles } from '@/lib/db/articles-schema';
+import { comments, commentLikes, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, desc, asc, sql, and, lt } from 'drizzle-orm';
 import type { RootType } from './types';
@@ -242,6 +243,11 @@ const validationStrategies: Record<string, (id: string) => Promise<boolean>> = {
     const db = getDb();
     const [pattern] = await db.select({ id: patterns.id }).from(patterns).where(eq(patterns.id, id)).limit(1);
     return !!pattern;
+  },
+  article: async (id) => {
+    const db = getDb();
+    const [article] = await db.select({ id: articles.id }).from(articles).where(eq(articles.id, id)).limit(1);
+    return !!article;
   },
   comment: async (id) => {
     const db = getDb();
