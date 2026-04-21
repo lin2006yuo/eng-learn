@@ -10,9 +10,8 @@ let db: ReturnType<typeof drizzle<typeof combinedSchema>>;
 
 export function getDb() {
   if (!db) {
-    const databaseUrl = process.env.DATABASE_URL;
-    const isRemoteDb = databaseUrl?.startsWith('libsql://') ||
-                       databaseUrl?.startsWith('http');
+    const databaseUrl = process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL;
+    const isRemoteDb = databaseUrl?.startsWith('libsql://') || databaseUrl?.startsWith('http');
 
     if (isRemoteDb && databaseUrl) {
       const client = createClient({
@@ -21,7 +20,7 @@ export function getDb() {
       });
       db = drizzle(client, { schema: combinedSchema });
     } else {
-      const dbPath = databaseUrl?.replace('file:', '') || './local.db';
+      const dbPath = databaseUrl?.replace(/^file:/, '') || './local.db';
       const client = createClient({
         url: `file:${dbPath}`,
       });
