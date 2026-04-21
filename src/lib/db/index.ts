@@ -2,24 +2,25 @@ import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from './schema';
 import * as patternsSchema from './patterns-schema';
+import * as articlesSchema from './articles-schema';
 
-const combinedSchema = { ...schema, ...patternsSchema };
+const combinedSchema = { ...schema, ...patternsSchema, ...articlesSchema };
 
 let db: ReturnType<typeof drizzle<typeof combinedSchema>>;
 
 export function getDb() {
   if (!db) {
-    const isRemoteDb = process.env.DATABASE_URL?.startsWith('libsql://') ||
-                       process.env.DATABASE_URL?.startsWith('http');
+    const databaseUrl = process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL;
+    const isRemoteDb = databaseUrl?.startsWith('libsql://') || databaseUrl?.startsWith('http');
 
-    if (isRemoteDb) {
+    if (isRemoteDb && databaseUrl) {
       const client = createClient({
-        url: process.env.DATABASE_URL!,
+        url: databaseUrl,
         authToken: process.env.TURSO_AUTH_TOKEN,
       });
       db = drizzle(client, { schema: combinedSchema });
     } else {
-      const dbPath = process.env.DATABASE_URL?.replace('file:', '') || './local.db';
+      const dbPath = databaseUrl?.replace(/^file:/, '') || './local.db';
       const client = createClient({
         url: `file:${dbPath}`,
       });
@@ -29,4 +30,4 @@ export function getDb() {
   return db;
 }
 
-export { schema, patternsSchema };
+export { schema, patternsSchema, articlesSchema };
