@@ -28,7 +28,7 @@ export function PatternLearnPage() {
   const urlDay = parseInt(searchParams.get('day') ?? '', 10);
   const selectedDay = Number.isFinite(urlDay) ? urlDay : 1;
 
-  const { isModalOpen, activePatternId } = useModalRouteContext();
+  const { isModalOpen, activeTargetId } = useModalRouteContext();
 
   const { data: dayData } = useSWR<{ days: { dayNumber: number }[] }>(
     '/api/study-days',
@@ -168,8 +168,8 @@ export function PatternLearnPage() {
       )}
 
       <AnimatePresence>
-        {isModalOpen && activePatternId && (
-          <CommentsModal targetId={activePatternId} />
+        {isModalOpen && activeTargetId && (
+          <CommentsModal targetId={activeTargetId} />
         )}
       </AnimatePresence>
     </>

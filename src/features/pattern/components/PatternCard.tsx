@@ -36,7 +36,7 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  let openModal: ((patternId: string) => void) | null = null;
+  let openModal: ((modalType: 'comments', targetId: string) => void) | null = null;
   try {
     const modalContext = useModalRouteContext();
     openModal = modalContext.openModal;
@@ -52,7 +52,7 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
 
   const handleCommentClick = () => {
     if (openModal) {
-      openModal(pattern.id);
+      openModal('comments', pattern.id);
     } else {
       router.push(`/pattern/${pattern.id}/comments`);
     }

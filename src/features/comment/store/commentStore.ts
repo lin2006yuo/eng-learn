@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Comment, CommentListResponse, CreateCommentRequest } from '../types';
+import type { Comment, CommentListResponse, CreateCommentRequest, RootType } from '../types';
 import { commentBus } from '@/shared/utils/eventBus';
 import { apiGet, apiPost, apiDelete } from '@/shared/utils/api';
 
@@ -14,13 +14,17 @@ interface CommentState {
   error: string | null;
   sortBy: 'newest' | 'hottest';
   fetchingTargetIds: Set<string>;
-  fetchComments: (rootType: string, rootId: string) => Promise<void>;
-  getCommentStats: (rootType: string, rootId: string) => CommentStats;
+  fetchComments: (rootType: RootType, rootId: string) => Promise<void>;
+  getCommentStats: (rootType: RootType, rootId: string) => CommentStats;
   createComment: (request: CreateCommentRequest) => Promise<boolean>;
-  deleteComment: (commentId: string, rootType: string, rootId: string) => Promise<boolean>;
-  toggleLike: (commentId: string, rootType: string, rootId: string) => Promise<void>;
+  deleteComment: (commentId: string, rootType: RootType, rootId: string) => Promise<boolean>;
+  toggleLike: (commentId: string, rootType: RootType, rootId: string) => Promise<void>;
   setSortBy: (sortBy: 'newest' | 'hottest') => void;
-  loadMoreComments: (rootType: string, rootId: string) => Promise<void>;
+  loadMoreComments: (rootType: RootType, rootId: string) => Promise<void>;
+}
+
+function getCommentStoreKey(rootType: RootType, rootId: string) {
+  return `${rootType}-${rootId}`;
 }
 
 export function formatRelativeTime(dateString: string): string {
@@ -87,8 +91,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   sortBy: 'newest',
   fetchingTargetIds: new Set(),
 
-  fetchComments: async (rootType: string, rootId: string) => {
-    const key = `${rootType}-${rootId}`;
+  fetchComments: async (rootType: RootType, rootId: string) => {
+    const key = getCommentStoreKey(rootType, rootId);
     if (get().fetchingTargetIds.has(key)) return;
 
     const newSet = new Set(get().fetchingTargetIds);
@@ -127,7 +131,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     if (!result.ok || !result.data) return false;
 
     const newComment = result.data.data;
-    const key = `${request.rootType}-${request.rootId}`;
+    const key = getCommentStoreKey(request.rootType, request.rootId);
 
     set((state) => {
       const list = state.comments[key] || [];
@@ -153,11 +157,11 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     return true;
   },
 
-  deleteComment: async (commentId: string, rootType: string, rootId: string): Promise<boolean> => {
+  deleteComment: async (commentId: string, rootType: RootType, rootId: string): Promise<boolean> => {
     const result = await apiDelete(`/api/comments/${commentId}`);
     if (!result.ok) return false;
 
-    const key = `${rootType}-${rootId}`;
+    const key = getCommentStoreKey(rootType, rootId);
 
     set((state) => ({
       comments: {
@@ -173,8 +177,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     return true;
   },
 
-  toggleLike: async (commentId: string, rootType: string, rootId: string) => {
-    const key = `${rootType}-${rootId}`;
+  toggleLike: async (commentId: string, rootType: RootType, rootId: string) => {
+    const key = getCommentStoreKey(rootType, rootId);
     const previousState = get().comments;
 
     set((state) => ({
@@ -197,8 +201,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     }
   },
 
-  getCommentStats: (rootType: string, rootId: string): CommentStats => {
-    const key = `${rootType}-${rootId}`;
+  getCommentStats: (rootType: RootType, rootId: string): CommentStats => {
+    const key = getCommentStoreKey(rootType, rootId);
     const list = get().comments[key] || [];
     return {
       count: list.reduce((sum, c) => sum + 1 + (c.replyCount || 0), 0),
@@ -210,6 +214,6 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     set({ sortBy });
   },
 
-  loadMoreComments: async (_rootType: string, _rootId: string) => {
+  loadMoreComments: async (_rootType: RootType, _rootId: string) => {
   },
 }));

@@ -3,10 +3,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { username } from 'better-auth/plugins';
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
+import * as articlesSchema from '@/lib/db/articles-schema';
 import * as schema from '@/lib/db/schema';
 import * as patternsSchema from '@/lib/db/patterns-schema';
 
-const combinedSchema = { ...schema, ...patternsSchema };
+const combinedSchema = { ...schema, ...patternsSchema, ...articlesSchema };
 
 const CREATE_TABLES_SQL = `
   CREATE TABLE IF NOT EXISTS user (
@@ -19,7 +20,8 @@ const CREATE_TABLES_SQL = `
     updated_at INTEGER NOT NULL,
     username TEXT UNIQUE,
     display_username TEXT,
-    nickname TEXT
+    nickname TEXT,
+    role TEXT NOT NULL DEFAULT 'user'
   );
 
   CREATE TABLE IF NOT EXISTS session (
@@ -90,9 +92,9 @@ const CREATE_TABLES_SQL = `
     user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
     target_type TEXT NOT NULL,
     target_id TEXT NOT NULL,
-    content TEXT NOT NULL,
-    parent_id TEXT,
+    root_type TEXT NOT NULL,
     root_id TEXT NOT NULL,
+    content TEXT NOT NULL,
     reply_to_user_id TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
@@ -113,13 +115,31 @@ const CREATE_TABLES_SQL = `
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS articles (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    content TEXT NOT NULL,
+    author_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'draft',
+    published_at INTEGER,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
 `;
 
 export function createTestDb() {
   const client = createClient({
     url: ':memory:',
   });
-  client.execute(CREATE_TABLES_SQL);
+  CREATE_TABLES_SQL
+    .split(';')
+    .map((statement) => statement.trim())
+    .filter(Boolean)
+    .forEach((statement) => {
+      client.execute(statement);
+    });
 
   const db = drizzle(client, { schema: combinedSchema });
 
@@ -155,6 +175,11 @@ export function createTestDb() {
         nickname: {
           type: 'string',
           required: false,
+        },
+        role: {
+          type: 'string',
+          required: false,
+          defaultValue: 'user',
         },
       },
     },

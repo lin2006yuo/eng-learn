@@ -1,4 +1,5 @@
 import { getDb } from '@/lib/db';
+import { articles } from '@/lib/db/articles-schema';
 import { comments, commentLikes, patterns, notifications } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, desc, asc, sql, and, lt } from 'drizzle-orm';
@@ -238,6 +239,15 @@ export async function fetchReplyCounts(parentIds: string[]) {
 }
 
 const validationStrategies: Record<string, (id: string) => Promise<boolean>> = {
+  article: async (id) => {
+    const db = getDb();
+    const [article] = await db
+      .select({ id: articles.id })
+      .from(articles)
+      .where(and(eq(articles.id, id), eq(articles.status, 'published')))
+      .limit(1);
+    return !!article;
+  },
   pattern: async (id) => {
     const db = getDb();
     const [pattern] = await db.select({ id: patterns.id }).from(patterns).where(eq(patterns.id, id)).limit(1);

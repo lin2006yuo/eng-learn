@@ -15,6 +15,7 @@ import {
   Clock,
   Sparkles,
   FileText,
+  LayoutDashboard,
 } from 'lucide-react';
 import { Card } from '@/shared/components/Card';
 
@@ -51,10 +52,14 @@ export function ProfilePage() {
     router.push('/favorites');
   };
 
+  const handleGoManageArticles = () => {
+    router.push('/articles/manage');
+  };
+
   return (
     <div className="min-h-full bg-background pb-20">
       <div className="max-w-[430px] mx-auto">
-        {authLoading ? <LoadingSkeleton /> : user ? <LoggedInView user={user} onEditNickname={() => setShowEditNickname(true)} onGoComments={handleGoComments} onGoFavorites={handleGoFavorites} onGoNotifications={handleGoNotifications} onGoNotes={handleGoNotes} unreadCount={unreadCount} /> : <LoggedOutView onLogin={handleGoLogin} />}
+        {authLoading ? <LoadingSkeleton /> : user ? <LoggedInView user={user} onEditNickname={() => setShowEditNickname(true)} onGoComments={handleGoComments} onGoFavorites={handleGoFavorites} onGoNotifications={handleGoNotifications} onGoNotes={handleGoNotes} onGoManageArticles={handleGoManageArticles} unreadCount={unreadCount} /> : <LoggedOutView onLogin={handleGoLogin} />}
       </div>
 
       <EditNicknameModal
@@ -86,7 +91,9 @@ function LoadingSkeleton() {
 }
 
 // ===== 已登录视图 =====
-function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoNotifications, onGoNotes, unreadCount }: { user: { nickname?: string; username: string }; onEditNickname: () => void; onGoComments: () => void; onGoFavorites: () => void; onGoNotifications: () => void; onGoNotes: () => void; unreadCount: number }) {
+function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoNotifications, onGoNotes, onGoManageArticles, unreadCount }: { user: { nickname?: string; username: string; role?: string }; onEditNickname: () => void; onGoComments: () => void; onGoFavorites: () => void; onGoNotifications: () => void; onGoNotes: () => void; onGoManageArticles: () => void; unreadCount: number }) {
+  const isAdmin = user.role === 'admin';
+
   return (
     <>
       {/* 渐变头部卡片 */}
@@ -134,6 +141,9 @@ function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoN
         <MenuCard title="我的笔记" icon={<FileText size={20} />} delay={0.15} onClick={onGoNotes} />
         <MenuCard title="我的评论" icon={<MessageSquare size={20} />} delay={0.2} onClick={onGoComments} />
         <MenuCard title="我的消息" icon={<Bell size={20} />} delay={0.3} badgeCount={unreadCount} onClick={onGoNotifications} />
+        {isAdmin && (
+          <MenuCard title="我的文章" icon={<LayoutDashboard size={20} />} delay={0.35} onClick={onGoManageArticles} />
+        )}
       </div>
     </>
   );

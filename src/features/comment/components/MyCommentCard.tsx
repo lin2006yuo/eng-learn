@@ -17,7 +17,7 @@ export function MyCommentCard({ comment }: MyCommentCardProps) {
   const patternTitle = pattern ? `${pattern.emoji} ${pattern.title}` : comment.rootId;
 
   const handlePatternClick = () => {
-    openModal(comment.rootId);
+    openModal('comments', comment.rootId);
   };
 
   const hasReplies = comment.replyCount && comment.replyCount > 0;

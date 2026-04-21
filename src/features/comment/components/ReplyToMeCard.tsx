@@ -18,7 +18,7 @@ export function ReplyToMeCard({ comment, onReply }: ReplyToMeCardProps) {
   const patternTitle = pattern ? `${pattern.emoji} ${pattern.title}` : comment.rootId;
 
   const handlePatternClick = () => {
-    openModal(comment.rootId);
+    openModal('comments', comment.rootId);
   };
 
   const handleReplyClick = () => {

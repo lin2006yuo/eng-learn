@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ModalRouteProvider } from '@/shared/hooks/ModalRouteContext';
 import { ModalComments } from '@/features/comment/components/ModalComments';
+import { ModalArticleDetail } from '@/features/article/components/ModalArticleDetail';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,6 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <ModalRouteProvider>
         {children}
         <ModalComments />
+        <ModalArticleDetail />
       </ModalRouteProvider>
     </QueryClientProvider>
   );

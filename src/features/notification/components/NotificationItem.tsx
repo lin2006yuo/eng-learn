@@ -30,7 +30,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 
   const handleClick = useCallback(() => {
     if (notification.targetType === 'comment' && notification.rootId) {
-      openModal(notification.rootId);
+      openModal('comments', notification.rootId);
     } else {
       router.push(`/pattern/${notification.targetId}`);
     }

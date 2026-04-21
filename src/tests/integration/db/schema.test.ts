@@ -10,8 +10,7 @@ describe('Database Schema (memory SQLite)', () => {
 
   beforeEach(() => {
     client = createClient({ url: ':memory:' });
-
-    client.execute(`
+    const createTablesSql = `
       CREATE TABLE user (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -22,7 +21,8 @@ describe('Database Schema (memory SQLite)', () => {
         updated_at INTEGER NOT NULL,
         username TEXT UNIQUE,
         display_username TEXT,
-        nickname TEXT
+        nickname TEXT,
+        role TEXT NOT NULL DEFAULT 'user'
       );
 
       CREATE TABLE session (
@@ -60,12 +60,20 @@ describe('Database Schema (memory SQLite)', () => {
         created_at INTEGER,
         updated_at INTEGER
       );
-    `);
+    `;
+
+    createTablesSql
+      .split(';')
+      .map((statement) => statement.trim())
+      .filter(Boolean)
+      .forEach((statement) => {
+        client.execute(statement);
+      });
 
     db = drizzle(client, { schema });
   });
 
-  it('可以插入和查询用户', () => {
+  it('可以插入和查询用户', async () => {
     const newUser = {
       id: 'user-1',
       name: 'Test User',
@@ -75,16 +83,17 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: new Date(),
     };
 
-    db.insert(schema.users).values(newUser).run();
+    await db.insert(schema.users).values(newUser).run();
 
-    const result = db.select().from(schema.users).where(eq(schema.users.id, 'user-1')).all();
+    const result = await db.select().from(schema.users).where(eq(schema.users.id, 'user-1')).all();
 
     expect(result).toHaveLength(1);
     expect(result[0]?.name).toBe('Test User');
     expect(result[0]?.email).toBe('test@example.com');
+    expect(result[0]?.role).toBe('user');
   });
 
-  it('用户邮箱唯一约束', () => {
+  it('用户邮箱唯一约束', async () => {
     const newUser = {
       id: 'user-1',
       name: 'Test User',
@@ -94,14 +103,14 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: new Date(),
     };
 
-    db.insert(schema.users).values(newUser).run();
+    await db.insert(schema.users).values(newUser).run();
 
-    expect(() => {
-      db.insert(schema.users).values({ ...newUser, id: 'user-2' }).run();
-    }).toThrow();
+    await expect(
+      db.insert(schema.users).values({ ...newUser, id: 'user-2' }).run()
+    ).rejects.toThrow();
   });
 
-  it('插入会话并与用户关联', () => {
+  it('插入会话并与用户关联', async () => {
     const now = new Date();
     const user = {
       id: 'user-1',
@@ -112,7 +121,7 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: now,
     };
 
-    db.insert(schema.users).values(user).run();
+    await db.insert(schema.users).values(user).run();
 
     const session = {
       id: 'session-1',
@@ -123,9 +132,9 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: now,
     };
 
-    db.insert(schema.sessions).values(session).run();
+    await db.insert(schema.sessions).values(session).run();
 
-    const result = db
+    const result = await db
       .select()
       .from(schema.sessions)
       .where(eq(schema.sessions.userId, 'user-1'))
@@ -135,10 +144,10 @@ describe('Database Schema (memory SQLite)', () => {
     expect(result[0]?.token).toBe('token-abc');
   });
 
-  it('删除用户时级联删除会话', () => {
+  it('删除用户时级联删除会话', async () => {
     const now = new Date();
 
-    db.insert(schema.users).values({
+    await db.insert(schema.users).values({
       id: 'user-1',
       name: 'Test User',
       email: 'test@example.com',
@@ -147,7 +156,7 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: now,
     }).run();
 
-    db.insert(schema.sessions).values({
+    await db.insert(schema.sessions).values({
       id: 'session-1',
       userId: 'user-1',
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -156,9 +165,9 @@ describe('Database Schema (memory SQLite)', () => {
       updatedAt: now,
     }).run();
 
-    db.delete(schema.users).where(eq(schema.users.id, 'user-1')).run();
+    await db.delete(schema.users).where(eq(schema.users.id, 'user-1')).run();
 
-    const sessions = db.select().from(schema.sessions).all();
+    const sessions = await db.select().from(schema.sessions).all();
     expect(sessions).toHaveLength(0);
   });
 });

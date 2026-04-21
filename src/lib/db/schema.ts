@@ -12,6 +12,7 @@ export const users = sqliteTable('user', {
   username: text('username').unique(),
   displayUsername: text('display_username'),
   nickname: text('nickname'),
+  role: text('role').notNull().default('user'),
 });
 
 export const sessions = sqliteTable('session', {

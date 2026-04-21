@@ -4,25 +4,45 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useCommentStore } from '@/features/comment/store/commentStore';
+import type { RootType } from '@/features/comment/types';
 import { CommentItem } from './CommentItem';
 import { CommentInput } from './CommentInput';
 import { patterns } from '@/data/patterns';
 
 interface CommentsModalProps {
   targetId?: string;
+  rootType?: RootType;
+  title?: string;
 }
 
-export function CommentsModal({ targetId: propTargetId }: CommentsModalProps = {}) {
+const rootTitleMap: Record<RootType, string> = {
+  pattern: '当前句型',
+  article: '当前文章',
+  post: '当前内容',
+  note: '当前笔记',
+};
+
+const emptyDescriptionMap: Record<RootType, string> = {
+  pattern: '成为第一个参与讨论的人吧',
+  article: '分享你的阅读感受，参与这篇文章的讨论',
+  post: '成为第一个参与讨论的人吧',
+  note: '记录你对这条笔记的想法',
+};
+
+export function CommentsModal({
+  targetId: propTargetId,
+  rootType = 'pattern',
+  title,
+}: CommentsModalProps = {}) {
   const router = useRouter();
   const { comments, loading, fetchComments } = useCommentStore();
 
   const targetId = propTargetId;
-  const rootType = 'pattern' as const;
   const storeKey = targetId ? `${rootType}-${targetId}` : '';
 
   const targetComments = storeKey ? comments[storeKey] || [] : [];
 
-  const pattern = patterns.find((p) => p.id === targetId);
+  const pattern = rootType === 'pattern' ? patterns.find((p) => p.id === targetId) : undefined;
 
   useEffect(() => {
     if (targetId) {
@@ -53,7 +73,7 @@ export function CommentsModal({ targetId: propTargetId }: CommentsModalProps = {
           <ArrowLeft size={24} className="text-text-primary" />
         </button>
         <h1 className="text-lg font-bold text-text-primary">
-          评论 {targetComments.length > 0 && `(${targetComments.length})`}
+          {title || '评论'} {targetComments.length > 0 && `(${targetComments.length})`}
         </h1>
       </div>
 
@@ -63,7 +83,7 @@ export function CommentsModal({ targetId: propTargetId }: CommentsModalProps = {
             <div className="bg-white rounded-subtle-card p-4 mb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">{pattern.emoji}</span>
-                <span className="text-sm text-text-secondary">当前句型</span>
+                <span className="text-sm text-text-secondary">{rootTitleMap[rootType]}</span>
               </div>
               <h3 className="font-bold text-text-primary mb-1">{pattern.title}</h3>
               <p className="text-sm text-text-secondary">{pattern.translation}</p>
@@ -95,13 +115,13 @@ export function CommentsModal({ targetId: propTargetId }: CommentsModalProps = {
                 <span className="text-3xl">💬</span>
               </div>
               <p className="text-lg font-medium mb-2">暂无评论</p>
-              <p className="text-sm">成为第一个评论我的人吧</p>
+              <p className="text-sm">{emptyDescriptionMap[rootType]}</p>
             </div>
           )}
         </div>
       </div>
 
-      {targetId && <CommentInput rootId={targetId} rootType="pattern" />}
+      {targetId && <CommentInput rootId={targetId} rootType={rootType} />}
     </div>
   );
 }

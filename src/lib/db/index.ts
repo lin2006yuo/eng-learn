@@ -2,8 +2,9 @@ import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from './schema';
 import * as patternsSchema from './patterns-schema';
+import * as articlesSchema from './articles-schema';
 
-const combinedSchema = { ...schema, ...patternsSchema };
+const combinedSchema = { ...schema, ...patternsSchema, ...articlesSchema };
 
 let db: ReturnType<typeof drizzle<typeof combinedSchema>>;
 
@@ -29,4 +30,4 @@ export function getDb() {
   return db;
 }
 
-export { schema, patternsSchema };
+export { schema, patternsSchema, articlesSchema };

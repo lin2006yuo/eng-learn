@@ -4,7 +4,7 @@ const isRemoteDb = process.env.DATABASE_URL?.startsWith('libsql://') ||
                    process.env.DATABASE_URL?.startsWith('http');
 
 export default defineConfig({
-  schema: ['./src/lib/db/schema.ts', './src/lib/db/patterns-schema.ts'],
+  schema: ['./src/lib/db/schema.ts', './src/lib/db/patterns-schema.ts', './src/lib/db/articles-schema.ts'],
   out: './drizzle',
   dialect: isRemoteDb ? 'turso' : 'sqlite',
   dbCredentials: {

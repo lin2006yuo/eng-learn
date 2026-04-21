@@ -26,10 +26,10 @@ const secondaryFeatures: SquareFeature[] = [
     comingSoon: true,
   },
   {
+    route: '/articles',
     title: '文章分享',
     description: '分享学习心得与资源',
     emoji: '📝',
-    comingSoon: true,
   },
 ];
 
@@ -139,11 +139,13 @@ export function SquarePage() {
             onClick={() => handleFeatureClick(feature)}
             className="bg-white rounded-subtle-card p-5 shadow-card cursor-pointer relative overflow-hidden"
           >
-            <div className="absolute top-2 right-2">
-              <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
-                敬请期待
-              </span>
-            </div>
+            {feature.comingSoon && (
+              <div className="absolute top-2 right-2">
+                <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
+                  敬请期待
+                </span>
+              </div>
+            )}
 
             <div className="w-12 h-12 rounded-subtle-card bg-primary/10 flex items-center justify-center mb-3">
               <span className="text-2xl">{feature.emoji}</span>
@@ -158,7 +160,7 @@ export function SquarePage() {
 
             <div className="flex items-center gap-1 text-primary text-xs font-semibold">
               <Bell size={12} />
-              <span>上线提醒</span>
+              <span>{feature.comingSoon ? '上线提醒' : '立即进入'}</span>
             </div>
           </motion.div>
         ))}

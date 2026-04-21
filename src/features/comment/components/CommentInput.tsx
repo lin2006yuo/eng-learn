@@ -13,6 +13,13 @@ interface CommentInputProps {
   onReplySuccess?: () => void;
 }
 
+const placeholderMap: Record<RootType, string> = {
+  pattern: '写下你的评论...',
+  article: '写下你的阅读感受...',
+  post: '写下你的评论...',
+  note: '写下你的想法...',
+};
+
 export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId, onReplySuccess }: CommentInputProps) {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +37,8 @@ export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId
       setContent(value);
     }
   };
+
+  const placeholder = replyToCommentId ? '回复这条评论...' : placeholderMap[rootType];
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -69,7 +78,7 @@ export function CommentInput({ rootId, rootType, replyToCommentId, replyToUserId
             value={content}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="写下你的评论..."
+            placeholder={placeholder}
             maxLength={MAX_LENGTH}
             disabled={isSubmitting}
             className="w-full bg-gray-100 rounded-input px-4 py-3 pr-12 text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"

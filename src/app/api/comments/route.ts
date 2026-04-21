@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { articles } from '@/lib/db/articles-schema';
 import { comments, notifications, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray } from 'drizzle-orm';
@@ -42,6 +43,32 @@ function fetchPatternContext(rootType: RootType, rootId: string) {
     .where(eq(patterns.id, rootId))
     .limit(1)
     .then(rows => rows[0]);
+}
+
+function fetchArticleContext(rootType: RootType, rootId: string) {
+  if (rootType !== 'article') return Promise.resolve(undefined);
+  const db = getDb();
+  return db
+    .select({ id: articles.id, title: articles.title, status: articles.status })
+    .from(articles)
+    .where(eq(articles.id, rootId))
+    .limit(1)
+    .then(rows => rows[0]);
+}
+
+async function validateRootAccess(rootType: RootType, rootId: string) {
+  if (rootType === 'pattern') {
+    const pattern = await fetchPatternContext(rootType, rootId);
+    return { valid: !!pattern, context: pattern };
+  }
+  if (rootType === 'article') {
+    const article = await fetchArticleContext(rootType, rootId);
+    return {
+      valid: !!article && article.status === 'published',
+      context: article,
+    };
+  }
+  return { valid: true, context: undefined };
 }
 
 function determineQueryMode(params: {
@@ -115,13 +142,17 @@ export async function GET(request: NextRequest) {
   const mode = determineQueryMode(params);
 
   if (mode === 'byRoot') {
-    const [patternInfo, { comments: mainComments, hasMore, nextCursor }] = await Promise.all([
-      fetchPatternContext(params.rootType!, params.rootId!),
+    const rootAccess = await validateRootAccess(params.rootType!, params.rootId!);
+    if (!rootAccess.valid) {
+      return NextResponse.json({ error: '根资源不存在或不可访问' }, { status: 404 });
+    }
+
+    const [{ comments: mainComments, hasMore, nextCursor }] = await Promise.all([
       fetchCommentsByRoot(params.rootType!, params.rootId!, params.cursor || undefined, params.limit),
     ]);
 
     if (mainComments.length === 0) {
-      return NextResponse.json({ data: [], totalCount: 0, hasMore: false, nextCursor: undefined, patternInfo });
+      return NextResponse.json({ data: [], totalCount: 0, hasMore: false, nextCursor: undefined, rootInfo: rootAccess.context });
     }
 
     const commentIds = mainComments.map(c => c.id);
@@ -142,7 +173,7 @@ export async function GET(request: NextRequest) {
       replyCountByRoot,
     );
 
-    return NextResponse.json({ data, totalCount: mainComments.length, hasMore, nextCursor, patternInfo });
+    return NextResponse.json({ data, totalCount: mainComments.length, hasMore, nextCursor, rootInfo: rootAccess.context });
   }
 
   if (mode === 'byUser') {
@@ -227,6 +258,11 @@ export async function POST(request: NextRequest) {
   const targetExists = await validateTargetExists(targetType, targetId);
   if (!targetExists) {
     return NextResponse.json({ error: '目标不存在' }, { status: 400 });
+  }
+
+  const rootAccess = await validateRootAccess(rootType, rootId);
+  if (!rootAccess.valid) {
+    return NextResponse.json({ error: '根资源不存在或不可访问' }, { status: 400 });
   }
 
   const newComment = {
@@ -321,5 +357,4 @@ export async function POST(request: NextRequest) {
     },
   });
 }
-
 

@@ -16,7 +16,8 @@ const CREATE_TABLES_SQL = `
     updated_at INTEGER NOT NULL,
     username TEXT UNIQUE,
     display_username TEXT,
-    nickname TEXT
+    nickname TEXT,
+    role TEXT NOT NULL DEFAULT 'user'
   );
 
   CREATE TABLE IF NOT EXISTS session (
@@ -60,7 +61,13 @@ export function createTestAuth() {
   const client = createClient({
     url: ':memory:',
   });
-  client.execute(CREATE_TABLES_SQL);
+  CREATE_TABLES_SQL
+    .split(';')
+    .map((statement) => statement.trim())
+    .filter(Boolean)
+    .forEach((statement) => {
+      client.execute(statement);
+    });
 
   const db = drizzle(client, { schema });
 
@@ -96,6 +103,11 @@ export function createTestAuth() {
         nickname: {
           type: 'string',
           required: false,
+        },
+        role: {
+          type: 'string',
+          required: false,
+          defaultValue: 'user',
         },
       },
     },
