@@ -1,11 +1,3 @@
-// 在本地执行脚本时，允许通过 .env 注入变量；在 Vercel 构建环境中通常不需要。
-// 这里用可选依赖的方式加载，避免强依赖 dotenv。
-try {
-  await import('dotenv/config');
-} catch {
-  // ignore
-}
-
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { migrate } from 'drizzle-orm/libsql/migrator';
