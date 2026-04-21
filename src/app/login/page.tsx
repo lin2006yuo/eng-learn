@@ -176,7 +176,6 @@ export default function LoginPage() {
                            transition-all duration-200"
                   placeholder="密码"
                   required
-                  minLength={6}
                   maxLength={255}
                 />
               </div>

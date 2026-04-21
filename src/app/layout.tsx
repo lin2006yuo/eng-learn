@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Providers } from '@/app/providers';
 import { Toast } from '@/shared/components/Toast';
+import { SelectionPopover } from '@/features/comment/components/selection/SelectionPopover';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
           <div className="min-h-screen max-w-[430px] mx-auto relative">
             {children}
             <Toast />
+            <SelectionPopover />
           </div>
         </Providers>
       </body>

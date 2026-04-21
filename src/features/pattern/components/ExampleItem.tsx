@@ -3,7 +3,7 @@ import { useCopy } from '@/shared/hooks/useCopy';
 import type { Example } from '@/shared/types';
 import { useEffect, useMemo, useState } from 'react';
 import { CommentInput } from '@/features/comment/components/CommentInput';
-import { CommentItem } from '@/features/comment/components/CommentItem';
+import { AnchorFocusedComments } from '@/features/comment/components/selection/AnchorFocusedComments';
 import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
 import { SelectableText } from '@/features/comment/components/selection/SelectableText';
 import type { CreateCommentAnchorRequest } from '@/features/comment/types';
@@ -16,13 +16,18 @@ interface ExampleItemProps {
   index: number;
 }
 
+interface FocusState {
+  commentIds: string[];
+  currentIndex: number;
+}
+
 export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   const { copy, isCopied } = useCopy();
   const { comments, fetchComments } = useCommentStore();
   const copyId = `${patternId}-${example.id}`;
   const copied = isCopied(copyId);
   const [anchor, setAnchor] = useState<CreateCommentAnchorRequest | null>(null);
-  const [focusedCommentIds, setFocusedCommentIds] = useState<string[]>([]);
+  const [focus, setFocus] = useState<FocusState>({ commentIds: [], currentIndex: 0 });
   const patternComments = comments[`pattern-${patternId}`] || [];
   const enBlockId = `pattern-${patternId}-example-${example.id}-en`;
   const zhBlockId = `pattern-${patternId}-example-${example.id}-zh`;
@@ -45,14 +50,17 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
     [enBlockId, example.en, example.zh, patternComments, zhBlockId],
   );
 
-  const focusedComments = useMemo(
-    () => resolvedComments.filter((comment) => focusedCommentIds.includes(comment.id)),
-    [focusedCommentIds, resolvedComments],
-  );
-
   const handleCopy = () => {
     if (window.getSelection()?.toString().trim()) return;
     copy(example.en, copyId);
+  };
+
+  const handleAnchorClick = (_intervalIndex: number, commentIds: string[]) => {
+    setFocus({ commentIds, currentIndex: 0 });
+  };
+
+  const handleCloseFocus = () => {
+    setFocus({ commentIds: [], currentIndex: 0 });
   };
 
   return (
@@ -79,7 +87,7 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
             blockId={enBlockId}
             comments={resolvedComments}
             text={textValue}
-            onAnchorClick={setFocusedCommentIds}
+            onAnchorClick={handleAnchorClick}
           />
         )}
         onSelect={setAnchor}
@@ -95,7 +103,7 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
             blockId={zhBlockId}
             comments={resolvedComments}
             text={textValue}
-            onAnchorClick={setFocusedCommentIds}
+            onAnchorClick={handleAnchorClick}
           />
         )}
         onSelect={setAnchor}
@@ -115,18 +123,16 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
         </div>
       ) : null}
 
-      {focusedComments.length > 0 ? (
-        <div
-          className="pattern-example-comment-list mt-3 rounded-subtle-card border border-primary/20 bg-white p-3"
-          onClick={(event) => event.stopPropagation()}
-        >
-          <p className="mb-2 text-sm font-medium text-text-primary">片段评论</p>
-          <div className="space-y-2">
-            {focusedComments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} targetId={patternId} rootType="pattern" />
-            ))}
-          </div>
-        </div>
+      {focus.commentIds.length > 0 ? (
+        <AnchorFocusedComments
+          resolvedComments={resolvedComments}
+          focusedCommentIds={focus.commentIds}
+          focusedCommentIndex={focus.currentIndex}
+          targetId={patternId}
+          rootType="pattern"
+          onIndexChange={(index) => setFocus((prev) => ({ ...prev, currentIndex: index }))}
+          onClose={handleCloseFocus}
+        />
       ) : null}
     </motion.div>
   );

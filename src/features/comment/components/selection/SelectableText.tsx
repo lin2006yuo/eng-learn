@@ -1,11 +1,9 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useMemo, useRef } from 'react';
 import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
-import { buildSelectionAnchor, clearBrowserSelection } from '@/features/comment/utils';
-import { SelectionActionPopover } from './SelectionActionPopover';
+import { buildSelectionAnchor } from '@/features/comment/utils';
+import { useSelectionStore } from '@/features/comment/store/selectionStore';
 
 interface SelectableTextProps {
   blockId: string;
@@ -17,18 +15,10 @@ interface SelectableTextProps {
   onSelect?: (anchor: CreateCommentAnchorRequest) => void;
 }
 
-interface SelectionPosition {
-  x: number;
-  y: number;
-}
-
 export function SelectableText(props: SelectableTextProps) {
   const { blockId, rootId, rootType, text, className, renderText, onSelect } = props;
-  const router = useRouter();
-  const { user } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [anchor, setAnchor] = useState<CreateCommentAnchorRequest | null>(null);
-  const [position, setPosition] = useState<SelectionPosition | null>(null);
+  const { setSelection } = useSelectionStore();
 
   const content = useMemo(() => (renderText ? renderText(text) : text), [renderText, text]);
 
@@ -47,55 +37,25 @@ export function SelectableText(props: SelectableTextProps) {
     });
 
     if (!nextAnchor) {
-      setAnchor(null);
-      setPosition(null);
       return;
     }
 
     const range = selection!.getRangeAt(0);
     const rect = range.getBoundingClientRect();
-    setAnchor(nextAnchor);
-    setPosition({
+    setSelection(nextAnchor, {
       x: rect.left + rect.width / 2,
       y: rect.top - 12,
-    });
-  };
-
-  const handleComment = () => {
-    if (!anchor) return;
-    onSelect?.(anchor);
-    setAnchor(null);
-    setPosition(null);
-    clearBrowserSelection();
-  };
-
-  const handleLogin = () => {
-    router.push(`/login?from=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-    setAnchor(null);
-    setPosition(null);
-    clearBrowserSelection();
+    }, onSelect);
   };
 
   return (
-    <>
-      <div
-        ref={containerRef}
-        onMouseUp={handleSelection}
-        onTouchEnd={handleSelection}
-        className={className}
-      >
-        {content}
-      </div>
-
-      {anchor && position ? (
-        <SelectionActionPopover
-          x={position.x}
-          y={position.y}
-          isAuthenticated={!!user}
-          onComment={handleComment}
-          onLogin={handleLogin}
-        />
-      ) : null}
-    </>
+    <div
+      ref={containerRef}
+      onMouseUp={handleSelection}
+      onTouchEnd={handleSelection}
+      className={className}
+    >
+      {content}
+    </div>
   );
 }

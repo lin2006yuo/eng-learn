@@ -61,7 +61,7 @@ export default function ManageArticleDetailPage() {
         >
           <div className="flex items-center gap-3">
             <button
-              onClick={() => router.push('/articles/manage')}
+              onClick={() => router.back()}
               className="article-manage-edit-back flex h-10 w-10 items-center justify-center rounded-full bg-white text-text-primary shadow-card transition-transform active:scale-95"
             >
               <ArrowLeft size={20} />

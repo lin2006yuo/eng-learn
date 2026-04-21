@@ -3,6 +3,7 @@ import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('user', {
   id: text('id').primaryKey(),
+  // 用于兼容 Better-Auth 框架必填要求，约定 name = username
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: integer('email_verified', { mode: 'boolean' }).notNull().default(false),
@@ -10,7 +11,6 @@ export const users = sqliteTable('user', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   username: text('username').unique(),
-  displayUsername: text('display_username'),
   nickname: text('nickname'),
   role: text('role').notNull().default('user'),
 });

@@ -1,12 +1,49 @@
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { patterns, examples, studyPlans } from '../src/lib/db/patterns-schema';
 import patternsData from '../src/data/patterns.json';
 
-const dbPath = process.env.DATABASE_URL?.replace('file:', '') || './local.db';
-const client = createClient({
-  url: `file:${dbPath}`,
-});
+// 手动加载 .env.local
+function loadEnvLocal() {
+  try {
+    const envPath = resolve(process.cwd(), '.env.local');
+    const envContent = readFileSync(envPath, 'utf-8');
+    envContent.split('\n').forEach((line) => {
+      const match = line.match(/^([^#=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        let value = match[2].trim();
+        // 去除引号
+        if ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        if (!process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    });
+  } catch {
+    // .env.local 不存在时忽略
+  }
+}
+loadEnvLocal();
+
+const isRemoteDb = process.env.DATABASE_URL?.startsWith('libsql://') ||
+                   process.env.DATABASE_URL?.startsWith('http');
+
+const client = createClient(
+  isRemoteDb
+    ? {
+        url: process.env.DATABASE_URL!,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      }
+    : {
+        url: process.env.DATABASE_URL || 'file:./local.db',
+      }
+);
 const db = drizzle(client);
 
 async function seed() {

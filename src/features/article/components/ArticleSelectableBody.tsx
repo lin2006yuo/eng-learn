@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { CommentInput } from '@/features/comment/components/CommentInput';
-import { CommentItem } from '@/features/comment/components/CommentItem';
-import { useCommentStore } from '@/features/comment/store/commentStore';
+import { AnchorFocusedComments } from '@/features/comment/components/selection/AnchorFocusedComments';
+import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
 import { SelectableText } from '@/features/comment/components/selection/SelectableText';
 import type { CreateCommentAnchorRequest } from '@/features/comment/types';
-import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
+import { useCommentStore } from '@/features/comment/store/commentStore';
 import { resolveAnchorPosition } from '@/features/comment/utils/anchorRelocation';
 
 interface ArticleSelectableBodyProps {
@@ -14,10 +14,15 @@ interface ArticleSelectableBodyProps {
   content: string;
 }
 
+interface FocusState {
+  commentIds: string[];
+  currentIndex: number;
+}
+
 export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
   const { articleId, content } = props;
   const [anchor, setAnchor] = useState<CreateCommentAnchorRequest | null>(null);
-  const [focusedCommentIds, setFocusedCommentIds] = useState<string[]>([]);
+  const [focus, setFocus] = useState<FocusState>({ commentIds: [], currentIndex: 0 });
   const { comments, fetchComments } = useCommentStore();
   const articleComments = comments[`article-${articleId}`] || [];
   const articleBlockId = `article-${articleId}-content`;
@@ -35,10 +40,13 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
     [articleBlockId, articleComments, content],
   );
 
-  const focusedComments = useMemo(
-    () => resolvedComments.filter((comment) => focusedCommentIds.includes(comment.id)),
-    [focusedCommentIds, resolvedComments],
-  );
+  const handleAnchorClick = (_intervalIndex: number, commentIds: string[]) => {
+    setFocus({ commentIds, currentIndex: 0 });
+  };
+
+  const handleCloseFocus = () => {
+    setFocus({ commentIds: [], currentIndex: 0 });
+  };
 
   return (
     <div className="article-selectable-body space-y-4">
@@ -50,10 +58,10 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         className="article-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary"
         renderText={(textValue) => (
           <AnchorHighlightText
-            blockId={`article-${articleId}-content`}
+            blockId={articleBlockId}
             comments={resolvedComments}
             text={textValue}
-            onAnchorClick={setFocusedCommentIds}
+            onAnchorClick={handleAnchorClick}
           />
         )}
         onSelect={setAnchor}
@@ -70,15 +78,16 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         </div>
       ) : null}
 
-      {focusedComments.length > 0 ? (
-        <div className="article-selectable-body-comments rounded-subtle-card border border-primary/20 bg-white p-4">
-          <p className="mb-3 text-sm font-medium text-text-primary">片段评论</p>
-          <div className="space-y-2">
-            {focusedComments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} targetId={articleId} rootType="article" />
-            ))}
-          </div>
-        </div>
+      {focus.commentIds.length > 0 ? (
+        <AnchorFocusedComments
+          resolvedComments={resolvedComments}
+          focusedCommentIds={focus.commentIds}
+          focusedCommentIndex={focus.currentIndex}
+          targetId={articleId}
+          rootType="article"
+          onIndexChange={(index) => setFocus((prev) => ({ ...prev, currentIndex: index }))}
+          onClose={handleCloseFocus}
+        />
       ) : null}
     </div>
   );
