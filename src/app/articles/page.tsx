@@ -4,6 +4,8 @@ import { BookText, PenSquare } from 'lucide-react';
 import { ArticleList } from '@/features/article/components/ArticleList';
 import { listArticles } from '@/features/article/queries';
 
+export const dynamic = "force-dynamic";
+
 export default async function ArticlesPage() {
   const articles = await listArticles();
 
