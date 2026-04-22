@@ -1,12 +1,12 @@
 'use client';
 
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
+import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import { CommentsModal } from '@/features/comment/components/CommentsModal';
 
 export function ModalComments() {
-  const { isModalOpen, activeModalType, activeTargetId, closeModal } = useModalRouteContext();
+  const { isModalOpen, targetId, closeModal } = usePatternCommentModalContext();
 
-  if (!isModalOpen || activeModalType !== 'comments' || !activeTargetId) return null;
+  if (!isModalOpen || !targetId) return null;
 
   return (
     <div className="fixed inset-0 z-[100]">
@@ -16,7 +16,7 @@ export function ModalComments() {
       />
       <div className="absolute inset-0 pointer-events-none">
         <div className="pointer-events-auto h-full">
-          <CommentsModal targetId={activeTargetId} />
+          <CommentsModal targetId={targetId} />
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ export default function ArticleDetailPage() {
     <div className="article-detail-page min-h-screen bg-background px-5 pb-10 pt-6">
       <div className="article-detail-page-header mb-6 flex items-center gap-3">
         <button
-          onClick={() => router.push('/articles')}
+          onClick={() => router.back()}
           className="article-detail-back-btn flex h-10 w-10 items-center justify-center rounded-full bg-white text-text-primary shadow-card"
         >
           <ArrowLeft size={20} />

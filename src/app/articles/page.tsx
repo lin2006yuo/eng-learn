@@ -42,7 +42,7 @@ export default function ArticlesPage() {
       ) : null}
 
       {!isLoading && !isError && data?.data.length === 0 ? (
-        <ArticleEmptyState description="管理员发布文章后，这里会展示最新内容。" />
+        <ArticleEmptyState description="发布文章后，这里会展示最新内容。" />
       ) : null}
 
       {!isLoading && !isError && data && data.data.length > 0 ? (

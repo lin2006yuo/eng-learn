@@ -6,7 +6,7 @@ import { Card } from '@/shared/components/Card';
 import { ExampleItem } from './ExampleItem';
 import { FavoriteButton } from '@/features/favorite/components/FavoriteButton';
 import { CommentPreview } from '@/features/comment/components/CommentPreview';
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
+import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import type { Pattern } from '@/shared/types';
 
 interface PatternCardProps {
@@ -35,14 +35,7 @@ function commentSummaryToPreview(summary?: Pattern['commentSummary']) {
 export function PatternCard({ pattern, index }: PatternCardProps) {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(true);
-
-  let openModal: ((modalType: 'comments', targetId: string) => void) | null = null;
-  try {
-    const modalContext = useModalRouteContext();
-    openModal = modalContext.openModal;
-  } catch {
-    openModal = null;
-  }
+  const { openModal } = usePatternCommentModalContext();
 
   const summary = pattern.commentSummary;
   const commentCount = summary?.totalCount || 0;
@@ -51,11 +44,7 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
   const patternNumber = pattern.id.replace('pattern-', '');
 
   const handleCommentClick = () => {
-    if (openModal) {
-      openModal('comments', pattern.id);
-    } else {
-      router.push(`/pattern/${pattern.id}/comments`);
-    }
+    openModal(pattern.id);
   };
 
   const toggleExpand = () => {

@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { MessageSquare, Reply } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
+import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import { NotificationReplyInput } from './NotificationReplyInput';
 import type { Notification } from '@/features/notification/hooks/useNotifications';
 import type { RootType } from '@/features/comment/types';
@@ -22,7 +22,7 @@ const notificationConfig = {
 
 export function NotificationItem({ notification }: NotificationItemProps) {
   const router = useRouter();
-  const { openModal } = useModalRouteContext();
+  const { openModal } = usePatternCommentModalContext();
   const [showReplyInput, setShowReplyInput] = useState(false);
 
   const config = notificationConfig;
@@ -30,7 +30,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 
   const handleClick = useCallback(() => {
     if (notification.targetType === 'comment' && notification.rootId) {
-      openModal('comments', notification.rootId);
+      openModal(notification.rootId);
     } else {
       router.push(`/pattern/${notification.targetId}`);
     }

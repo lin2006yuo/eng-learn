@@ -1,7 +1,6 @@
-import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { Card } from '@/shared/components';
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
+import { useArticleModalContext } from '@/shared/hooks/ArticleModalContext';
 import type { ArticleSummary } from '../types';
 
 interface ArticleCardProps {
@@ -14,22 +13,10 @@ function formatPublishTime(value: string | null) {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
-  const router = useRouter();
-
-  let openModal: ((modalType: 'article', targetId: string) => void) | null = null;
-  try {
-    const modalContext = useModalRouteContext();
-    openModal = modalContext.openModal;
-  } catch {
-    openModal = null;
-  }
+  const { openModal } = useArticleModalContext();
 
   const handleClick = () => {
-    if (openModal) {
-      openModal('article', article.id);
-    } else {
-      router.push(`/articles/${article.id}`);
-    }
+    openModal(article.id);
   };
 
   return (

@@ -1,4 +1,38 @@
 #!/usr/bin/env node
+/**
+ * eng-learn CLI
+ * 
+ * Fragment Comment Usage:
+ * 
+ * When you select text in a browser UI:
+ *   "The [quick brown fox] jumps over the dog"
+ *   
+ *   selectedText = "quick brown fox"
+ *   prefixText   = "The "          (text before selection)
+ *   suffixText   = " jumps over"   (text after selection)
+ *   startOffset  = 4
+ *   endOffset    = 19
+ * 
+ * If document content changes (e.g., word inserted):
+ *   "The [quick brown fox] now jumps over the dog"
+ *   
+ *   Old startOffset/endOffset become invalid
+ *   System relocates using: prefixText + selectedText + suffixText
+ * 
+ * CLI Example:
+ *   eng-learn comment create \
+ *     --targetType pattern \
+ *     --targetId pattern-1 \
+ *     --rootType pattern \
+ *     --rootId pattern-1 \
+ *     --content "Good example" \
+ *     --blockId "sentence-1" \
+ *     --selectedText "quick brown fox" \
+ *     --startOffset 4 \
+ *     --endOffset 19 \
+ *     --prefixText "The " \
+ *     --suffixText " jumps over"
+ */
 import { Command } from 'commander';
 import { loadConfig } from './config.js';
 import { registerCmd, loginCmd, logoutCmd, whoamiCmd } from './commands/auth.js';
@@ -146,20 +180,39 @@ comment
 comment
   .command('create')
   .description('Create comment')
-  .requiredOption('--targetType <type>', 'target type')
-  .requiredOption('--targetId <id>', 'target id')
-  .requiredOption('--rootType <type>', 'root type')
-  .requiredOption('--rootId <id>', 'root id')
-  .requiredOption('--content <content>', 'comment content')
+  .requiredOption('--targetType <type>', 'target type: pattern|comment')
+  .requiredOption('--targetId <id>', 'target id (pattern ID or parent comment ID)')
+  .requiredOption('--rootType <type>', 'root resource type: pattern|article|post|note')
+  .requiredOption('--rootId <id>', 'root resource id')
+  .requiredOption('--content <content>', 'comment content (1-300 chars)')
   .option('--replyToUserId <id>', 'reply to specific user id')
-  .action(async (options: Record<string, string>) => {
+  // Anchor options for fragment comments
+  .option('--blockId <id>', '[anchor] block id within the root resource')
+  .option('--selectedText <text>', '[anchor] the exact text being commented on')
+  .option('--startOffset <n>', '[anchor] character offset where selection starts', (v: string) => parseInt(v, 10))
+  .option('--endOffset <n>', '[anchor] character offset where selection ends', (v: string) => parseInt(v, 10))
+  .option('--prefixText <text>', '[anchor] text immediately before the selection (used for relocation)')
+  .option('--suffixText <text>', '[anchor] text immediately after the selection (used for relocation)')
+  .action(async (options: Record<string, string | number | undefined>) => {
+    let anchor: import('./commands/comment.js').AnchorOptions | undefined;
+    if (options.blockId && options.selectedText !== undefined && options.startOffset !== undefined && options.endOffset !== undefined && options.prefixText !== undefined && options.suffixText !== undefined) {
+      anchor = {
+        blockId: options.blockId as string,
+        selectedText: options.selectedText as string,
+        startOffset: options.startOffset as number,
+        endOffset: options.endOffset as number,
+        prefixText: options.prefixText as string,
+        suffixText: options.suffixText as string,
+      };
+    }
     await commentCreateCmd(
-      options.targetType,
-      options.targetId,
-      options.rootType,
-      options.rootId,
-      options.content,
-      options.replyToUserId,
+      options.targetType as string,
+      options.targetId as string,
+      options.rootType as string,
+      options.rootId as string,
+      options.content as string,
+      options.replyToUserId as string | undefined,
+      anchor,
       getFormat(program)
     );
   });

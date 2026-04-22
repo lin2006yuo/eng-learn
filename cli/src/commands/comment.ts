@@ -32,6 +32,15 @@ export async function commentListMineCmd(format: 'json' | 'table'): Promise<void
   console.log(format === 'table' ? formatTable(data) : formatJson(data));
 }
 
+export interface AnchorOptions {
+  blockId: string;
+  selectedText: string;
+  startOffset: number;
+  endOffset: number;
+  prefixText: string;
+  suffixText: string;
+}
+
 export async function commentCreateCmd(
   targetType: string,
   targetId: string,
@@ -39,10 +48,23 @@ export async function commentCreateCmd(
   rootId: string,
   content: string,
   replyToUserId: string | undefined,
+  anchor: AnchorOptions | undefined,
   format: 'json' | 'table'
 ): Promise<void> {
   const body: Record<string, unknown> = { targetType, targetId, rootType, rootId, content };
   if (replyToUserId) body.replyToUserId = replyToUserId;
+  if (anchor) {
+    body.anchor = {
+      rootType,
+      rootId,
+      blockId: anchor.blockId,
+      selectedText: anchor.selectedText,
+      startOffset: anchor.startOffset,
+      endOffset: anchor.endOffset,
+      prefixText: anchor.prefixText,
+      suffixText: anchor.suffixText,
+    };
+  }
   const res = await client.post('/comments', body);
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));

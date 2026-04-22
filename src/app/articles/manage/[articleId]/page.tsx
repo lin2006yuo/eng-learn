@@ -83,7 +83,7 @@ export default function ManageArticleDetailPage() {
             onSubmit={async (values) => {
               await updateArticle.mutateAsync({ articleId, values });
               showToast('文章保存成功', 'success');
-              router.push('/articles/manage');
+              router.back();
             }}
           />
         ) : null}

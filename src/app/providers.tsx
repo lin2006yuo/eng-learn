@@ -2,7 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ModalRouteProvider } from '@/shared/hooks/ModalRouteContext';
+import { PatternCommentModalProvider } from '@/shared/hooks/PatternCommentModalContext';
+import { ArticleModalProvider } from '@/shared/hooks/ArticleModalContext';
 import { ModalComments } from '@/features/comment/components/ModalComments';
 import { ModalArticleDetail } from '@/features/article/components/ModalArticleDetail';
 
@@ -20,11 +21,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ModalRouteProvider>
-        {children}
-        <ModalComments />
-        <ModalArticleDetail />
-      </ModalRouteProvider>
+      <PatternCommentModalProvider>
+        <ArticleModalProvider>
+          {children}
+          <ModalComments />
+          <ModalArticleDetail />
+        </ArticleModalProvider>
+      </PatternCommentModalProvider>
     </QueryClientProvider>
   );
 }

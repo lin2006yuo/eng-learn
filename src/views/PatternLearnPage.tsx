@@ -6,7 +6,7 @@ import useSWR from 'swr';
 import { apiGet } from '@/shared/utils/api';
 import { VirtualPatternList, type VirtualPatternListRef } from '@/features/pattern';
 import { CommentsModal } from '@/features/comment';
-import { QuickNav, QuickNavFab, StudyDayNav, useModalRouteContext } from '@/shared';
+import { QuickNav, QuickNavFab, StudyDayNav, usePatternCommentModalContext } from '@/shared';
 import { useScrollSpy } from '@/shared/hooks/useScrollSpy';
 import { commentBus } from '@/shared/utils/eventBus';
 import type { Pattern } from '@/shared/types';
@@ -28,7 +28,7 @@ export function PatternLearnPage() {
   const urlDay = parseInt(searchParams.get('day') ?? '', 10);
   const selectedDay = Number.isFinite(urlDay) ? urlDay : 1;
 
-  const { isModalOpen, activeTargetId } = useModalRouteContext();
+  const { isModalOpen, targetId } = usePatternCommentModalContext();
 
   const { data: dayData } = useSWR<{ days: { dayNumber: number }[] }>(
     '/api/study-days',
@@ -168,8 +168,8 @@ export function PatternLearnPage() {
       )}
 
       <AnimatePresence>
-        {isModalOpen && activeTargetId && (
-          <CommentsModal targetId={activeTargetId} />
+        {isModalOpen && targetId && (
+          <CommentsModal targetId={targetId} />
         )}
       </AnimatePresence>
     </>

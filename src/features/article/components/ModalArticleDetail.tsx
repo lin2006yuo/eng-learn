@@ -3,28 +3,28 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
-import { ArticleDetail } from './ArticleDetail';
-import { ArticleCommentsSection } from './ArticleCommentsSection';
-import { ArticleEmptyState } from './ArticleEmptyState';
-import { useArticleDetail } from '../hooks/useArticleDetail';
+import { useArticleModalContext } from '@/shared/hooks/ArticleModalContext';
+import { ArticleDetail } from '@/features/article/components/ArticleDetail';
+import { ArticleCommentsSection } from '@/features/article/components/ArticleCommentsSection';
+import { ArticleEmptyState } from '@/features/article/components/ArticleEmptyState';
+import { useArticleDetail } from '@/features/article/hooks/useArticleDetail';
 
 export function ModalArticleDetail() {
   const router = useRouter();
-  const { isModalOpen, activeModalType, activeTargetId, closeModal } = useModalRouteContext();
-  const articleId = activeTargetId || '';
+  const { isModalOpen, targetId, closeModal } = useArticleModalContext();
+  const articleId = targetId || '';
   const { data, isLoading, isError, refetch } = useArticleDetail(articleId);
 
   useEffect(() => {
-    if (!isModalOpen || activeModalType !== 'article') return;
+    if (!isModalOpen) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = originalOverflow;
     };
-  }, [isModalOpen, activeModalType]);
+  }, [isModalOpen]);
 
-  if (!isModalOpen || activeModalType !== 'article' || !activeTargetId) return null;
+  if (!isModalOpen || !targetId) return null;
 
   return (
     <div className="fixed inset-0 z-[100]">

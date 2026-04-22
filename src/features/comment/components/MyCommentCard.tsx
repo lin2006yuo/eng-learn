@@ -2,7 +2,8 @@
 
 import { Heart, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useModalRouteContext } from '@/shared/hooks/ModalRouteContext';
+import { useRouter } from 'next/navigation';
+import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import type { Comment } from '@/features/comment/types';
 import { formatRelativeTime } from '@/features/comment/store/commentStore';
 import { getPatternById } from '@/data/patterns';
@@ -11,13 +12,30 @@ interface MyCommentCardProps {
   comment: Comment;
 }
 
-export function MyCommentCard({ comment }: MyCommentCardProps) {
-  const { openModal } = useModalRouteContext();
-  const pattern = getPatternById(comment.rootId);
-  const patternTitle = pattern ? `${pattern.emoji} ${pattern.title}` : comment.rootId;
+const rootTypeRoutes: Record<string, (rootId: string) => string | null> = {
+  pattern: (rootId) => null,
+  article: (rootId) => `/articles/${rootId}`,
+  post: (rootId) => null,
+  note: (rootId) => null,
+};
 
-  const handlePatternClick = () => {
-    openModal('comments', comment.rootId);
+export function MyCommentCard({ comment }: MyCommentCardProps) {
+  const router = useRouter();
+  const { openModal } = usePatternCommentModalContext();
+
+  const handleRootClick = () => {
+    if (comment.rootType === 'pattern') {
+      openModal(comment.rootId);
+      return;
+    }
+
+    const route = rootTypeRoutes[comment.rootType]?.(comment.rootId);
+    if (route) {
+      router.push(route);
+      return;
+    }
+
+    // post 和 note 暂无对应页面，暂不跳转
   };
 
   const hasReplies = comment.replyCount && comment.replyCount > 0;
@@ -31,10 +49,10 @@ export function MyCommentCard({ comment }: MyCommentCardProps) {
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs text-text-secondary">在</span>
         <button
-          onClick={handlePatternClick}
+          onClick={handleRootClick}
           className="text-xs font-medium text-primary hover:underline truncate max-w-[200px]"
         >
-          {patternTitle}
+          {comment.rootId}
         </button>
         <span className="text-xs text-text-secondary">下评论</span>
       </div>
@@ -55,7 +73,7 @@ export function MyCommentCard({ comment }: MyCommentCardProps) {
 
         {hasReplies && (
           <button
-            onClick={handlePatternClick}
+            onClick={handleRootClick}
             className="flex items-center gap-1 text-xs text-primary hover:underline"
           >
             <MessageSquare size={12} />

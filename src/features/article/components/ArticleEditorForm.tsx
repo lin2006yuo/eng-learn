@@ -15,7 +15,7 @@ interface ArticleEditorFormProps {
 const statusOptions: ArticleStatus[] = ['draft', 'published', 'archived'];
 
 const statusMeta: Record<ArticleStatus, { label: string; desc: string; dot: string }> = {
-  draft: { label: '草稿', desc: '仅管理员可见', dot: 'bg-gray-400' },
+  draft: { label: '草稿', desc: '仅自己可见', dot: 'bg-gray-400' },
   published: { label: '发布', desc: '所有人可浏览', dot: 'bg-primary' },
   archived: { label: '下线', desc: '已从列表移除', dot: 'bg-secondary' },
 };
