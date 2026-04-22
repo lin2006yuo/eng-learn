@@ -32,19 +32,6 @@ export default function ManageArticleDetailPage() {
     return <div className="min-h-screen bg-background px-5 py-10 text-center text-text-secondary">加载中...</div>;
   }
 
-  if (user.role !== 'admin') {
-    return (
-      <div className="min-h-screen bg-background px-5 py-10">
-        <ArticleEmptyState
-          title="暂无权限"
-          description="只有管理员可以编辑文章。"
-          actionText="返回文章管理"
-          onAction={() => router.push('/articles/manage')}
-        />
-      </div>
-    );
-  }
-
   const handleDelete = async () => {
     await deleteArticle.mutateAsync(articleId);
     router.push('/articles/manage');
@@ -67,7 +54,7 @@ export default function ManageArticleDetailPage() {
               <ArrowLeft size={20} />
             </button>
             <div>
-              <p className="text-xs text-text-secondary">管理员</p>
+              <p className="text-xs text-text-secondary">文章编辑</p>
               <h1 className="text-xl font-bold text-text-primary">编辑文章</h1>
             </div>
           </div>

@@ -2,20 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { fetchArticleById } from '@/features/article/queries';
 import type { ArticleFormValues } from '@/features/article/types';
-import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
-
-async function requireAdmin(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session?.user) {
-    return { error: NextResponse.json({ error: '请先登录' }, { status: 401 }) };
-  }
-  if ((session.user as typeof session.user & { role?: string }).role !== 'admin') {
-    return { error: NextResponse.json({ error: '无文章管理权限' }, { status: 403 }) };
-  }
-  return { session };
-}
+import { requireOwnerOrAdmin } from '../_auth';
 
 export async function GET(
   request: NextRequest,
@@ -26,9 +15,9 @@ export async function GET(
   const includeUnpublished = scope === 'manage';
 
   if (includeUnpublished) {
-    const authResult = await requireAdmin(request);
-    if (authResult.error) {
-      return authResult.error;
+    const authResult = await requireOwnerOrAdmin(request, articleId);
+    if (!authResult.ok) {
+      return authResult.response;
     }
   }
 
@@ -45,12 +34,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ articleId: string }> }
 ) {
-  const authResult = await requireAdmin(request);
-  if (authResult.error) {
-    return authResult.error;
+  const { articleId } = await params;
+  const authResult = await requireOwnerOrAdmin(request, articleId);
+  if (!authResult.ok) {
+    return authResult.response;
   }
 
-  const { articleId } = await params;
   const body = (await request.json().catch(() => null)) as Partial<ArticleFormValues> | null;
   if (!body) {
     return NextResponse.json({ error: '请求参数错误' }, { status: 400 });
@@ -83,12 +72,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ articleId: string }> }
 ) {
-  const authResult = await requireAdmin(request);
-  if (authResult.error) {
-    return authResult.error;
+  const { articleId } = await params;
+  const authResult = await requireOwnerOrAdmin(request, articleId);
+  if (!authResult.ok) {
+    return authResult.response;
   }
 
-  const { articleId } = await params;
   const db = getDb();
   const result = await db
     .delete(articles)

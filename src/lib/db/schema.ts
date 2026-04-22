@@ -11,8 +11,10 @@ export const users = sqliteTable('user', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   username: text('username').unique(),
+  displayUsername: text('display_username').unique(),
   nickname: text('nickname'),
   role: text('role').notNull().default('user'),
+  isAgent: integer('is_agent', { mode: 'boolean' }).notNull().default(false),
 });
 
 export const sessions = sqliteTable('session', {

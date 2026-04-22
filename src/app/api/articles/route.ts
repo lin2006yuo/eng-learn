@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { countAllArticles, countPublishedArticles, fetchManageArticles, fetchPublicArticles } from '@/features/article/queries';
-import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
 import type { ArticleFormValues, ArticleStatus } from '@/features/article/types';
+import { requireAuth } from './_auth';
 
 function parseListParams(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -15,28 +15,20 @@ function parseListParams(request: NextRequest) {
   };
 }
 
-async function requireAdmin(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session?.user) {
-    return { error: NextResponse.json({ error: '请先登录' }, { status: 401 }) };
-  }
-  if ((session.user as typeof session.user & { role?: string }).role !== 'admin') {
-    return { error: NextResponse.json({ error: '无文章管理权限' }, { status: 403 }) };
-  }
-  return { session };
-}
-
 export async function GET(request: NextRequest) {
   const params = parseListParams(request);
   if (params.scope === 'manage') {
-    const authResult = await requireAdmin(request);
-    if (authResult.error) {
-      return authResult.error;
+    const authResult = await requireAuth(request);
+    if (!authResult.ok) {
+      return authResult.response;
     }
 
+    const userId = authResult.userId;
+    const isAdmin = authResult.role === 'admin';
+
     const [data, totalCount] = await Promise.all([
-      fetchManageArticles(params.status),
-      countAllArticles(params.status),
+      fetchManageArticles(params.status, isAdmin ? undefined : userId),
+      countAllArticles(params.status, isAdmin ? undefined : userId),
     ]);
 
     return NextResponse.json({ data, totalCount, hasMore: false, nextCursor: undefined });
@@ -56,9 +48,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const authResult = await requireAdmin(request);
-  if (authResult.error) {
-    return authResult.error;
+  const authResult = await requireAuth(request);
+  if (!authResult.ok) {
+    return authResult.response;
   }
 
   const body = (await request.json().catch(() => null)) as Partial<ArticleFormValues> | null;
@@ -76,7 +68,7 @@ export async function POST(request: NextRequest) {
     summary,
     content,
     status,
-    authorId: authResult.session!.user.id,
+    authorId: authResult.userId,
     publishedAt: status === 'published' ? now : null,
     createdAt: now,
     updatedAt: now,

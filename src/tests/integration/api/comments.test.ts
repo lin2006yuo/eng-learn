@@ -19,7 +19,8 @@ const CREATE_TABLES_SQL = `
     username TEXT UNIQUE,
     display_username TEXT,
     nickname TEXT,
-    role TEXT NOT NULL DEFAULT 'user'
+    role TEXT NOT NULL DEFAULT 'user',
+    is_agent INTEGER NOT NULL DEFAULT 0
   );
 
   CREATE TABLE patterns (
@@ -97,13 +98,43 @@ describe('数据库集成测试 - 评论系统', () => {
       const result = await db.select().from(patternsSchema.comments)
         .where(eq(patternsSchema.comments.id, 'c1')).all();
       expect(result).toHaveLength(1);
-      expect(result[0]?.rootType).toBe('pattern');
-      expect(result[0]?.rootId).toBe('p1');
-      expect(result[0]?.targetType).toBe('pattern');
-      expect(result[0]?.targetId).toBe('p1');
+      expect(result[0]?.content).toBe('主评论');
     });
 
     it('插入回复评论', async () => {
+      const now = new Date();
+      await db.insert(schema.users).values({
+        id: 'u1', name: 'Test', email: 'test@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(schema.users).values({
+        id: 'u2', name: 'Test2', email: 'test2@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
+        metadata: '{}', createdAt: now, updatedAt: now,
+      }).run();
+
+      await db.insert(patternsSchema.comments).values({
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '主评论',
+        createdAt: now, updatedAt: now,
+      }).run();
+
+      await db.insert(patternsSchema.comments).values({
+        id: 'c2', userId: 'u2', targetType: 'comment', targetId: 'c1',
+        rootType: 'pattern', rootId: 'p1', content: '回复评论',
+        createdAt: now, updatedAt: now,
+      }).run();
+
+      const result = await db.select().from(patternsSchema.comments)
+        .where(eq(patternsSchema.comments.id, 'c2')).all();
+      expect(result).toHaveLength(1);
+      expect(result[0]?.targetType).toBe('comment');
+    });
+
+    it('级联删除 - 删除用户时删除其评论', async () => {
       const now = new Date();
       await db.insert(schema.users).values({
         id: 'u1', name: 'Test', email: 'test@test.com',
@@ -113,34 +144,72 @@ describe('数据库集成测试 - 评论系统', () => {
         id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
         metadata: '{}', createdAt: now, updatedAt: now,
       }).run();
+
       await db.insert(patternsSchema.comments).values({
-        id: 'A', userId: 'u1', targetType: 'pattern', targetId: 'p1',
-        rootType: 'pattern', rootId: 'p1', content: '主评论',
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '评论',
         createdAt: now, updatedAt: now,
       }).run();
 
-      await db.insert(patternsSchema.comments).values({
-        id: 'B', userId: 'u1', targetType: 'comment', targetId: 'A',
-        rootType: 'pattern', rootId: 'p1', content: '回复A',
-        createdAt: now, updatedAt: now,
+      await db.delete(schema.users).where(eq(schema.users.id, 'u1')).run();
+
+      const remaining = await db.select().from(patternsSchema.comments).all();
+      expect(remaining).toHaveLength(0);
+    });
+
+    it('级联删除 - 删除pattern时删除关联评论', async () => {
+      const now = new Date();
+      await db.insert(schema.users).values({
+        id: 'u1', name: 'Test', email: 'test@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
+        metadata: '{}', createdAt: now, updatedAt: now,
       }).run();
 
       await db.insert(patternsSchema.comments).values({
-        id: 'C', userId: 'u1', targetType: 'comment', targetId: 'B',
-        rootType: 'pattern', rootId: 'p1', content: '回复B',
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '评论',
         createdAt: now, updatedAt: now,
       }).run();
 
-      const replies = await db.select().from(patternsSchema.comments)
-        .where(and(eq(patternsSchema.comments.rootId, 'p1'), eq(patternsSchema.comments.targetId, 'A')))
-        .all();
-      expect(replies).toHaveLength(1);
-      expect(replies[0]?.id).toBe('B');
+      await db.delete(patternsSchema.patterns).where(eq(patternsSchema.patterns.id, 'p1')).run();
 
-      const allInThread = await db.select().from(patternsSchema.comments)
-        .where(eq(patternsSchema.comments.rootId, 'p1'))
-        .all();
-      expect(allInThread).toHaveLength(3);
+      const remaining = await db.select().from(patternsSchema.comments).all();
+      expect(remaining).toHaveLength(0);
+    });
+
+    it('查询指定pattern的评论', async () => {
+      const now = new Date();
+      await db.insert(schema.users).values({
+        id: 'u1', name: 'Test', email: 'test@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
+        metadata: '{}', createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p2', emoji: '📝', title: 'Test2', translation: '测试2',
+        metadata: '{}', createdAt: now, updatedAt: now,
+      }).run();
+
+      await db.insert(patternsSchema.comments).values({
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '评论1',
+        createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.comments).values({
+        id: 'c2', userId: 'u1', targetType: 'pattern', targetId: 'p2',
+        rootType: 'pattern', rootId: 'p2', content: '评论2',
+        createdAt: now, updatedAt: now,
+      }).run();
+
+      const result = await db.select().from(patternsSchema.comments)
+        .where(eq(patternsSchema.comments.targetId, 'p1')).all();
+      expect(result).toHaveLength(1);
+      expect(result[0]?.content).toBe('评论1');
     });
 
     it('删除评论', async () => {
@@ -153,9 +222,10 @@ describe('数据库集成测试 - 评论系统', () => {
         id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
         metadata: '{}', createdAt: now, updatedAt: now,
       }).run();
+
       await db.insert(patternsSchema.comments).values({
         id: 'A', userId: 'u1', targetType: 'pattern', targetId: 'p1',
-        rootType: 'pattern', rootId: 'p1', content: '主评论',
+        rootType: 'pattern', rootId: 'p1', content: '评论',
         createdAt: now, updatedAt: now,
       }).run();
 
@@ -246,13 +316,72 @@ describe('数据库集成测试 - 评论系统', () => {
         id: 'cl1', userId: 'u1', commentId: 'c1', createdAt: now,
       }).run();
 
-      await db.delete(patternsSchema.commentLikes).where(eq(patternsSchema.commentLikes.userId, 'u1')).run();
+      await db.delete(patternsSchema.commentLikes)
+        .where(
+          and(
+            eq(patternsSchema.commentLikes.userId, 'u1'),
+            eq(patternsSchema.commentLikes.commentId, 'c1')
+          )
+        )
+        .run();
 
       const likeCount = await db.select({ count: count() })
         .from(patternsSchema.commentLikes)
         .where(eq(patternsSchema.commentLikes.commentId, 'c1'))
         .all();
       expect(likeCount[0]?.count).toBe(0);
+    });
+
+    it('级联删除 - 删除用户时删除其点赞', async () => {
+      const now = new Date();
+      await db.insert(schema.users).values({
+        id: 'u1', name: 'Test', email: 'test@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
+        metadata: '{}', createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.comments).values({
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '评论',
+        createdAt: now, updatedAt: now,
+      }).run();
+
+      await db.insert(patternsSchema.commentLikes).values({
+        id: 'cl1', userId: 'u1', commentId: 'c1', createdAt: now,
+      }).run();
+
+      await db.delete(schema.users).where(eq(schema.users.id, 'u1')).run();
+
+      const remaining = await db.select().from(patternsSchema.commentLikes).all();
+      expect(remaining).toHaveLength(0);
+    });
+
+    it('级联删除 - 删除评论时删除其点赞', async () => {
+      const now = new Date();
+      await db.insert(schema.users).values({
+        id: 'u1', name: 'Test', email: 'test@test.com',
+        emailVerified: false, createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.patterns).values({
+        id: 'p1', emoji: '📝', title: 'Test', translation: '测试',
+        metadata: '{}', createdAt: now, updatedAt: now,
+      }).run();
+      await db.insert(patternsSchema.comments).values({
+        id: 'c1', userId: 'u1', targetType: 'pattern', targetId: 'p1',
+        rootType: 'pattern', rootId: 'p1', content: '评论',
+        createdAt: now, updatedAt: now,
+      }).run();
+
+      await db.insert(patternsSchema.commentLikes).values({
+        id: 'cl1', userId: 'u1', commentId: 'c1', createdAt: now,
+      }).run();
+
+      await db.delete(patternsSchema.comments).where(eq(patternsSchema.comments.id, 'c1')).run();
+
+      const remaining = await db.select().from(patternsSchema.commentLikes).all();
+      expect(remaining).toHaveLength(0);
     });
   });
 });

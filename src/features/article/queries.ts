@@ -98,7 +98,7 @@ export async function countPublishedArticles() {
   return value || 0;
 }
 
-export async function fetchManageArticles(status?: ArticleStatus) {
+export async function fetchManageArticles(status?: ArticleStatus, authorId?: string) {
   const db = getDb();
   const rows = await db
     .select({
@@ -116,17 +116,23 @@ export async function fetchManageArticles(status?: ArticleStatus) {
     })
     .from(articles)
     .leftJoin(users, eq(articles.authorId, users.id))
-    .where(status ? eq(articles.status, status) : undefined)
+    .where(and(
+      status ? eq(articles.status, status) : undefined,
+      authorId ? eq(articles.authorId, authorId) : undefined
+    ))
     .orderBy(desc(articles.updatedAt));
 
   return rows.map(mapArticleRow).map(({ content, ...item }) => item as ArticleSummary);
 }
 
-export async function countAllArticles(status?: ArticleStatus) {
+export async function countAllArticles(status?: ArticleStatus, authorId?: string) {
   const db = getDb();
   const [{ value }] = await db
     .select({ value: count() })
     .from(articles)
-    .where(status ? eq(articles.status, status) : undefined);
+    .where(and(
+      status ? eq(articles.status, status) : undefined,
+      authorId ? eq(articles.authorId, authorId) : undefined
+    ));
   return value || 0;
 }

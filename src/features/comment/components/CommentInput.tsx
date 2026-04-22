@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Send } from 'lucide-react';
 import { useCommentStore } from '@/features/comment/store/commentStore';
 import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
+import { cn } from '@/shared/utils/cn';
 
 interface CommentInputProps {
   rootId: string;
@@ -12,6 +13,9 @@ interface CommentInputProps {
   replyToUserId?: string;
   anchor?: CreateCommentAnchorRequest;
   onReplySuccess?: () => void;
+  autoFocus?: boolean;
+  variant?: 'page' | 'floating';
+  hideAnchorSummary?: boolean;
 }
 
 const placeholderMap: Record<RootType, string> = {
@@ -22,7 +26,17 @@ const placeholderMap: Record<RootType, string> = {
 };
 
 export function CommentInput(props: CommentInputProps) {
-  const { rootId, rootType, replyToCommentId, replyToUserId, anchor, onReplySuccess } = props;
+  const {
+    rootId,
+    rootType,
+    replyToCommentId,
+    replyToUserId,
+    anchor,
+    onReplySuccess,
+    autoFocus = false,
+    variant = 'page',
+    hideAnchorSummary = false,
+  } = props;
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +55,12 @@ export function CommentInput(props: CommentInputProps) {
   };
 
   const placeholder = replyToCommentId ? '回复这条评论...' : placeholderMap[rootType];
+
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -72,8 +92,13 @@ export function CommentInput(props: CommentInputProps) {
   };
 
   return (
-    <div className="bg-white border-t border-gray-100 p-4 safe-area-bottom">
-      {anchor ? (
+    <div
+      className={cn(
+        'bg-white p-4',
+        variant === 'page' ? 'border-t border-gray-100 safe-area-bottom' : '',
+      )}
+    >
+      {anchor && !hideAnchorSummary ? (
         <div className="mb-3 rounded-subtle-card bg-primary/10 px-3 py-2 text-sm text-text-primary">
           评论片段: "{anchor.selectedText}"
         </div>

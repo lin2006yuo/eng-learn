@@ -9,7 +9,7 @@ import { clearBrowserSelection } from '@/features/comment/utils';
 export function SelectionPopover() {
   const router = useRouter();
   const { user } = useAuth();
-  const { anchor, position, handleComment, clearSelection, handleDocumentClick } = useSelectionStore();
+  const { anchor, position, openComposer, clearSelection, handleDocumentClick } = useSelectionStore();
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function SelectionPopover() {
   };
 
   const handleCommentClick = () => {
-    handleComment();
+    openComposer();
     clearBrowserSelection();
   };
 
@@ -45,7 +45,7 @@ export function SelectionPopover() {
     >
       <button
         type="button"
-        onClick={handleCommentClick}
+        onClick={user ? handleCommentClick : handleLogin}
         onMouseDown={(e) => e.preventDefault()}
         className="comment-selection-popover-button rounded-full bg-text-primary px-4 py-2 text-sm font-medium text-white shadow-card"
       >

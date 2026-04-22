@@ -9,36 +9,46 @@ interface SelectionPosition {
 interface SelectionState {
   anchor: CreateCommentAnchorRequest | null;
   position: SelectionPosition | null;
-  onSelectCallback: ((anchor: CreateCommentAnchorRequest) => void) | null;
+  composerAnchor: CreateCommentAnchorRequest | null;
+  composerPosition: SelectionPosition | null;
   setSelection: (
     anchor: CreateCommentAnchorRequest,
     position: SelectionPosition,
-    onSelect?: (anchor: CreateCommentAnchorRequest) => void
+    composerPosition: SelectionPosition
   ) => void;
-  handleComment: () => void;
+  openComposer: () => void;
   clearSelection: () => void;
+  closeComposer: () => void;
+  handleDocumentClick: () => void;
 }
 
 export const useSelectionStore = create<SelectionState>((set, get) => ({
   anchor: null,
   position: null,
-  onSelectCallback: null,
-  setSelection: (anchor, position, onSelect) => set({
+  composerAnchor: null,
+  composerPosition: null,
+  setSelection: (anchor, position, composerPosition) => set({
     anchor,
     position,
-    onSelectCallback: onSelect || null,
+    composerAnchor: null,
+    composerPosition,
   }),
-  handleComment: () => {
-    const { anchor, onSelectCallback } = get();
-    if (!anchor) return;
-    onSelectCallback?.(anchor);
-    set({ anchor: null, position: null, onSelectCallback: null });
+  openComposer: () => {
+    const { anchor, composerPosition } = get();
+    if (!anchor || !composerPosition) return;
+    set({
+      anchor: null,
+      position: null,
+      composerAnchor: anchor,
+      composerPosition,
+    });
   },
-  clearSelection: () => set({ anchor: null, position: null, onSelectCallback: null }),
+  clearSelection: () => set({ anchor: null, position: null }),
+  closeComposer: () => set({ composerAnchor: null, composerPosition: null }),
   handleDocumentClick: () => {
     const selection = window.getSelection();
     if (!selection || selection.toString().trim().length === 0) {
-      set({ anchor: null, position: null, onSelectCallback: null });
+      set({ anchor: null, position: null });
     }
   },
 }));

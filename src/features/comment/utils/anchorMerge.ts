@@ -6,7 +6,7 @@ export interface MergedInterval {
   endOffset: number;
   commentIds: string[];
   text: string;
-  hasRelocated: boolean;
+  includesRelocated: boolean;
 }
 
 export function mergeAnchorIntervals(
@@ -18,12 +18,13 @@ export function mergeAnchorIntervals(
     startOffset: number;
     endOffset: number;
     commentId: string;
-    hasRelocated: boolean;
+    includesRelocated: boolean;
+    order: number;
   };
 
   const rawIntervals: RawInterval[] = [];
 
-  comments.forEach((comment) => {
+  comments.forEach((comment, order) => {
     const anchor = comment.anchor;
     if (!anchor || anchor.blockId !== blockId) return;
 
@@ -34,7 +35,8 @@ export function mergeAnchorIntervals(
       startOffset: resolved.startOffset,
       endOffset: resolved.endOffset,
       commentId: comment.id,
-      hasRelocated: resolved.anchorStatus === 'relocated',
+      includesRelocated: resolved.anchorStatus === 'relocated',
+      order,
     });
   });
 
@@ -46,28 +48,40 @@ export function mergeAnchorIntervals(
   let current = {
     startOffset: rawIntervals[0].startOffset,
     endOffset: rawIntervals[0].endOffset,
-    commentIds: [rawIntervals[0].commentId],
-    hasRelocated: rawIntervals[0].hasRelocated,
+    items: [rawIntervals[0]],
+    includesRelocated: rawIntervals[0].includesRelocated,
   };
 
   for (let i = 1; i < rawIntervals.length; i++) {
     const next = rawIntervals[i];
     if (next.startOffset <= current.endOffset) {
       current.endOffset = Math.max(current.endOffset, next.endOffset);
-      current.commentIds.push(next.commentId);
-      current.hasRelocated = current.hasRelocated || next.hasRelocated;
+      current.items.push(next);
+      current.includesRelocated = current.includesRelocated || next.includesRelocated;
     } else {
-      merged.push({ ...current, text: text.slice(current.startOffset, current.endOffset) });
+      merged.push({
+        startOffset: current.startOffset,
+        endOffset: current.endOffset,
+        commentIds: current.items.sort((a, b) => a.order - b.order).map((item) => item.commentId),
+        text: text.slice(current.startOffset, current.endOffset),
+        includesRelocated: current.includesRelocated,
+      });
       current = {
         startOffset: next.startOffset,
         endOffset: next.endOffset,
-        commentIds: [next.commentId],
-        hasRelocated: next.hasRelocated,
+        items: [next],
+        includesRelocated: next.includesRelocated,
       };
     }
   }
 
-  merged.push({ ...current, text: text.slice(current.startOffset, current.endOffset) });
+  merged.push({
+    startOffset: current.startOffset,
+    endOffset: current.endOffset,
+    commentIds: current.items.sort((a, b) => a.order - b.order).map((item) => item.commentId),
+    text: text.slice(current.startOffset, current.endOffset),
+    includesRelocated: current.includesRelocated,
+  });
 
   return merged;
 }

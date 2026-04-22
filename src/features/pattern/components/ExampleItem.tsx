@@ -2,12 +2,11 @@ import { motion } from 'framer-motion';
 import { useCopy } from '@/shared/hooks/useCopy';
 import type { Example } from '@/shared/types';
 import { useEffect, useMemo, useState } from 'react';
-import { CommentInput } from '@/features/comment/components/CommentInput';
 import { AnchorFocusedComments } from '@/features/comment/components/selection/AnchorFocusedComments';
 import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
 import { SelectableText } from '@/features/comment/components/selection/SelectableText';
-import type { CreateCommentAnchorRequest } from '@/features/comment/types';
 import { useCommentStore } from '@/features/comment/store/commentStore';
+import { mergeAnchorIntervals } from '@/features/comment/utils/anchorMerge';
 import { resolveAnchorPosition } from '@/features/comment/utils/anchorRelocation';
 
 interface ExampleItemProps {
@@ -16,9 +15,8 @@ interface ExampleItemProps {
   index: number;
 }
 
-interface FocusState {
-  commentIds: string[];
-  currentIndex: number;
+function getCommentOffsetForSegment(segmentIndex: number, segments: Array<{ commentIds: string[] }>) {
+  return segments.slice(0, segmentIndex).reduce((total, segment) => total + segment.commentIds.length, 0);
 }
 
 export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
@@ -26,8 +24,8 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   const { comments, fetchComments } = useCommentStore();
   const copyId = `${patternId}-${example.id}`;
   const copied = isCopied(copyId);
-  const [anchor, setAnchor] = useState<CreateCommentAnchorRequest | null>(null);
-  const [focus, setFocus] = useState<FocusState>({ commentIds: [], currentIndex: 0 });
+  const [activeCommentIndex, setActiveCommentIndex] = useState(0);
+  const [activeFocus, setActiveFocus] = useState<{ blockId: string; segmentIndex: number } | null>(null);
   const patternComments = comments[`pattern-${patternId}`] || [];
   const enBlockId = `pattern-${patternId}-example-${example.id}-en`;
   const zhBlockId = `pattern-${patternId}-example-${example.id}-zh`;
@@ -50,17 +48,25 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
     [enBlockId, example.en, example.zh, patternComments, zhBlockId],
   );
 
+  const enAnchorSegments = useMemo(
+    () => mergeAnchorIntervals(patternComments, enBlockId, example.en),
+    [enBlockId, example.en, patternComments],
+  );
+  const zhAnchorSegments = useMemo(
+    () => mergeAnchorIntervals(patternComments, zhBlockId, example.zh),
+    [example.zh, patternComments, zhBlockId],
+  );
+  const activeSegments = activeFocus?.blockId === zhBlockId ? zhAnchorSegments : enAnchorSegments;
+
   const handleCopy = () => {
     if (window.getSelection()?.toString().trim()) return;
     copy(example.en, copyId);
   };
 
-  const handleAnchorClick = (_intervalIndex: number, commentIds: string[]) => {
-    setFocus({ commentIds, currentIndex: 0 });
-  };
-
-  const handleCloseFocus = () => {
-    setFocus({ commentIds: [], currentIndex: 0 });
+  const handleAnchorClick = (blockId: string) => (segmentIndex: number) => {
+    const nextSegments = blockId === zhBlockId ? zhAnchorSegments : enAnchorSegments;
+    setActiveCommentIndex(getCommentOffsetForSegment(segmentIndex, nextSegments));
+    setActiveFocus({ blockId, segmentIndex });
   };
 
   return (
@@ -85,12 +91,11 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={enBlockId}
-            comments={resolvedComments}
+            comments={patternComments}
             text={textValue}
-            onAnchorClick={handleAnchorClick}
+            onAnchorClick={handleAnchorClick(enBlockId)}
           />
         )}
-        onSelect={setAnchor}
       />
       <SelectableText
         blockId={zhBlockId}
@@ -101,39 +106,23 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={zhBlockId}
-            comments={resolvedComments}
+            comments={patternComments}
             text={textValue}
-            onAnchorClick={handleAnchorClick}
+            onAnchorClick={handleAnchorClick(zhBlockId)}
           />
         )}
-        onSelect={setAnchor}
       />
 
-      {anchor ? (
-        <div
-          className="pattern-example-comment-input mt-3 rounded-subtle-card border border-primary/20 bg-white"
-          onClick={(event) => event.stopPropagation()}
-        >
-          <CommentInput
-            rootId={patternId}
-            rootType="pattern"
-            anchor={anchor}
-            onReplySuccess={() => setAnchor(null)}
-          />
-        </div>
-      ) : null}
-
-      {focus.commentIds.length > 0 ? (
-        <AnchorFocusedComments
-          resolvedComments={resolvedComments}
-          focusedCommentIds={focus.commentIds}
-          focusedCommentIndex={focus.currentIndex}
-          targetId={patternId}
-          rootType="pattern"
-          onIndexChange={(index) => setFocus((prev) => ({ ...prev, currentIndex: index }))}
-          onClose={handleCloseFocus}
-        />
-      ) : null}
+      <AnchorFocusedComments
+        resolvedComments={resolvedComments}
+        segments={activeSegments}
+        activeSegmentIndex={activeFocus?.segmentIndex ?? null}
+        activeCommentIndex={activeCommentIndex}
+        targetId={patternId}
+        rootType="pattern"
+        onCommentChange={setActiveCommentIndex}
+        onClose={() => setActiveFocus(null)}
+      />
     </motion.div>
   );
 }

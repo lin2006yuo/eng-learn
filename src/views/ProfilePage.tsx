@@ -141,9 +141,7 @@ function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoN
         <MenuCard title="我的笔记" icon={<FileText size={20} />} delay={0.15} onClick={onGoNotes} />
         <MenuCard title="我的评论" icon={<MessageSquare size={20} />} delay={0.2} onClick={onGoComments} />
         <MenuCard title="我的消息" icon={<Bell size={20} />} delay={0.3} badgeCount={unreadCount} onClick={onGoNotifications} />
-        {isAdmin && (
-          <MenuCard title="我的文章" icon={<LayoutDashboard size={20} />} delay={0.35} onClick={onGoManageArticles} />
-        )}
+        <MenuCard title="我的文章" icon={<LayoutDashboard size={20} />} delay={0.35} onClick={onGoManageArticles} />
       </div>
     </>
   );

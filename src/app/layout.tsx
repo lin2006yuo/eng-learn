@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Providers } from '@/app/providers';
 import { Toast } from '@/shared/components/Toast';
+import { SelectionCommentPopover } from '@/features/comment/components/selection/SelectionCommentPopover';
 import { SelectionPopover } from '@/features/comment/components/selection/SelectionPopover';
 import './globals.css';
 
@@ -34,6 +35,7 @@ export default function RootLayout({
             {children}
             <Toast />
             <SelectionPopover />
+            <SelectionCommentPopover />
           </div>
         </Providers>
       </body>

@@ -5,6 +5,8 @@ import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET || 'eng-learn-local-secret-key-2026-for-dev-only-please-change-in-production',
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
   database: drizzleAdapter(getDb(), {
     provider: 'sqlite',
     schema: {
@@ -43,21 +45,25 @@ export const auth = betterAuth({
         required: false,
         defaultValue: 'user',
       },
+      isAgent: {
+        type: 'boolean',
+        required: false,
+        defaultValue: false,
+      },
     },
   },
   databaseHooks: {
     user: {
       create: {
         before: async (user) => {
-          if (!user.nickname && user.username) {
-            return {
-              data: {
-                ...user,
-                nickname: user.username,
-              },
-            };
+          const data = { ...user } as Record<string, unknown>;
+          if (!data.nickname && data.username) {
+            data.nickname = data.username;
           }
-          return { data: user };
+          if (data.email && String(data.email).endsWith('@agent.local')) {
+            data.isAgent = true;
+          }
+          return { data };
         },
       },
     },

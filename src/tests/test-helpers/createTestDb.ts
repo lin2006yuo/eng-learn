@@ -21,7 +21,8 @@ const CREATE_TABLES_SQL = `
     username TEXT UNIQUE,
     display_username TEXT,
     nickname TEXT,
-    role TEXT NOT NULL DEFAULT 'user'
+    role TEXT NOT NULL DEFAULT 'user',
+    is_agent INTEGER NOT NULL DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS session (
@@ -180,6 +181,11 @@ export function createTestDb() {
           type: 'string',
           required: false,
           defaultValue: 'user',
+        },
+        isAgent: {
+          type: 'boolean',
+          required: false,
+          defaultValue: false,
         },
       },
     },

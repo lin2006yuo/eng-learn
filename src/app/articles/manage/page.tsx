@@ -30,19 +30,6 @@ export default function ManageArticlesPage() {
     return <div className="min-h-screen bg-background px-5 py-10 text-center text-text-secondary">加载中...</div>;
   }
 
-  if (user.role !== 'admin') {
-    return (
-      <div className="min-h-screen bg-background px-5 py-10">
-        <ArticleEmptyState
-          title="暂无权限"
-          description="只有管理员可以进入文章管理页面。"
-          actionText="返回文章广场"
-          onAction={() => router.push('/articles')}
-        />
-      </div>
-    );
-  }
-
   const handleCreate = async () => {
     const result = await createArticle.mutateAsync({});
     router.push(`/articles/manage/${result.id}`);
@@ -65,8 +52,8 @@ export default function ManageArticlesPage() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <p className="text-sm text-text-secondary">管理员工作台</p>
-            <h1 className="text-3xl font-bold text-text-primary">文章管理</h1>
+            <p className="text-sm text-text-secondary">管理你的学习内容</p>
+            <h1 className="text-3xl font-bold text-text-primary">我的文章</h1>
           </div>
         </div>
         <Button icon={<Plus size={18} />} onClick={handleCreate} disabled={createArticle.isPending}>
@@ -74,9 +61,9 @@ export default function ManageArticlesPage() {
         </Button>
       </div>
 
-      {isLoading ? <div className="py-20 text-center text-text-secondary">加载管理列表中...</div> : null}
+      {isLoading ? <div className="py-20 text-center text-text-secondary">加载文章列表中...</div> : null}
       {!isLoading && isError ? (
-        <ArticleEmptyState title="加载失败" description="文章管理列表暂时不可用。" actionText="重试" onAction={() => refetch()} />
+        <ArticleEmptyState title="加载失败" description="文章列表暂时不可用。" actionText="重试" onAction={() => refetch()} />
       ) : null}
       {!isLoading && !isError && data?.data.length === 0 ? (
         <ArticleEmptyState description="当前还没有文章，点击右上角创建第一篇文章。" />

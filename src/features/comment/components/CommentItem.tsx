@@ -15,9 +15,16 @@ interface CommentItemProps {
   targetId: string;
   rootType: RootType;
   isFocused?: boolean;
+  hideAnchorSummary?: boolean;
 }
 
-export function CommentItem({ comment, targetId, rootType, isFocused = false }: CommentItemProps) {
+export function CommentItem({
+  comment,
+  targetId,
+  rootType,
+  isFocused = false,
+  hideAnchorSummary = false,
+}: CommentItemProps) {
   const { toggleLike, deleteComment } = useCommentStore();
   const { user } = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -77,14 +84,14 @@ export function CommentItem({ comment, targetId, rootType, isFocused = false }: 
                   我
                 </span>
               )}
+              <span className="text-xs text-text-tertiary">
+                {formatRelativeTime(comment.createdAt)}
+              </span>
             </div>
-            <span className="text-xs text-text-tertiary">
-              {formatRelativeTime(comment.createdAt)}
-            </span>
           </div>
         </div>
 
-        <CommentAnchorSummary comment={comment} />
+        {!hideAnchorSummary ? <CommentAnchorSummary comment={comment} /> : null}
 
         <p className="text-text-primary text-sm leading-relaxed pl-12">
           {comment.content}

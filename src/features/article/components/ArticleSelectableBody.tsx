@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CommentInput } from '@/features/comment/components/CommentInput';
 import { AnchorFocusedComments } from '@/features/comment/components/selection/AnchorFocusedComments';
-import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
-import { SelectableText } from '@/features/comment/components/selection/SelectableText';
-import type { CreateCommentAnchorRequest } from '@/features/comment/types';
 import { useCommentStore } from '@/features/comment/store/commentStore';
+import { SelectableText } from '@/features/comment/components/selection/SelectableText';
+import { AnchorHighlightText } from '@/features/comment/components/selection/AnchorHighlightText';
+import { mergeAnchorIntervals } from '@/features/comment/utils/anchorMerge';
 import { resolveAnchorPosition } from '@/features/comment/utils/anchorRelocation';
 
 interface ArticleSelectableBodyProps {
@@ -14,15 +13,14 @@ interface ArticleSelectableBodyProps {
   content: string;
 }
 
-interface FocusState {
-  commentIds: string[];
-  currentIndex: number;
+function getCommentOffsetForSegment(segmentIndex: number, segments: Array<{ commentIds: string[] }>) {
+  return segments.slice(0, segmentIndex).reduce((total, segment) => total + segment.commentIds.length, 0);
 }
 
 export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
   const { articleId, content } = props;
-  const [anchor, setAnchor] = useState<CreateCommentAnchorRequest | null>(null);
-  const [focus, setFocus] = useState<FocusState>({ commentIds: [], currentIndex: 0 });
+  const [activeCommentIndex, setActiveCommentIndex] = useState(0);
+  const [activeSegmentIndex, setActiveSegmentIndex] = useState<number | null>(null);
   const { comments, fetchComments } = useCommentStore();
   const articleComments = comments[`article-${articleId}`] || [];
   const articleBlockId = `article-${articleId}-content`;
@@ -40,13 +38,10 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
     [articleBlockId, articleComments, content],
   );
 
-  const handleAnchorClick = (_intervalIndex: number, commentIds: string[]) => {
-    setFocus({ commentIds, currentIndex: 0 });
-  };
-
-  const handleCloseFocus = () => {
-    setFocus({ commentIds: [], currentIndex: 0 });
-  };
+  const anchorSegments = useMemo(
+    () => mergeAnchorIntervals(articleComments, articleBlockId, content),
+    [articleBlockId, articleComments, content],
+  );
 
   return (
     <div className="article-selectable-body space-y-4">
@@ -58,37 +53,27 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         className="article-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary"
         renderText={(textValue) => (
           <AnchorHighlightText
-            blockId={articleBlockId}
-            comments={resolvedComments}
+            blockId={`article-${articleId}-content`}
+            comments={articleComments}
             text={textValue}
-            onAnchorClick={handleAnchorClick}
+            onAnchorClick={(segmentIndex) => {
+              setActiveCommentIndex(getCommentOffsetForSegment(segmentIndex, anchorSegments));
+              setActiveSegmentIndex(segmentIndex);
+            }}
           />
         )}
-        onSelect={setAnchor}
       />
 
-      {anchor ? (
-        <div className="article-selectable-body-input rounded-subtle-card border border-primary/20 bg-white">
-          <CommentInput
-            rootId={articleId}
-            rootType="article"
-            anchor={anchor}
-            onReplySuccess={() => setAnchor(null)}
-          />
-        </div>
-      ) : null}
-
-      {focus.commentIds.length > 0 ? (
-        <AnchorFocusedComments
-          resolvedComments={resolvedComments}
-          focusedCommentIds={focus.commentIds}
-          focusedCommentIndex={focus.currentIndex}
-          targetId={articleId}
-          rootType="article"
-          onIndexChange={(index) => setFocus((prev) => ({ ...prev, currentIndex: index }))}
-          onClose={handleCloseFocus}
-        />
-      ) : null}
+      <AnchorFocusedComments
+        resolvedComments={resolvedComments}
+        segments={anchorSegments}
+        activeSegmentIndex={activeSegmentIndex}
+        activeCommentIndex={activeCommentIndex}
+        targetId={articleId}
+        rootType="article"
+        onCommentChange={setActiveCommentIndex}
+        onClose={() => setActiveSegmentIndex(null)}
+      />
     </div>
   );
 }
