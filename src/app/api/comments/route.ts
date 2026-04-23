@@ -114,11 +114,10 @@ function validateAnchor(
   if (!anchor) return { valid: true };
 
   const hasText = anchor.selectedText.trim().length > 0;
-  const hasBlock = anchor.blockId.trim().length > 0;
   const offsetsValid = anchor.startOffset >= 0 && anchor.endOffset > anchor.startOffset;
   const rootMatched = anchor.rootType === rootType && anchor.rootId === rootId;
 
-  if (!hasText || !hasBlock || !offsetsValid || !rootMatched) {
+  if (!hasText || !offsetsValid || !rootMatched) {
     return { valid: false, error: '锚点参数错误' };
   }
 
@@ -313,12 +312,12 @@ export async function POST(request: NextRequest) {
       commentId: newComment.id,
       rootType: anchor.rootType,
       rootId: anchor.rootId,
-      blockId: anchor.blockId,
       selectedText: anchor.selectedText.trim(),
       startOffset: anchor.startOffset,
       endOffset: anchor.endOffset,
       prefixText: anchor.prefixText,
       suffixText: anchor.suffixText,
+      extra: anchor.extra ? JSON.stringify(anchor.extra) : '{}',
       anchorStatus: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -365,7 +364,7 @@ export async function POST(request: NextRequest) {
       anchorId: commentAnchors.id,
       anchorRootType: commentAnchors.rootType,
       anchorRootId: commentAnchors.rootId,
-      blockId: commentAnchors.blockId,
+      extra: commentAnchors.extra,
       selectedText: commentAnchors.selectedText,
       startOffset: commentAnchors.startOffset,
       endOffset: commentAnchors.endOffset,
@@ -398,6 +397,8 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  const anchorExtra = createdComment!.extra ? JSON.parse(createdComment!.extra) : {};
+
   return NextResponse.json({
     data: {
       id: createdComment!.id,
@@ -419,12 +420,12 @@ export async function POST(request: NextRequest) {
             commentId: createdComment!.id,
             rootType: createdComment!.anchorRootType as RootType,
             rootId: createdComment!.anchorRootId,
-            blockId: createdComment!.blockId,
             selectedText: createdComment!.selectedText,
             startOffset: createdComment!.startOffset,
             endOffset: createdComment!.endOffset,
             prefixText: createdComment!.prefixText,
             suffixText: createdComment!.suffixText,
+            extra: anchorExtra,
             anchorStatus: createdComment!.anchorStatus,
             createdAt: createdComment!.anchorCreatedAt?.toISOString(),
             updatedAt: createdComment!.anchorUpdatedAt?.toISOString(),

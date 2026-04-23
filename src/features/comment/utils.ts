@@ -53,11 +53,11 @@ export function buildSelectionAnchor(options: BuildSelectionAnchorOptions): Crea
   return {
     rootType,
     rootId,
-    blockId,
     selectedText: text.slice(startOffset, endOffset).trim(),
     startOffset,
     endOffset,
     prefixText: text.slice(Math.max(0, startOffset - 20), startOffset),
     suffixText: text.slice(endOffset, Math.min(text.length, endOffset + 20)),
+    extra: { blockId },
   };
 }

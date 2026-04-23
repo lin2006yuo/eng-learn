@@ -31,7 +31,7 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
 
   const resolvedComments = useMemo(
     () => articleComments.map((comment) => {
-      if (!comment.anchor || comment.anchor.blockId !== articleBlockId) return comment;
+      if (!comment.anchor || comment.anchor.extra.blockId !== articleBlockId) return comment;
       const resolved = resolveAnchorPosition(comment.anchor, content);
       return { ...comment, anchor: { ...comment.anchor, ...resolved } };
     }),

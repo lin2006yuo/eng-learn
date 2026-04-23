@@ -21,7 +21,7 @@ interface CommentRaw {
   anchorId?: string | null;
   anchorRootType?: string | null;
   anchorRootId?: string | null;
-  blockId?: string | null;
+  extra?: string | null;
   selectedText?: string | null;
   startOffset?: number | null;
   endOffset?: number | null;
@@ -60,7 +60,7 @@ export async function fetchCommentsByRoot(
       anchorId: commentAnchors.id,
       anchorRootType: commentAnchors.rootType,
       anchorRootId: commentAnchors.rootId,
-      blockId: commentAnchors.blockId,
+      extra: commentAnchors.extra,
       selectedText: commentAnchors.selectedText,
       startOffset: commentAnchors.startOffset,
       endOffset: commentAnchors.endOffset,
@@ -112,7 +112,7 @@ export async function fetchReplies(rootType: RootType, rootId: string) {
       anchorId: commentAnchors.id,
       anchorRootType: commentAnchors.rootType,
       anchorRootId: commentAnchors.rootId,
-      blockId: commentAnchors.blockId,
+      extra: commentAnchors.extra,
       selectedText: commentAnchors.selectedText,
       startOffset: commentAnchors.startOffset,
       endOffset: commentAnchors.endOffset,
@@ -189,7 +189,7 @@ export async function fetchCommentsByUser(
       anchorId: commentAnchors.id,
       anchorRootType: commentAnchors.rootType,
       anchorRootId: commentAnchors.rootId,
-      blockId: commentAnchors.blockId,
+      extra: commentAnchors.extra,
       selectedText: commentAnchors.selectedText,
       startOffset: commentAnchors.startOffset,
       endOffset: commentAnchors.endOffset,

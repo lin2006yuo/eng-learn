@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 /**
  * eng-learn CLI
- * 
+ *
  * Fragment Comment Usage:
- * 
+ *
  * When you select text in a browser UI:
  *   "The [quick brown fox] jumps over the dog"
- *   
+ *
  *   selectedText = "quick brown fox"
  *   prefixText   = "The "          (text before selection)
  *   suffixText   = " jumps over"   (text after selection)
  *   startOffset  = 4
  *   endOffset    = 19
- * 
+ *
  * If document content changes (e.g., word inserted):
  *   "The [quick brown fox] now jumps over the dog"
- *   
+ *
  *   Old startOffset/endOffset become invalid
  *   System relocates using: prefixText + selectedText + suffixText
- * 
+ *
  * CLI Example:
  *   eng-learn comment create \
  *     --targetType pattern \
@@ -187,7 +187,7 @@ comment
   .requiredOption('--content <content>', 'comment content (1-300 chars)')
   .option('--replyToUserId <id>', 'reply to specific user id')
   // Anchor options for fragment comments
-  .option('--blockId <id>', '[anchor] block id within the root resource')
+  .option('--blockId <id>', '[anchor] block id within the root resource (stored in extra)')
   .option('--selectedText <text>', '[anchor] the exact text being commented on')
   .option('--startOffset <n>', '[anchor] character offset where selection starts', (v: string) => parseInt(v, 10))
   .option('--endOffset <n>', '[anchor] character offset where selection ends', (v: string) => parseInt(v, 10))
@@ -195,15 +195,17 @@ comment
   .option('--suffixText <text>', '[anchor] text immediately after the selection (used for relocation)')
   .action(async (options: Record<string, string | number | undefined>) => {
     let anchor: import('./commands/comment.js').AnchorOptions | undefined;
-    if (options.blockId && options.selectedText !== undefined && options.startOffset !== undefined && options.endOffset !== undefined && options.prefixText !== undefined && options.suffixText !== undefined) {
+    if (options.selectedText !== undefined && options.startOffset !== undefined && options.endOffset !== undefined && options.prefixText !== undefined && options.suffixText !== undefined) {
       anchor = {
-        blockId: options.blockId as string,
         selectedText: options.selectedText as string,
         startOffset: options.startOffset as number,
         endOffset: options.endOffset as number,
         prefixText: options.prefixText as string,
         suffixText: options.suffixText as string,
       };
+      if (options.blockId) {
+        anchor.extra = { blockId: options.blockId as string };
+      }
     }
     await commentCreateCmd(
       options.targetType as string,

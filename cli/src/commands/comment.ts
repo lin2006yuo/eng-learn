@@ -33,12 +33,12 @@ export async function commentListMineCmd(format: 'json' | 'table'): Promise<void
 }
 
 export interface AnchorOptions {
-  blockId: string;
   selectedText: string;
   startOffset: number;
   endOffset: number;
   prefixText: string;
   suffixText: string;
+  extra?: { blockId?: string };
 }
 
 export async function commentCreateCmd(
@@ -57,12 +57,12 @@ export async function commentCreateCmd(
     body.anchor = {
       rootType,
       rootId,
-      blockId: anchor.blockId,
       selectedText: anchor.selectedText,
       startOffset: anchor.startOffset,
       endOffset: anchor.endOffset,
       prefixText: anchor.prefixText,
       suffixText: anchor.suffixText,
+      extra: anchor.extra || {},
     };
   }
   const res = await client.post('/comments', body);

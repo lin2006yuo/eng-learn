@@ -16,7 +16,7 @@ interface CommentRow {
   anchorId?: string | null;
   anchorRootType?: string | null;
   anchorRootId?: string | null;
-  blockId?: string | null;
+  extra?: string | null;
   selectedText?: string | null;
   startOffset?: number | null;
   endOffset?: number | null;
@@ -28,19 +28,21 @@ interface CommentRow {
 }
 
 function buildCommentAnchor(row: CommentRow) {
-  if (!row.anchorId || !row.blockId || !row.selectedText) return undefined;
+  if (!row.anchorId || !row.selectedText) return undefined;
+
+  const extra = row.extra ? JSON.parse(row.extra) : {};
 
   return {
     id: row.anchorId,
     commentId: row.id,
     rootType: (row.anchorRootType || row.rootType) as RootType,
     rootId: row.anchorRootId || row.rootId,
-    blockId: row.blockId,
     selectedText: row.selectedText,
     startOffset: row.startOffset || 0,
     endOffset: row.endOffset || 0,
     prefixText: row.prefixText || '',
     suffixText: row.suffixText || '',
+    extra,
     anchorStatus: (row.anchorStatus || 'active') as CommentAnchorStatus,
     createdAt: row.anchorCreatedAt?.toISOString(),
     updatedAt: row.anchorUpdatedAt?.toISOString(),

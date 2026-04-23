@@ -4,17 +4,21 @@ export type CommentTargetType = RootType | 'comment';
 
 export type CommentAnchorStatus = 'active' | 'relocated' | 'orphaned';
 
+export interface CommentAnchorExtra {
+  blockId?: string;
+}
+
 export interface CommentAnchor {
   id: string;
   commentId: string;
   rootType: RootType;
   rootId: string;
-  blockId: string;
   selectedText: string;
   startOffset: number;
   endOffset: number;
   prefixText: string;
   suffixText: string;
+  extra: CommentAnchorExtra;
   anchorStatus: CommentAnchorStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -23,12 +27,12 @@ export interface CommentAnchor {
 export interface CreateCommentAnchorRequest {
   rootType: RootType;
   rootId: string;
-  blockId: string;
   selectedText: string;
   startOffset: number;
   endOffset: number;
   prefixText: string;
   suffixText: string;
+  extra?: CommentAnchorExtra;
 }
 
 export interface Comment {

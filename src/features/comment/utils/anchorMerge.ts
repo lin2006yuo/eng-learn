@@ -26,7 +26,7 @@ export function mergeAnchorIntervals(
 
   comments.forEach((comment, order) => {
     const anchor = comment.anchor;
-    if (!anchor || anchor.blockId !== blockId) return;
+    if (!anchor || anchor.extra.blockId !== blockId) return;
 
     const resolved = resolveAnchorPosition(anchor, text);
     if (resolved.anchorStatus === 'orphaned') return;

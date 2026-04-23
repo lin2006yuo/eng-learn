@@ -37,10 +37,10 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   const resolvedComments = useMemo(
     () => patternComments.map((comment) => {
       if (!comment.anchor) return comment;
-      if (comment.anchor.blockId === enBlockId) {
+      if (comment.anchor.extra.blockId === enBlockId) {
         return { ...comment, anchor: { ...comment.anchor, ...resolveAnchorPosition(comment.anchor, example.en) } };
       }
-      if (comment.anchor.blockId === zhBlockId) {
+      if (comment.anchor.extra.blockId === zhBlockId) {
         return { ...comment, anchor: { ...comment.anchor, ...resolveAnchorPosition(comment.anchor, example.zh) } };
       }
       return comment;
