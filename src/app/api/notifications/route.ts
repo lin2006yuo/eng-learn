@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { notifications, comments, patterns } from '@/lib/db/patterns-schema';
+import { articles } from '@/lib/db/articles-schema';
 import { users } from '@/lib/db/schema';
 import { eq, desc, lt, and, inArray } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
@@ -79,6 +80,16 @@ export async function GET(request: NextRequest) {
     patternInfoMap = new Map(patternRows.map(p => [p.id, p]));
   }
 
+  const articleRootIds = [...new Set(result.filter(n => n.targetType === 'article' && n.rootId).map(n => n.rootId as string))];
+  let articleInfoMap: Map<string, { id: string; title: string }> = new Map();
+  if (articleRootIds.length > 0) {
+    const articleRows = await db
+      .select({ id: articles.id, title: articles.title })
+      .from(articles)
+      .where(inArray(articles.id, articleRootIds));
+    articleInfoMap = new Map(articleRows.map(a => [a.id, a]));
+  }
+
   const data = result.map(n => ({
     id: n.id,
     userId: n.userId,
@@ -89,8 +100,9 @@ export async function GET(request: NextRequest) {
     targetId: n.targetId,
     rootId: n.rootId || undefined,
     targetContent: n.targetContent || undefined,
-    patternTitle: n.rootId ? patternInfoMap.get(n.rootId)?.title : undefined,
-    patternEmoji: n.rootId ? patternInfoMap.get(n.rootId)?.emoji : undefined,
+    patternTitle: n.rootId && n.targetType === 'comment' ? patternInfoMap.get(n.rootId)?.title : undefined,
+    patternEmoji: n.rootId && n.targetType === 'comment' ? patternInfoMap.get(n.rootId)?.emoji : undefined,
+    articleTitle: n.targetType === 'article' ? articleInfoMap.get(n.targetId)?.title : undefined,
     isRead: n.isRead,
     readAt: n.readAt?.toISOString() || null,
     createdAt: n.createdAt.toISOString(),

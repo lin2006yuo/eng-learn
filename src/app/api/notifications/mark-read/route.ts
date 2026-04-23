@@ -46,12 +46,12 @@ export async function POST(request: NextRequest) {
     await db
       .update(notifications)
       .set({ isRead: true, readAt: new Date() })
-      .where(and(...baseWhere, inArray(notifications.targetId, targetIds)));
+      .where(and(...baseWhere, inArray(notifications.id, targetIds)));
   } else {
     await db
       .update(notifications)
       .set({ isRead: true, readAt: new Date() })
-      .where(and(...baseWhere, eq(notifications.targetId, targetId)));
+      .where(and(...baseWhere, eq(notifications.id, targetId)));
   }
 
   return NextResponse.json({ success: true });

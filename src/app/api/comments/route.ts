@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
 import { commentAnchors, comments, notifications, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, and } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import {
   fetchCommentsByRoot,
@@ -341,6 +341,25 @@ export async function POST(request: NextRequest) {
         userId: notifyUserId,
         actorId: session.user.id,
         targetType: 'comment',
+        targetId: newComment.id,
+        isRead: false,
+        createdAt: new Date(),
+      });
+    }
+  } else if (targetType === 'article') {
+    const [article] = await db
+      .select({ id: articles.id, authorId: articles.authorId })
+      .from(articles)
+      .where(eq(articles.id, rootId))
+      .limit(1);
+
+    if (article && article.authorId !== session.user.id) {
+      const notificationId = generateId();
+      await db.insert(notifications).values({
+        id: notificationId,
+        userId: article.authorId,
+        actorId: session.user.id,
+        targetType: 'article',
         targetId: newComment.id,
         isRead: false,
         createdAt: new Date(),
