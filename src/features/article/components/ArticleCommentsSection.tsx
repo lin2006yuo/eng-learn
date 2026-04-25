@@ -5,16 +5,12 @@ import { useRouter } from 'next/navigation';
 import { CommentInput } from '@/features/comment/components/CommentInput';
 import { CommentItem } from '@/features/comment/components/CommentItem';
 import { useCommentStore } from '@/features/comment/store/commentStore';
+import { filterNormalComments } from '@/features/comment/utils';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Button, Card } from '@/shared/components';
-import type { Comment } from '@/features/comment/types';
 
 interface ArticleCommentsSectionProps {
   articleId: string;
-}
-
-function isNonAnchorComment(comment: Comment): boolean {
-  return comment.anchor == null;
 }
 
 export function ArticleCommentsSection({ articleId }: ArticleCommentsSectionProps) {
@@ -25,7 +21,7 @@ export function ArticleCommentsSection({ articleId }: ArticleCommentsSectionProp
   const articleComments = comments[storeKey] || [];
 
   const visibleComments = useMemo(
-    () => articleComments.filter(isNonAnchorComment),
+    () => filterNormalComments(articleComments),
     [articleComments],
   );
 

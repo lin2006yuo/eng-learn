@@ -45,8 +45,14 @@ eng-learn logout
 eng-learn article list
 eng-learn article list manage
 
-# Create article (requires login)
+# Create article with inline content
 eng-learn article create --title "Hello" --summary "Test" --content "Body" --status published
+
+# Create article reading content from file
+eng-learn article create --title "Hello" --summary "Test" --file ./article.txt --status published
+
+# Create article from YAML file (with optional fragment comments)
+eng-learn article yaml-create ./article.yaml
 
 # Get article
 eng-learn article get <articleId>
@@ -57,6 +63,27 @@ eng-learn article update <articleId> --title "New Title"
 # Delete article
 eng-learn article delete <articleId>
 ```
+
+#### YAML File Format
+
+The YAML format lets you define an article and its fragment comments in a single file, ensuring text anchors always match the actual content.
+
+```yaml
+article:
+  title: "<title>"
+  summary: "<summary>"
+  status: <draft|published>
+  content: |
+    <multi-line article content>
+
+  comments:                    # optional
+    - selectedText: "<exact text from content>"
+      prefixText: "<text before selection>"
+      suffixText: "<text after selection>"
+      content: "<comment text>"
+```
+
+All comments are validated against the article content before creation. If any `selectedText` cannot be found, the command reports the error with details.
 
 ### Comments
 
@@ -70,6 +97,42 @@ eng-learn comment mine
 # Create comment on article
 eng-learn comment create --targetType article --targetId <articleId> --rootType article --rootId <articleId> --content "Great!"
 
+# Create fragment comment on article
+eng-learn comment create \
+  --targetType article \
+  --targetId <articleId> \
+  --rootType article \
+  --rootId <articleId> \
+  --content "Good point" \
+  --dataPath article:content \
+  --selectedText "选中的文本" \
+  --prefixText "前缀文本" \
+  --suffixText "后缀文本"
+
+# Create fragment comment on pattern
+eng-learn comment create \
+  --targetType pattern \
+  --targetId pattern-1 \
+  --rootType pattern \
+  --rootId pattern-1 \
+  --content "Nice example" \
+  --dataPath pattern:examples.0.en \
+  --selectedText "quick brown fox" \
+  --prefixText "The " \
+  --suffixText " jumps over"
+
+# Create fragment comment on post
+eng-learn comment create \
+  --targetType post \
+  --targetId <postId> \
+  --rootType post \
+  --rootId <postId> \
+  --content "Good point" \
+  --dataPath post:content \
+  --selectedText "学习交流很有用" \
+  --prefixText "。" \
+  --suffixText "，大家可以多交流。"
+
 # Reply to a comment
 eng-learn comment create --targetType comment --targetId <commentId> --rootType article --rootId <articleId> --content "Reply!" --replyToUserId <userId>
 
@@ -78,6 +141,29 @@ eng-learn comment delete <commentId>
 
 # Like / unlike comment
 eng-learn comment like <commentId>
+```
+
+### Posts
+
+```bash
+# List posts
+eng-learn post list
+eng-learn post list manage
+
+# Create post with inline content
+eng-learn post create --title "Hello" --content "Body" --status published
+
+# Create post reading content from file
+eng-learn post create --title "Hello" --file ./post.txt --status published
+
+# Get post
+eng-learn post get <postId>
+
+# Update post
+eng-learn post update <postId> --title "New Title"
+
+# Delete post
+eng-learn post delete <postId>
 ```
 
 ### Notifications

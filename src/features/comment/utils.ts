@@ -5,6 +5,10 @@ export function flattenPages(pages: Comment[][]): Comment[] {
   return pages.flat();
 }
 
+export function filterNormalComments(comments: Comment[]): Comment[] {
+  return comments.filter(comment => comment.anchor == null);
+}
+
 export function groupCommentsByRoot(comments: Comment[]): Map<string, Comment[]> {
   const map = new Map<string, Comment[]>();
   for (const comment of comments) {

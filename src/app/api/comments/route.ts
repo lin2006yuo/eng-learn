@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
+import { posts } from '@/lib/db/posts-schema';
 import { commentAnchors, comments, notifications, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, and } from 'drizzle-orm';
@@ -60,6 +61,17 @@ function fetchArticleContext(rootType: RootType, rootId: string) {
     .then(rows => rows[0]);
 }
 
+function fetchPostContext(rootType: RootType, rootId: string) {
+  if (rootType !== 'post') return Promise.resolve(undefined);
+  const db = getDb();
+  return db
+    .select({ id: posts.id, title: posts.title, status: posts.status })
+    .from(posts)
+    .where(eq(posts.id, rootId))
+    .limit(1)
+    .then(rows => rows[0]);
+}
+
 async function validateRootAccess(rootType: RootType, rootId: string) {
   if (rootType === 'pattern') {
     const pattern = await fetchPatternContext(rootType, rootId);
@@ -70,6 +82,13 @@ async function validateRootAccess(rootType: RootType, rootId: string) {
     return {
       valid: !!article && article.status === 'published',
       context: article,
+    };
+  }
+  if (rootType === 'post') {
+    const post = await fetchPostContext(rootType, rootId);
+    return {
+      valid: !!post && post.status === 'published',
+      context: post,
     };
   }
   return { valid: true, context: undefined };
@@ -360,6 +379,25 @@ export async function POST(request: NextRequest) {
         userId: article.authorId,
         actorId: session.user.id,
         targetType: 'article',
+        targetId: newComment.id,
+        isRead: false,
+        createdAt: new Date(),
+      });
+    }
+  } else if (targetType === 'post') {
+    const [post] = await db
+      .select({ id: posts.id, authorId: posts.authorId })
+      .from(posts)
+      .where(eq(posts.id, rootId))
+      .limit(1);
+
+    if (post && post.authorId !== session.user.id) {
+      const notificationId = generateId();
+      await db.insert(notifications).values({
+        id: notificationId,
+        userId: post.authorId,
+        actorId: session.user.id,
+        targetType: 'post',
         targetId: newComment.id,
         isRead: false,
         createdAt: new Date(),

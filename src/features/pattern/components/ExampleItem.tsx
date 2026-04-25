@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useCopy } from '@/shared/hooks/useCopy';
+import { parsePatternExamplePath, PatternExampleLang } from '@/shared/utils/blockId';
 import type { Example } from '@/shared/types';
 import { useEffect, useMemo, useState } from 'react';
 import { AnchorFocusedComments } from '@/features/comment/components/selection/AnchorFocusedComments';
@@ -27,8 +28,8 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   const [activeCommentIndex, setActiveCommentIndex] = useState(0);
   const [activeFocus, setActiveFocus] = useState<{ blockId: string; segmentIndex: number } | null>(null);
   const patternComments = comments[`pattern-${patternId}`] || [];
-  const enBlockId = `pattern-${patternId}-example-${example.id}-en`;
-  const zhBlockId = `pattern-${patternId}-example-${example.id}-zh`;
+  const enBlockId = parsePatternExamplePath(index, PatternExampleLang.En);
+  const zhBlockId = parsePatternExamplePath(index, PatternExampleLang.Zh);
 
   useEffect(() => {
     fetchComments('pattern', patternId);

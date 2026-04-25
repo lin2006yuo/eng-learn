@@ -9,8 +9,9 @@ import { mergeAnchorIntervals } from '@/features/comment/utils/anchorMerge';
 import { resolveAnchorPosition } from '@/features/comment/utils/anchorRelocation';
 
 interface ArticleSelectableBodyProps {
-  articleId: string;
-  content: string;
+  rootId: string;
+  dataPath: string;
+  text: string;
 }
 
 function getCommentOffsetForSegment(segmentIndex: number, segments: Array<{ commentIds: string[] }>) {
@@ -18,42 +19,41 @@ function getCommentOffsetForSegment(segmentIndex: number, segments: Array<{ comm
 }
 
 export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
-  const { articleId, content } = props;
+  const { rootId, dataPath, text } = props;
   const [activeCommentIndex, setActiveCommentIndex] = useState(0);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState<number | null>(null);
   const { comments, fetchComments } = useCommentStore();
-  const articleComments = comments[`article-${articleId}`] || [];
-  const articleBlockId = `article-${articleId}-content`;
+  const articleComments = comments[`article-${rootId}`] || [];
 
   useEffect(() => {
-    fetchComments('article', articleId);
-  }, [articleId, fetchComments]);
+    fetchComments('article', rootId);
+  }, [rootId, fetchComments]);
 
   const resolvedComments = useMemo(
     () => articleComments.map((comment) => {
-      if (!comment.anchor || comment.anchor.extra.blockId !== articleBlockId) return comment;
-      const resolved = resolveAnchorPosition(comment.anchor, content);
+      if (!comment.anchor || comment.anchor.extra.blockId !== dataPath) return comment;
+      const resolved = resolveAnchorPosition(comment.anchor, text);
       return { ...comment, anchor: { ...comment.anchor, ...resolved } };
     }),
-    [articleBlockId, articleComments, content],
+    [dataPath, articleComments, text],
   );
 
   const anchorSegments = useMemo(
-    () => mergeAnchorIntervals(articleComments, articleBlockId, content),
-    [articleBlockId, articleComments, content],
+    () => mergeAnchorIntervals(articleComments, dataPath, text),
+    [dataPath, articleComments, text],
   );
 
   return (
     <div className="article-selectable-body space-y-4">
       <SelectableText
-        blockId={articleBlockId}
-        rootId={articleId}
+        blockId={dataPath}
+        rootId={rootId}
         rootType="article"
-        text={content}
+        text={text}
         className="article-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary"
         renderText={(textValue) => (
           <AnchorHighlightText
-            blockId={`article-${articleId}-content`}
+            blockId={dataPath}
             comments={articleComments}
             text={textValue}
             onAnchorClick={(segmentIndex) => {
@@ -69,7 +69,7 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         segments={anchorSegments}
         activeSegmentIndex={activeSegmentIndex}
         activeCommentIndex={activeCommentIndex}
-        targetId={articleId}
+        targetId={rootId}
         rootType="article"
         onCommentChange={setActiveCommentIndex}
         onClose={() => setActiveSegmentIndex(null)}

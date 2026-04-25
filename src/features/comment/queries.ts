@@ -1,5 +1,6 @@
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
+import { posts } from '@/lib/db/posts-schema';
 import { comments, commentAnchors, commentLikes, patterns, notifications } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, desc, asc, sql, and, lt } from 'drizzle-orm';
@@ -298,6 +299,15 @@ const validationStrategies: Record<string, (id: string) => Promise<boolean>> = {
       .where(and(eq(articles.id, id), eq(articles.status, 'published')))
       .limit(1);
     return !!article;
+  },
+  post: async (id) => {
+    const db = getDb();
+    const [post] = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(and(eq(posts.id, id), eq(posts.status, 'published')))
+      .limit(1);
+    return !!post;
   },
   pattern: async (id) => {
     const db = getDb();

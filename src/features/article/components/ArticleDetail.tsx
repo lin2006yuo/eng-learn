@@ -1,4 +1,5 @@
 import { Card } from '@/shared/components';
+import { parseArticlePath, ArticleField } from '@/shared/utils/blockId';
 import type { ArticleDetailData } from '../types';
 import { ArticleMeta } from './ArticleMeta';
 import { ArticleSelectableBody } from './ArticleSelectableBody';
@@ -28,7 +29,11 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
       </Card>
 
       <Card className="article-detail-body">
-        <ArticleSelectableBody articleId={article.id} content={article.content} />
+        <ArticleSelectableBody
+          rootId={article.id}
+          dataPath={parseArticlePath(ArticleField.Content)}
+          text={article.content}
+        />
       </Card>
     </div>
   );

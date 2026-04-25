@@ -20,10 +20,10 @@ const mainFeature: SquareFeature = {
 
 const secondaryFeatures: SquareFeature[] = [
   {
+    route: '/posts',
     title: '学习交流',
     description: '与学友讨论互动',
     emoji: '💬',
-    comingSoon: true,
   },
   {
     route: '/articles',

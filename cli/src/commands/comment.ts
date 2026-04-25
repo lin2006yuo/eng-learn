@@ -2,6 +2,7 @@ import { client } from '../client.js';
 import { formatJson } from '../formatters/json.js';
 import { formatTable } from '../formatters/table.js';
 import { getCurrentUserId } from './auth.js';
+import { computeAnchorOffset } from '../utils/anchorOffset.js';
 
 export async function commentListCmd(
   rootType: string,
@@ -33,12 +34,10 @@ export async function commentListMineCmd(format: 'json' | 'table'): Promise<void
 }
 
 export interface AnchorOptions {
+  dataPath: string;
   selectedText: string;
-  startOffset: number;
-  endOffset: number;
   prefixText: string;
   suffixText: string;
-  extra?: { blockId?: string };
 }
 
 export async function commentCreateCmd(
@@ -54,15 +53,24 @@ export async function commentCreateCmd(
   const body: Record<string, unknown> = { targetType, targetId, rootType, rootId, content };
   if (replyToUserId) body.replyToUserId = replyToUserId;
   if (anchor) {
+    const { startOffset, endOffset } = await computeAnchorOffset(
+      anchor.dataPath,
+      rootType,
+      rootId,
+      anchor.selectedText,
+      anchor.prefixText,
+      anchor.suffixText,
+    );
+
     body.anchor = {
       rootType,
       rootId,
       selectedText: anchor.selectedText,
-      startOffset: anchor.startOffset,
-      endOffset: anchor.endOffset,
+      startOffset,
+      endOffset,
       prefixText: anchor.prefixText,
       suffixText: anchor.suffixText,
-      extra: anchor.extra || {},
+      extra: { blockId: anchor.dataPath },
     };
   }
   const res = await client.post('/comments', body);

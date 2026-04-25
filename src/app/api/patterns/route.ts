@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { patterns, examples, studyPlans, comments, commentLikes } from '@/lib/db/patterns-schema';
+import { patterns, examples, studyPlans, comments, commentLikes, commentAnchors } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, and, inArray, desc, sql, count, isNull } from 'drizzle-orm';
 
@@ -78,11 +78,13 @@ export async function GET(request: Request) {
       .from(comments)
       .leftJoin(commentLikes, eq(commentLikes.commentId, comments.id))
       .leftJoin(users, eq(comments.userId, users.id))
+      .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
       .where(and(
         eq(comments.targetType, 'pattern'),
         inArray(comments.targetId, patternIds),
         eq(comments.rootType, 'pattern'),
         eq(comments.rootId, comments.targetId),
+        isNull(commentAnchors.commentId),
       ))
       .groupBy(comments.id, users.nickname, users.name)
       .orderBy(desc(sql`COUNT(${commentLikes.id})`))
@@ -94,9 +96,11 @@ export async function GET(request: Request) {
         count: count(),
       })
       .from(comments)
+      .leftJoin(commentAnchors, eq(commentAnchors.commentId, comments.id))
       .where(and(
         eq(comments.targetType, 'pattern'),
-        inArray(comments.targetId, patternIds)
+        inArray(comments.targetId, patternIds),
+        isNull(commentAnchors.commentId),
       ))
       .groupBy(comments.targetId);
 

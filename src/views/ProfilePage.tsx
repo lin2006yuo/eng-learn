@@ -16,6 +16,7 @@ import {
   Sparkles,
   FileText,
   LayoutDashboard,
+  MessageCircle,
 } from 'lucide-react';
 import { Card } from '@/shared/components/Card';
 
@@ -56,10 +57,14 @@ export function ProfilePage() {
     router.push('/articles/manage');
   };
 
+  const handleGoManagePosts = () => {
+    router.push('/posts/manage');
+  };
+
   return (
     <div className="min-h-full bg-background pb-20">
       <div className="max-w-[430px] mx-auto">
-        {authLoading ? <LoadingSkeleton /> : user ? <LoggedInView user={user} onEditNickname={() => setShowEditNickname(true)} onGoComments={handleGoComments} onGoFavorites={handleGoFavorites} onGoNotifications={handleGoNotifications} onGoNotes={handleGoNotes} onGoManageArticles={handleGoManageArticles} unreadCount={unreadCount} /> : <LoggedOutView onLogin={handleGoLogin} />}
+        {authLoading ? <LoadingSkeleton /> : user ? <LoggedInView user={user} onEditNickname={() => setShowEditNickname(true)} onGoComments={handleGoComments} onGoFavorites={handleGoFavorites} onGoNotifications={handleGoNotifications} onGoNotes={handleGoNotes} onGoManageArticles={handleGoManageArticles} onGoManagePosts={handleGoManagePosts} unreadCount={unreadCount} /> : <LoggedOutView onLogin={handleGoLogin} />}
       </div>
 
       <EditNicknameModal
@@ -91,7 +96,7 @@ function LoadingSkeleton() {
 }
 
 // ===== 已登录视图 =====
-function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoNotifications, onGoNotes, onGoManageArticles, unreadCount }: { user: { nickname?: string; username: string; role?: string }; onEditNickname: () => void; onGoComments: () => void; onGoFavorites: () => void; onGoNotifications: () => void; onGoNotes: () => void; onGoManageArticles: () => void; unreadCount: number }) {
+function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoNotifications, onGoNotes, onGoManageArticles, onGoManagePosts, unreadCount }: { user: { nickname?: string; username: string; role?: string }; onEditNickname: () => void; onGoComments: () => void; onGoFavorites: () => void; onGoNotifications: () => void; onGoNotes: () => void; onGoManageArticles: () => void; onGoManagePosts: () => void; unreadCount: number }) {
   const isAdmin = user.role === 'admin';
 
   return (
@@ -142,6 +147,7 @@ function LoggedInView({ user, onEditNickname, onGoComments, onGoFavorites, onGoN
         <MenuCard title="我的评论" icon={<MessageSquare size={20} />} delay={0.2} onClick={onGoComments} />
         <MenuCard title="我的消息" icon={<Bell size={20} />} delay={0.3} badgeCount={unreadCount} onClick={onGoNotifications} />
         <MenuCard title="我的文章" icon={<LayoutDashboard size={20} />} delay={0.35} onClick={onGoManageArticles} />
+        <MenuCard title="我的帖子" icon={<MessageCircle size={20} />} delay={0.4} onClick={onGoManagePosts} />
       </div>
     </>
   );

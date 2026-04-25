@@ -51,7 +51,11 @@ export default function LoginPage() {
         });
 
         if (result.error) {
-          setError(result.error.message || '登录失败');
+          let errorMessage = result.error.message || '登录失败';
+          if (errorMessage.toLowerCase().includes('user not found') || errorMessage.toLowerCase().includes('invalid')) {
+            errorMessage = '用户不存在，请先注册';
+          }
+          setError(errorMessage);
           return;
         }
 

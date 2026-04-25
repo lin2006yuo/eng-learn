@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useCommentStore } from '@/features/comment/store/commentStore';
+import { filterNormalComments } from '@/features/comment/utils';
 import type { RootType } from '@/features/comment/types';
 import { CommentItem } from './CommentItem';
 import { CommentInput } from './CommentInput';
@@ -42,7 +43,8 @@ export function CommentsModal({
   const targetId = propTargetId;
   const storeKey = targetId ? `${rootType}-${targetId}` : '';
 
-  const targetComments = storeKey ? comments[storeKey] || [] : [];
+  const allTargetComments = storeKey ? comments[storeKey] || [] : [];
+  const targetComments = filterNormalComments(allTargetComments);
   const orderedComments = focusCommentId
     ? [...targetComments].sort((left, right) => {
         if (left.id === focusCommentId) return -1;

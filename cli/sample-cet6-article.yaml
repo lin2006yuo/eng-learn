@@ -1,0 +1,108 @@
+article:
+  title: "The Transformative Impact of Technology on Modern Education"
+  summary: "This article explores how technology has revolutionized education, discussing both opportunities and challenges in the digital learning era."
+  status: published
+  content: |
+    In recent years, technology has profoundly transformed the educational landscape, fundamentally altering how students acquire knowledge and how educators facilitate learning. This paradigm shift has brought unprecedented opportunities alongside formidable challenges.
+
+    The proliferation of digital devices has democratized access to information. Students no longer need to rely solely on traditional textbooks; instead, they can explore vast repositories of knowledge through online platforms. E-learning platforms, interactive applications, and virtual classrooms have become ubiquitous in modern education. These technological advancements have enabled personalized learning experiences, allowing students to progress at their own pace.
+
+    Moreover, artificial intelligence has emerged as a formidable tool in education. Intelligent tutoring systems can analyze individual learning patterns and provide customized feedback. Machine learning algorithms can identify knowledge gaps and recommend targeted interventions. This adaptive approach ensures that no student is left behind.
+
+    However, this technological revolution is not without its drawbacks. The digital divide remains a pervasive issue, as students from disadvantaged backgrounds may lack access to necessary devices and reliable internet connectivity. Furthermore, excessive screen time has raised concerns about potential health implications, including eye strain and sedentary lifestyles.
+
+    Another significant challenge is the proliferation of misinformation. In an era where anyone can publish content online, students must develop robust critical thinking skills to discern credible sources from unreliable ones. Digital literacy has become an indispensable skill in the modern educational curriculum.
+
+    Despite these challenges, the benefits of technological integration in education are undeniable. Collaborative tools enable students from different geographical locations to work together on projects, fostering cross-cultural understanding. Virtual reality and augmented reality technologies can create immersive learning experiences, making abstract concepts more tangible.
+
+    In conclusion, while technology has undeniably revolutionized education, it is imperative that we address its associated challenges. Educators, policymakers, and technologists must collaborate to ensure that technological advancements serve to enhance, rather than hinder, the educational experience for all students.
+  comments:
+    - selectedText: "profoundly"
+      prefixText: "has "
+      suffixText: " transformed"
+      content: "profoundly (adv.): 深刻地，极大地。程度副词，修饰transformed"
+
+    - selectedText: "landscape"
+      prefixText: "educational "
+      suffixText: ", fundamentally"
+      content: "landscape (n.): 景观，局面。此处指教育领域的整体环境"
+
+    - selectedText: "paradigm shift"
+      prefixText: "This "
+      suffixText: " has brought"
+      content: "paradigm shift (n.): 范式转变，根本性变革。指思维模式或方法论的根本改变"
+
+    - selectedText: "unprecedented"
+      prefixText: "brought "
+      suffixText: " opportunities"
+      content: "unprecedented (adj.): 史无前例的，空前的。un-(不)+precedent(先例)+-ed(形容词后缀)"
+
+    - selectedText: "formidable"
+      prefixText: "alongside "
+      suffixText: " challenges."
+      content: "formidable (adj.): 强大的，令人敬畏的，难以克服的"
+
+    - selectedText: "proliferation"
+      prefixText: "The "
+      suffixText: " of digital"
+      content: "proliferation (n.): 激增，扩散，大量繁殖。prolifer(增殖)+-ation(名词后缀)"
+
+    - selectedText: "democratized"
+      prefixText: "has "
+      suffixText: " access"
+      content: "democratized (v.): 使大众化，使普及。democrat(民主)+-ize(动词)+-ed(过去式)"
+
+    - selectedText: "repositories"
+      prefixText: "vast "
+      suffixText: " of knowledge"
+      content: "repositories (n.): 仓库，知识库，存储库。repository(容器、仓库)的复数形式"
+
+    - selectedText: "ubiquitous"
+      prefixText: "become "
+      suffixText: " in modern"
+      content: "ubiquitous (adj.): 无处不在的，普遍存在的"
+
+    - selectedText: "interventions"
+      prefixText: "targeted "
+      suffixText: ". This"
+      content: "interventions (n.): 干预措施，介入手段。intervene(干预)+-tion(名词后缀)+-s(复数)"
+
+    - selectedText: "drawbacks"
+      prefixText: "its "
+      suffixText: ". The"
+      content: "drawbacks (n.): 缺点，弊端。draw(拉)+back(回)+-s(复数)，引申为阻碍进步的因素"
+
+    - selectedText: "pervasive"
+      prefixText: "a "
+      suffixText: " issue"
+      content: "pervasive (adj.): 普遍的，弥漫的，渗透的"
+
+    - selectedText: "indispensable"
+      prefixText: "an "
+      suffixText: " skill"
+      content: "indispensable (adj.): 不可或缺的，必不可少的"
+
+    - selectedText: "immersive"
+      prefixText: "create "
+      suffixText: " learning"
+      content: "immersive (adj.): 沉浸式的，身临其境的"
+
+    - selectedText: "tangible"
+      prefixText: "more "
+      suffixText: "."
+      content: "tangible (adj.): 有形的，切实的，可触摸的"
+
+    - selectedText: "undeniably"
+      prefixText: "has "
+      suffixText: " revolutionized"
+      content: "undeniably (adv.): 不可否认地。un-(不)+deny(否认)+-able(能)+-ly(副词)"
+
+    - selectedText: "imperative"
+      prefixText: "it is "
+      suffixText: " that we"
+      content: "imperative (adj.): 必要的，紧急的，极重要的"
+
+    - selectedText: "collaborate"
+      prefixText: "must "
+      suffixText: " to ensure"
+      content: "collaborate (v.): 合作，协作，共同工作。co-(共同)+labor(劳动)+-ate(动词)"
