@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { useArticleModalRoute } from './useArticleModalRoute';
+import { usePostModalRoute } from './usePostModalRoute';
 
 interface PostModalContextValue {
   isModalOpen: boolean;
@@ -13,7 +13,7 @@ interface PostModalContextValue {
 const PostModalContext = createContext<PostModalContextValue | null>(null);
 
 export function PostModalProvider({ children }: { children: ReactNode }) {
-  const { isModalOpen, targetId, openModal, closeModal } = useArticleModalRoute();
+  const { isModalOpen, targetId, openModal, closeModal } = usePostModalRoute();
 
   return (
     <PostModalContext.Provider value={{ isModalOpen, targetId, openModal, closeModal }}>

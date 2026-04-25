@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { usePostModalContext } from '@/shared/hooks/PostModalContext';
 import { PostDetail } from '@/features/post/components/PostDetail';
@@ -10,7 +9,6 @@ import { PostEmptyState } from '@/features/post/components/PostEmptyState';
 import { usePostDetail } from '@/features/post/hooks/usePostDetail';
 
 export function ModalPostDetail() {
-  const router = useRouter();
   const { isModalOpen, targetId, closeModal } = usePostModalContext();
   const postId = targetId || '';
   const { data, isLoading, isError, refetch } = usePostDetail(postId);

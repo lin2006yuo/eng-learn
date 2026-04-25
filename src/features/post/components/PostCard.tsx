@@ -1,6 +1,6 @@
-import { useRouter } from 'next/navigation';
 import { MessageSquare } from 'lucide-react';
 import { Card } from '@/shared/components';
+import { usePostModalContext } from '@/shared/hooks/PostModalContext';
 import type { PostSummary } from '../types';
 
 interface PostCardProps {
@@ -13,10 +13,10 @@ function formatPublishTime(value: string | null) {
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const router = useRouter();
+  const { openModal } = usePostModalContext();
 
   const handleClick = () => {
-    router.push(`/posts/${post.id}`);
+    openModal(post.id);
   };
 
   return (
