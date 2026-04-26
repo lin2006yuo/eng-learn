@@ -8,6 +8,7 @@ import { PostModalProvider } from '@/shared/hooks/PostModalContext';
 import { ModalComments } from '@/features/comment/components/ModalComments';
 import { ModalArticleDetail } from '@/features/article/components/ModalArticleDetail';
 import { ModalPostDetail } from '@/features/post/components/ModalPostDetail';
+import { AnchorHighlightProvider } from '@/features/comment/context/AnchorHighlightContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -23,16 +24,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PatternCommentModalProvider>
-        <ArticleModalProvider>
-          <PostModalProvider>
-            {children}
-            <ModalComments />
-            <ModalArticleDetail />
-            <ModalPostDetail />
-          </PostModalProvider>
-        </ArticleModalProvider>
-      </PatternCommentModalProvider>
+      <AnchorHighlightProvider>
+        <PatternCommentModalProvider>
+          <ArticleModalProvider>
+            <PostModalProvider>
+              {children}
+              <ModalComments />
+              <ModalArticleDetail />
+              <ModalPostDetail />
+            </PostModalProvider>
+          </ArticleModalProvider>
+        </PatternCommentModalProvider>
+      </AnchorHighlightProvider>
     </QueryClientProvider>
   );
 }

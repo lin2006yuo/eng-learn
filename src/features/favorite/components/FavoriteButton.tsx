@@ -20,7 +20,7 @@ interface Particle {
 export function FavoriteButton({ patternId }: FavoriteButtonProps) {
   const [showTagModal, setShowTagModal] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  
+
   const isFavorited = useFavoriteStore((state) => state.isPatternFavorited(patternId));
   const getPatternTagIds = useFavoriteStore((state) => state.getPatternTagIds);
 
@@ -36,7 +36,7 @@ export function FavoriteButton({ patternId }: FavoriteButtonProps) {
   const createParticles = () => {
     const newParticles: Particle[] = [];
     const colors = ['#FF4B4B', '#FF6B6B', '#FFD700', '#FF8C00'];
-    
+
     for (let i = 0; i < 8; i++) {
       const angle = (i / 8) * Math.PI * 2;
       newParticles.push({
@@ -48,7 +48,7 @@ export function FavoriteButton({ patternId }: FavoriteButtonProps) {
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
-    
+
     setParticles(newParticles);
     setTimeout(() => setParticles([]), 600);
   };
@@ -57,13 +57,13 @@ export function FavoriteButton({ patternId }: FavoriteButtonProps) {
     <>
       <motion.button
         onClick={handleClick}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.96 }}
         className={`
-          relative flex items-center gap-1.5 px-3 py-2 rounded-xl
-          font-medium text-sm transition-all duration-200
-          ${isFavorited 
-            ? 'bg-red-50 text-red-500' 
-            : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+          relative flex items-center gap-1
+          font-medium text-[14px] transition-colors
+          ${isFavorited
+            ? 'text-[#FF3B30]'
+            : 'text-[#6E6E73] active:text-[#1D1D1F]'
           }
         `}
       >
@@ -75,10 +75,10 @@ export function FavoriteButton({ patternId }: FavoriteButtonProps) {
           className="relative"
         >
           <Heart
-            size={18}
+            size={16}
             className={isFavorited ? 'fill-current' : ''}
           />
-          
+
           <AnimatePresence>
             {particles.map((particle) => (
               <motion.div
@@ -105,7 +105,7 @@ export function FavoriteButton({ patternId }: FavoriteButtonProps) {
             ))}
           </AnimatePresence>
         </motion.div>
-        
+
         <span>{isFavorited ? '已收藏' : '收藏'}</span>
       </motion.button>
 

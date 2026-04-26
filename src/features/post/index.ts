@@ -7,6 +7,8 @@ export * from './hooks/useManagePostList';
 export * from './components/PostList';
 export * from './components/PostCard';
 export * from './components/PostDetail';
+export * from './components/PostDetailHeader';
+export * from './components/PostDetailShell';
 export * from './components/PostCommentsSection';
 export * from './components/PostManageList';
 export * from './components/PostEditorForm';

@@ -7,9 +7,14 @@ interface PostListProps {
 
 export function PostList({ posts }: PostListProps) {
   return (
-    <div className="post-list-container space-y-4">
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+    <div className="post-list-container">
+      {posts.map((post, index) => (
+        <div
+          key={post.id}
+          className={`post-list-item ${index !== posts.length - 1 ? 'border-b border-[#E5E5EA]' : ''}`}
+        >
+          <PostCard post={post} />
+        </div>
       ))}
     </div>
   );

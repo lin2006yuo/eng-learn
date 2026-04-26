@@ -21,23 +21,23 @@ export function Button({
   icon,
   type = 'button',
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 rounded-button active:scale-95';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 rounded-[12px] active:opacity-80';
 
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary-dark shadow-md hover:shadow-lg',
-    secondary: 'bg-secondary text-white hover:opacity-90 shadow-md',
-    ghost: 'bg-transparent text-text-primary hover:bg-black/5',
+    primary: 'bg-[#007AFF] text-white',
+    secondary: 'bg-[#007AFF]/10 text-[#007AFF]',
+    ghost: 'bg-transparent text-[#1D1D1F] active:bg-[#F5F5F7]',
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg',
+    sm: 'px-4 py-2 text-[14px]',
+    md: 'px-6 py-3 text-[16px]',
+    lg: 'px-8 py-4 text-[17px]',
   };
 
   return (
     <motion.button
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
       disabled={disabled}
       type={type}

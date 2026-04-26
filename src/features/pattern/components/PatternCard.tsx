@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Card } from '@/shared/components/Card';
+import { MessageCircle, ChevronDown } from 'lucide-react';
 import { ExampleItem } from './ExampleItem';
 import { FavoriteButton } from '@/features/favorite/components/FavoriteButton';
 import { CommentPreview } from '@/features/comment/components/CommentPreview';
@@ -12,6 +10,7 @@ import type { Pattern } from '@/shared/types';
 interface PatternCardProps {
   pattern: Pattern;
   index: number;
+  isLast?: boolean;
 }
 
 function commentSummaryToPreview(summary?: Pattern['commentSummary']) {
@@ -32,16 +31,13 @@ function commentSummaryToPreview(summary?: Pattern['commentSummary']) {
   }));
 }
 
-export function PatternCard({ pattern, index }: PatternCardProps) {
-  const router = useRouter();
+export function PatternCard({ pattern, index, isLast }: PatternCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const { openModal } = usePatternCommentModalContext();
 
   const summary = pattern.commentSummary;
   const commentCount = summary?.totalCount || 0;
   const commentPreview = commentSummaryToPreview(summary);
-
-  const patternNumber = pattern.id.replace('pattern-', '');
 
   const handleCommentClick = () => {
     openModal(pattern.id);
@@ -52,20 +48,26 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
   };
 
   return (
-    <Card delay={index * 0.1} className="mb-4 relative overflow-hidden">
-      <div className="absolute -top-3 -left-3 w-12 h-12 bg-primary/10 rounded-full flex items-end justify-end pb-2.5 pr-2.5">
-        <span className="text-xs font-bold text-primary">{patternNumber}</span>
-      </div>
-
+    <div className={`py-4 ${!isLast ? 'border-b border-[#E5E5EA]' : ''}`}>
+      {/* Pattern Header */}
       <div
-        className="flex items-center gap-2 pl-6 cursor-pointer select-none"
+        className="flex items-start gap-3.5 cursor-pointer select-none"
         onClick={toggleExpand}
       >
-        <span className="text-2xl">{pattern.emoji}</span>
-        <div className="flex-1">
-          <h3 className="text-xl font-bold text-text-primary">{pattern.title}</h3>
-          <p className="text-sm text-text-secondary">{pattern.translation}</p>
+        <span className="text-[28px] leading-none flex-shrink-0">{pattern.emoji}</span>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[18px] font-semibold text-[#1D1D1F] tracking-tight">
+            {pattern.title}
+          </h3>
+          <p className="text-[14px] text-[#6E6E73] mt-0.5">{pattern.translation}</p>
         </div>
+        <motion.div
+          animate={{ rotate: isExpanded ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-shrink-0 mt-1"
+        >
+          <ChevronDown size={18} className="text-[#C7C7CC]" />
+        </motion.div>
       </div>
 
       <AnimatePresence initial={false}>
@@ -77,9 +79,8 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
             transition={{ duration: 0.2 }}
             style={{ overflow: 'hidden' }}
           >
-            <div className="h-px bg-gray-100 my-4" />
-
-            <div className="space-y-1">
+            {/* Examples */}
+            <div className="space-y-1 mt-2 ml-[44px]">
               {pattern.examples.map((example, idx) => (
                 <ExampleItem
                   key={example.id}
@@ -90,26 +91,29 @@ export function PatternCard({ pattern, index }: PatternCardProps) {
               ))}
             </div>
 
-            <div className="flex gap-3 mt-4">
+            {/* Actions */}
+            <div className="flex items-center gap-1 mt-2 ml-[44px]">
               <FavoriteButton patternId={pattern.id} />
-
+              <span className="text-[#C7C7CC] text-[14px]">·</span>
               <motion.button
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={handleCommentClick}
-                className="flex-1 py-3 px-4 rounded-list font-medium flex items-center justify-center gap-2 bg-gray-50 text-text-primary hover:bg-gray-100 transition-all duration-200"
+                className="flex items-center gap-1 text-[#6E6E73] text-[14px] font-medium active:text-[#1D1D1F] transition-colors"
               >
-                <MessageCircle size={18} />
-                评论{commentCount > 0 ? `+${commentCount}` : ''}
+                <MessageCircle size={14} />
+                {commentCount > 0 ? `评论 (${commentCount})` : '评论'}
               </motion.button>
             </div>
 
-            <CommentPreview 
-              comments={commentPreview} 
-              onClick={handleCommentClick}
-            />
+            <div className="mt-3 ml-[44px] -mr-3">
+              <CommentPreview
+                comments={commentPreview}
+                onClick={handleCommentClick}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </Card>
+    </div>
   );
 }

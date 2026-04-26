@@ -9,23 +9,20 @@ export function CommentPreview({ comments, onClick }: CommentPreviewProps) {
   if (comments.length === 0) return null;
 
   return (
-    <div 
-      className="mt-3 space-y-2 cursor-pointer"
+    <div
+      className="px-3 py-2.5 bg-[#F5F5F7] rounded-[12px] space-y-1.5 cursor-pointer"
       onClick={onClick}
     >
       {comments.map((comment) => (
-        <div
+        <p
           key={comment.id}
-          className="flex items-start gap-2 text-sm hover:bg-gray-50 -mx-2 px-2 py-1 rounded-list transition-colors"
+          className="text-[13px] text-[#6E6E73] leading-snug truncate"
         >
-          <span className="text-text-tertiary flex-shrink-0">💬</span>
-          <p className="text-text-secondary truncate">
-            <span className="font-medium text-text-primary">
-              {comment.userName}:
-            </span>{' '}
-            {truncateContent(comment.content)}
-          </p>
-        </div>
+          <span className="text-[#1D1D1F] font-medium">
+            {comment.userName}
+          </span>
+          ：{truncateContent(comment.content)}
+        </p>
       ))}
     </div>
   );

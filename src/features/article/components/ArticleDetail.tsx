@@ -1,4 +1,3 @@
-import { Card } from '@/shared/components';
 import { parseArticlePath, ArticleField } from '@/shared/utils/blockId';
 import type { ArticleDetailData } from '../types';
 import { ArticleMeta } from './ArticleMeta';
@@ -10,31 +9,32 @@ interface ArticleDetailProps {
 
 export function ArticleDetail({ article }: ArticleDetailProps) {
   return (
-    <div className="article-detail-container space-y-4">
-      <Card className="article-detail-header">
-        <div className="article-detail-badge mb-4 inline-flex rounded-badge bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          文章分享
-        </div>
-        <h1 className="article-detail-title mb-3 text-3xl font-bold leading-tight text-text-primary">
+    <div className="article-detail-container">
+      {/* Header Section */}
+      <div className="article-detail-header pb-4 border-b border-[#E5E5EA]">
+        <h1 className="article-detail-title text-[22px] font-bold leading-tight tracking-tight text-[#1D1D1F]">
           {article.title}
         </h1>
-        <p className="article-detail-summary mb-4 text-base leading-7 text-text-secondary">
+        <p className="article-detail-summary mt-3 text-[16px] leading-snug text-[#3A3A3C]">
           {article.summary}
         </p>
-        <ArticleMeta
-          authorName={article.authorName}
-          publishedAt={article.publishedAt}
-          status={article.status}
-        />
-      </Card>
+        <div className="article-detail-meta mt-4">
+          <ArticleMeta
+            authorName={article.authorName}
+            publishedAt={article.publishedAt}
+            status={article.status}
+          />
+        </div>
+      </div>
 
-      <Card className="article-detail-body">
+      {/* Content Section */}
+      <div className="article-detail-body py-6">
         <ArticleSelectableBody
           rootId={article.id}
           dataPath={parseArticlePath(ArticleField.Content)}
           text={article.content}
         />
-      </Card>
+      </div>
     </div>
   );
 }

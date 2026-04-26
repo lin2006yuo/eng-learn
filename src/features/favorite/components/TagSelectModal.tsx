@@ -1,10 +1,27 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Check } from 'lucide-react';
+import { Plus, X, Check, Heart, Star, Bookmark, Briefcase, Lightbulb, Flag } from 'lucide-react';
 import { useFavoriteStore } from '@/features/favorite/store/favoriteStore';
 import { CreateTagModal } from './CreateTagModal';
 import type { FavoriteTag } from '../types';
+
+const TAG_ICONS: Record<string, React.ReactNode> = {
+  heart: <Heart size={20} />,
+  star: <Star size={20} />,
+  bookmark: <Bookmark size={20} />,
+  briefcase: <Briefcase size={20} />,
+  lightbulb: <Lightbulb size={20} />,
+  flag: <Flag size={20} />,
+};
+
+const TAG_ICON_COLORS: Record<string, string> = {
+  heart: '#FF3B30',
+  star: '#FF9500',
+  bookmark: '#007AFF',
+  briefcase: '#5856D6',
+  lightbulb: '#FFCC00',
+  flag: '#34C759',
+};
 
 interface TagSelectModalProps {
   isOpen: boolean;
@@ -16,7 +33,7 @@ interface TagSelectModalProps {
 export function TagSelectModal({ isOpen, onClose, patternId, initialSelectedTags }: TagSelectModalProps) {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialSelectedTags);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  
+
   const tags = useFavoriteStore((state) => state.tags);
   const addFavorite = useFavoriteStore((state) => state.addFavorite);
   const updateFavoriteTags = useFavoriteStore((state) => state.updateFavoriteTags);
@@ -49,76 +66,70 @@ export function TagSelectModal({ isOpen, onClose, patternId, initialSelectedTags
   };
 
   const modalContent = (
-    <AnimatePresence>
+    <>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-[100]"
+          <div
+            className="tag-select-modal-overlay fixed inset-0 bg-black/50 z-[100]"
             onClick={onClose}
           />
-          
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-modal z-[101] max-h-[80vh] overflow-hidden"
-          >
-            <div className="p-5">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-text-primary">选择收藏标签</h3>
+
+          <div className="tag-select-modal fixed bottom-0 left-0 right-0 bg-[#FFFFFF] z-[101] overflow-hidden">
+            <div className="flex justify-center px-4 pt-3">
+              <span className="tag-select-modal-handle h-1 w-10 rounded-full bg-[#E5E5EA]" />
+            </div>
+
+            <div className="border-b border-[#E5E5EA] px-5 pb-3 pt-3">
+              <div className="flex items-center justify-between">
+                <h3 className="tag-select-title text-[17px] font-semibold text-[#1D1D1F]">选择收藏标签</h3>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                  className="tag-select-close flex h-8 w-8 items-center justify-center rounded-full active:bg-[#F5F5F7]"
                 >
-                  <X size={18} className="text-gray-500" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mb-6 max-h-[50vh] overflow-y-auto">
-                {tags.map((tag) => (
-                  <TagCard
-                    key={tag.id}
-                    tag={tag}
-                    isSelected={selectedTagIds.includes(tag.id)}
-                    onClick={() => handleTagToggle(tag.id)}
-                  />
-                ))}
-                
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowCreateModal(true)}
-                  className="aspect-[5/6] rounded-subtle-card border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-colors"
-                >
-                  <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center">
-                    <Plus size={24} className="text-gray-400" />
-                  </div>
-                  <span className="text-sm text-gray-500 font-medium">新建标签</span>
-                </motion.button>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="flex-1 py-3.5 rounded-subtle-card bg-gray-100 text-text-primary font-semibold hover:bg-gray-200 transition-colors"
-                >
-                  取消
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className="flex-1 py-3.5 rounded-subtle-card bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
-                >
-                  确定
+                  <X size={20} className="text-[#6E6E73]" />
                 </button>
               </div>
             </div>
-          </motion.div>
+
+            <div className="max-h-[320px] overflow-y-auto">
+              {tags.map((tag) => (
+                <TagListItem
+                  key={tag.id}
+                  tag={tag}
+                  isSelected={selectedTagIds.includes(tag.id)}
+                  onClick={() => handleTagToggle(tag.id)}
+                />
+              ))}
+
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="tag-select-create w-full px-5 py-4 flex items-center gap-3 active:bg-[#F5F5F7]"
+              >
+                <div className="tag-select-create-icon w-8 h-8 rounded-[8px] bg-[#F5F5F7] flex items-center justify-center">
+                  <Plus size={18} className="text-[#6E6E73]" />
+                </div>
+                <span className="tag-select-create-label text-[16px] text-[#007AFF]">新建标签</span>
+              </button>
+            </div>
+
+            <div className="border-t border-[#E5E5EA] px-5 py-4 flex gap-3">
+              <button
+                onClick={onClose}
+                className="tag-select-cancel flex-1 py-3.5 rounded-[12px] bg-[#F5F5F7] text-[#1D1D1F] text-[17px] font-semibold active:opacity-50"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="tag-select-confirm flex-1 py-3.5 rounded-[12px] bg-[#007AFF] text-[#FFFFFF] text-[17px] font-semibold active:opacity-50"
+              >
+                确定
+              </button>
+            </div>
+          </div>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 
   return (
@@ -133,38 +144,30 @@ export function TagSelectModal({ isOpen, onClose, patternId, initialSelectedTags
   );
 }
 
-interface TagCardProps {
+interface TagListItemProps {
   tag: FavoriteTag;
   isSelected: boolean;
   onClick: () => void;
 }
 
-function TagCard({ tag, isSelected, onClick }: TagCardProps) {
+function TagListItem({ tag, isSelected, onClick }: TagListItemProps) {
+  const iconColor = TAG_ICON_COLORS[tag.icon] || '#6E6E73';
+  const icon = TAG_ICONS[tag.icon] || <Bookmark size={20} />;
+
   return (
-    <motion.button
-      whileTap={{ scale: 0.95 }}
+    <button
       onClick={onClick}
-      className={`
-        aspect-[5/6] rounded-subtle-card flex flex-col items-center justify-center gap-2 relative
-        transition-all duration-200
-        ${isSelected 
-          ? 'bg-primary text-white' 
-          : 'bg-white border-2 border-gray-100 text-text-primary hover:border-gray-200'
-        }
-      `}
+      className="tag-select-item w-full px-5 py-4 flex items-center justify-between border-b border-[#E5E5EA] active:bg-[#F5F5F7]"
     >
-      <span className="text-3xl">{tag.icon}</span>
-      <span className="text-sm font-medium">{tag.name}</span>
-      
+      <div className="flex items-center gap-3">
+        <span className="tag-select-item-icon" style={{ color: iconColor }}>
+          {icon}
+        </span>
+        <span className="tag-select-item-name text-[16px] text-[#1D1D1F]">{tag.name}</span>
+      </div>
       {isSelected && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center"
-        >
-          <Check size={12} className="text-primary" />
-        </motion.div>
+        <Check size={20} className="tag-select-item-check text-[#007AFF]" />
       )}
-    </motion.button>
+    </button>
   );
 }

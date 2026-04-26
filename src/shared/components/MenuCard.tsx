@@ -14,14 +14,14 @@ export function MenuCard({ icon, title, delay = 0, badgeCount = 0, onClick }: Me
   return (
     <Card
       delay={delay}
-      className="cursor-pointer hover:bg-gray-50 active:scale-[0.98] transition-all"
+      className="cursor-pointer active:opacity-50 transition-opacity"
       onClick={onClick}
     >
       <div className="relative flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-10 h-10 rounded-full bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF]">
           {icon}
         </div>
-        <span className="text-base font-semibold text-text-primary">{title}</span>
+        <span className="text-base font-semibold text-[#1D1D1F]">{title}</span>
         {badgeCount > 0 && <TabBarBadge count={badgeCount} />}
       </div>
     </Card>

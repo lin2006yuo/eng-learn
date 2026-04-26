@@ -47,7 +47,7 @@ export function SelectionPopover() {
         type="button"
         onClick={user ? handleCommentClick : handleLogin}
         onMouseDown={(e) => e.preventDefault()}
-        className="comment-selection-popover-button rounded-full bg-text-primary px-4 py-2 text-sm font-medium text-white shadow-card"
+        className="comment-selection-popover-button rounded-full bg-[#007AFF] px-4 py-2 text-[14px] font-medium text-white shadow-md"
       >
         {user ? '评论这段' : '登录后评论'}
       </button>

@@ -19,12 +19,12 @@ function formatDate(value: string | null) {
 
 export function ArticleMeta({ authorName, publishedAt, status }: ArticleMetaProps) {
   return (
-    <div className="article-meta-container flex flex-wrap items-center gap-3 text-sm text-text-secondary">
-      <span className="article-meta-author">作者 {authorName}</span>
+    <div className="article-meta-container flex flex-wrap items-center gap-2 text-[13px] text-[#6E6E73]">
+      <span className="article-meta-author">{authorName}</span>
+      <span className="text-[#C7C7CC]">·</span>
       <span className="article-meta-date">{formatDate(publishedAt)}</span>
-      <span className="article-meta-status rounded-badge bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
-        {statusLabelMap[status]}
-      </span>
+      <span className="text-[#C7C7CC]">·</span>
+      <span className="article-meta-status">{statusLabelMap[status]}</span>
     </div>
   );
 }

@@ -18,11 +18,11 @@ export function CommentAnchorSummary(props: CommentAnchorSummaryProps) {
   } as const;
 
   return (
-    <div className="comment-anchor-summary mb-3 ml-12 rounded-subtle-card bg-primary/10 px-3 py-2 text-sm text-text-primary">
-      <span className="mr-2 rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium">
+    <div className="comment-anchor-summary mb-3 rounded-[12px] bg-[#007AFF]/10 px-3 py-2 text-sm text-[#1D1D1F]">
+      <span className="comment-anchor-status mr-2 rounded-full bg-[#FFFFFF]/80 px-2 py-0.5 text-xs font-medium">
         {statusTextMap[comment.anchor.anchorStatus]}
       </span>
-      <span className="font-medium">关联片段:</span> "{comment.anchor.selectedText}"
+      <span className="comment-anchor-label font-medium">关联片段:</span> "{comment.anchor.selectedText}"
     </div>
   );
 }

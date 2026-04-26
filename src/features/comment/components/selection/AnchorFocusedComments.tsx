@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CommentItem } from '@/features/comment/components/CommentItem';
 import type { MergedInterval } from '@/features/comment/utils/anchorMerge';
 import type { Comment, RootType } from '@/features/comment/types';
+import { useAnchorHighlight, useScrollToActiveAnchor } from '@/features/comment/context/AnchorHighlightContext';
 
 interface AnchorFocusedCommentsProps {
   resolvedComments: Comment[];
@@ -14,12 +14,29 @@ interface AnchorFocusedCommentsProps {
   activeCommentIndex: number;
   targetId: string;
   rootType: RootType;
+  blockId: string;
   onCommentChange: (index: number) => void;
+  onSegmentChange: (index: number) => void;
   onClose: () => void;
 }
 
 function getCommentById(resolvedComments: Comment[], id: string): Comment | null {
   return resolvedComments.find((c) => c.id === id) || null;
+}
+
+function getSegmentIndexByCommentIndex(
+  segments: MergedInterval[],
+  commentIndex: number
+): number {
+  let accumulatedCount = 0;
+  for (let i = 0; i < segments.length; i++) {
+    const segmentCommentCount = segments[i].commentIds.length;
+    if (commentIndex < accumulatedCount + segmentCommentCount) {
+      return i;
+    }
+    accumulatedCount += segmentCommentCount;
+  }
+  return 0;
 }
 
 export function AnchorFocusedComments(props: AnchorFocusedCommentsProps) {
@@ -30,15 +47,24 @@ export function AnchorFocusedComments(props: AnchorFocusedCommentsProps) {
     activeCommentIndex,
     targetId,
     rootType,
+    blockId,
     onCommentChange,
+    onSegmentChange,
     onClose,
   } = props;
   const drawerRef = useRef<HTMLDivElement>(null);
+  const { setActiveAnchor, clearActiveAnchor } = useAnchorHighlight();
+  const lastProcessedCommentIndexRef = useRef<number | null>(null);
+
+  useScrollToActiveAnchor(activeSegmentIndex !== null);
 
   useEffect(() => {
-    if (activeSegmentIndex === null) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    if (activeSegmentIndex === null) {
+      clearActiveAnchor();
+      return;
+    }
+
+    setActiveAnchor(blockId, activeSegmentIndex);
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -55,11 +81,25 @@ export function AnchorFocusedComments(props: AnchorFocusedCommentsProps) {
     document.addEventListener('keydown', handleEscape);
     document.addEventListener('pointerdown', handlePointerDown, true);
     return () => {
-      document.body.style.overflow = originalOverflow;
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('pointerdown', handlePointerDown, true);
     };
-  }, [activeSegmentIndex, onClose]);
+  }, [activeSegmentIndex, blockId, setActiveAnchor, clearActiveAnchor, onClose]);
+
+  useEffect(() => {
+    if (lastProcessedCommentIndexRef.current === null) {
+      lastProcessedCommentIndexRef.current = activeCommentIndex;
+      return;
+    }
+
+    if (lastProcessedCommentIndexRef.current !== activeCommentIndex) {
+      const newSegmentIndex = getSegmentIndexByCommentIndex(segments, activeCommentIndex);
+      if (newSegmentIndex !== activeSegmentIndex) {
+        onSegmentChange(newSegmentIndex);
+      }
+      lastProcessedCommentIndexRef.current = activeCommentIndex;
+    }
+  }, [activeCommentIndex, segments, activeSegmentIndex, onSegmentChange]);
 
   if (activeSegmentIndex === null) return null;
 
@@ -78,61 +118,59 @@ export function AnchorFocusedComments(props: AnchorFocusedCommentsProps) {
 
   const title = activeComment.anchor?.selectedText || '评论';
 
+  const handleCommentChange = (newCommentIndex: number) => {
+    onCommentChange(newCommentIndex);
+  };
+
   return createPortal(
-    <div className="fixed inset-0 z-[130] pointer-events-none">
-      <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[430px] pointer-events-none">
+    <div className="anchor-focused-comments-overlay fixed inset-0 z-[130]" onClick={onClose}>
+      <div className="anchor-focused-comments-wrapper absolute inset-x-0 bottom-0 mx-auto w-full max-w-[430px]">
         <div
           ref={drawerRef}
-          className="anchor-focused-comments pointer-events-auto rounded-t-modal bg-white shadow-card"
+          className="anchor-focused-comments bg-[#FAFAFA] border-t border-[#E5E5EA]"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex justify-center px-4 pt-3">
-            <span className="h-1 w-10 rounded-full bg-gray-200" />
-          </div>
-
-          <div className="border-b border-gray-100 px-4 pb-3 pt-2">
-            {totalCommentCount > 1 ? (
-              <div className="flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => onCommentChange((safeCommentIndex - 1 + totalCommentCount) % totalCommentCount)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
-                >
-                  <ChevronLeft size={16} className="text-text-secondary" />
-                </button>
-
-                <div className="min-w-0 flex-1 text-center">
-                  <div className="mx-auto flex max-w-[280px] items-center justify-center gap-2 text-center">
-                    <h2 className="truncate text-base font-semibold text-text-primary">{title}</h2>
-                    <p className="shrink-0 text-xs text-text-tertiary">
-                      {safeCommentIndex + 1} / {totalCommentCount}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => onCommentChange((safeCommentIndex + 1) % totalCommentCount)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
-                >
-                  <ChevronRight size={16} className="text-text-secondary" />
-                </button>
-              </div>
-            ) : (
-              <h2 className="text-center text-base font-semibold text-text-primary">{title}</h2>
-            )}
-          </div>
-
-          <div className="px-4 pb-4 pt-3">
-            <div className="anchor-focused-comments-item max-h-[65vh] overflow-y-auto pr-1">
-              <CommentItem
-                comment={activeComment}
-                targetId={targetId}
-                rootType={rootType}
-                isFocused
-                hideAnchorSummary
-              />
+          <div className="anchor-focused-comments-header flex items-center justify-between px-5 py-3 border-b border-[#E5E5EA]">
+            <h2 className="anchor-focused-comments-title text-[17px] font-semibold text-[#1D1D1F] truncate flex-1">{title}</h2>
+            <div className="anchor-focused-comments-controls flex items-center gap-3">
+              {totalCommentCount > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleCommentChange((safeCommentIndex - 1 + totalCommentCount) % totalCommentCount)}
+                    className="anchor-focused-comments-prev text-[13px] text-[#007AFF] active:opacity-50 transition-opacity"
+                  >
+                    上一条
+                  </button>
+                  <span className="anchor-focused-comments-counter text-[13px] text-[#6E6E73]">
+                    {safeCommentIndex + 1}/{totalCommentCount}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCommentChange((safeCommentIndex + 1) % totalCommentCount)}
+                    className="anchor-focused-comments-next text-[13px] text-[#007AFF] active:opacity-50 transition-opacity"
+                  >
+                    下一条
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="anchor-focused-comments-close text-[13px] text-[#6E6E73] active:opacity-50 transition-opacity ml-2"
+              >
+                关闭
+              </button>
             </div>
+          </div>
+
+          <div className="anchor-focused-comments-body px-5 py-4">
+            <CommentItem
+              comment={activeComment}
+              targetId={targetId}
+              rootType={rootType}
+              hideAnchorSummary
+            />
           </div>
         </div>
       </div>

@@ -56,11 +56,11 @@ export function StudyDayNav({ totalDays, activeDay, onSelect }: StudyDayNavProps
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative py-3 px-4 bg-background"
+      className="relative py-2 px-5 bg-[#FAFAFA]"
     >
       <div
         ref={containerRef}
-        className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1 px-1"
+        className="flex gap-6 overflow-x-auto scrollbar-hide py-1"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -75,28 +75,23 @@ export function StudyDayNav({ totalDays, activeDay, onSelect }: StudyDayNavProps
               data-day={day}
               onClick={() => handleClick(day)}
               className={`
-                relative flex-shrink-0 w-16 h-8 rounded-full
-                flex items-center justify-center
-                text-xs font-bold
-                transition-all duration-200
+                flex-shrink-0 text-[15px] font-medium
+                transition-colors duration-200
                 ${
                   isActive
-                    ? 'bg-primary text-white shadow-md scale-110'
-                    : 'bg-white text-text-secondary hover:bg-gray-100'
+                    ? 'text-[#1D1D1F]'
+                    : 'text-[#6E6E73]'
                 }
               `}
             >
               Day {day}
-              {isActive && (
-                <span className="absolute inset-0 rounded-full border-2 border-primary" />
-              )}
             </button>
           );
         })}
       </div>
 
-      <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#FAFAFA] to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FAFAFA] to-transparent pointer-events-none" />
     </motion.div>
   );
 }
@@ -115,7 +110,7 @@ export function StudyDayFab({
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          className="absolute bottom-14 right-0 bg-white rounded-subtle-card shadow-float p-3 w-48"
+          className="absolute bottom-14 right-0 bg-white rounded-[12px] shadow-lg p-3 w-48"
         >
           <div className="grid grid-cols-5 gap-2">
             {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => (
@@ -126,12 +121,12 @@ export function StudyDayFab({
                   setIsOpen(false);
                 }}
                 className={`
-                  w-10 h-8 rounded-list text-xs font-bold
+                  w-10 h-8 rounded-[8px] text-[12px] font-bold
                   transition-colors
                   ${
                     day === activeDay
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
+                      ? 'bg-[#007AFF] text-white'
+                      : 'bg-[#F5F5F7] text-[#6E6E73] active:bg-[#E5E5EA]'
                   }
                 `}
               >
@@ -144,7 +139,7 @@ export function StudyDayFab({
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 rounded-full bg-primary text-white shadow-lg
+        className="w-12 h-12 rounded-full bg-[#007AFF] text-white shadow-lg
                    flex items-center justify-center text-sm font-bold active:scale-90 transition-transform"
       >
         {isOpen ? '✕' : `D${activeDay}`}

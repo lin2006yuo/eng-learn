@@ -8,7 +8,6 @@ import { ArticleManageList } from '@/features/article/components/ArticleManageLi
 import { useArticleMutations } from '@/features/article/hooks/useArticleMutations';
 import { useManageArticleList } from '@/features/article/hooks/useManageArticleList';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { Button } from '@/shared/components';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +26,7 @@ export default function ManageArticlesPage() {
   }, [loading, router, user]);
 
   if (loading || !user) {
-    return <div className="min-h-screen bg-background px-5 py-10 text-center text-text-secondary">加载中...</div>;
+    return <div className="min-h-screen bg-[#FAFAFA] px-5 py-10 text-center text-[#6E6E73]">加载中...</div>;
   }
 
   const handleCreate = async () => {
@@ -42,39 +41,45 @@ export default function ManageArticlesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background px-5 pb-10 pt-6">
-      <div className="mb-6 flex items-center justify-between gap-3">
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-[#FAFAFA]/95 px-5 py-3 flex items-center justify-between backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-text-primary shadow-card"
+            className="w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="text-[#007AFF]" />
           </button>
-          <div>
-            <p className="text-sm text-text-secondary">管理你的学习内容</p>
-            <h1 className="text-3xl font-bold text-text-primary">我的文章</h1>
-          </div>
+          <h2 className="text-[17px] font-semibold text-[#1D1D1F]">我的文章</h2>
         </div>
-        <Button icon={<Plus size={18} />} onClick={handleCreate} disabled={createArticle.isPending}>
-          新建文章
-        </Button>
+        <button
+          onClick={handleCreate}
+          disabled={createArticle.isPending}
+          className="flex items-center gap-1 text-[14px] font-medium text-[#007AFF] active:opacity-50 transition-opacity disabled:opacity-50"
+        >
+          <Plus size={18} />
+          <span>新建</span>
+        </button>
       </div>
 
-      {isLoading ? <div className="py-20 text-center text-text-secondary">加载文章列表中...</div> : null}
-      {!isLoading && isError ? (
-        <ArticleEmptyState title="加载失败" description="文章列表暂时不可用。" actionText="重试" onAction={() => refetch()} />
-      ) : null}
-      {!isLoading && !isError && data?.data.length === 0 ? (
-        <ArticleEmptyState description="当前还没有文章，点击右上角创建第一篇文章。" />
-      ) : null}
-      {!isLoading && !isError && data && data.data.length > 0 ? (
-        <ArticleManageList
-          articles={data.data}
-          onEdit={(articleId) => router.push(`/articles/manage/${articleId}`)}
-          onDelete={setPendingDeleteId}
-        />
-      ) : null}
+      {/* Content */}
+      <div className="px-5 pb-10 pt-4">
+        {isLoading ? <div className="py-20 text-center text-[#6E6E73]">加载文章列表中...</div> : null}
+        {!isLoading && isError ? (
+          <ArticleEmptyState title="加载失败" description="文章列表暂时不可用。" actionText="重试" onAction={() => refetch()} />
+        ) : null}
+        {!isLoading && !isError && data?.data.length === 0 ? (
+          <ArticleEmptyState description="当前还没有文章，点击右上角创建第一篇文章。" />
+        ) : null}
+        {!isLoading && !isError && data && data.data.length > 0 ? (
+          <ArticleManageList
+            articles={data.data}
+            onEdit={(articleId) => router.push(`/articles/manage/${articleId}`)}
+            onDelete={setPendingDeleteId}
+          />
+        ) : null}
+      </div>
 
       <ConfirmModal
         isOpen={!!pendingDeleteId}

@@ -2,7 +2,7 @@
 
 import { motion, type Transition, type Variants } from 'framer-motion';
 import { TabBar, Toast } from '@/shared/components';
-import { SquarePage } from '@/views';
+import { ProfilePage } from '@/views';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 8 },
@@ -16,7 +16,7 @@ const pageTransition: Transition = {
   damping: 30,
 };
 
-export default function Home() {
+export default function ProfileRoute() {
   return (
     <div className="min-h-screen bg-background">
       <motion.main
@@ -27,7 +27,7 @@ export default function Home() {
         exit="exit"
         transition={pageTransition}
       >
-        <SquarePage />
+        <ProfilePage />
       </motion.main>
       <TabBar />
       <Toast />

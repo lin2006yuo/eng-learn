@@ -1,25 +1,24 @@
 'use client';
 
 import { Heart, MessageSquare } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import type { Comment } from '@/features/comment/types';
 import { formatRelativeTime } from '@/features/comment/store/commentStore';
-import { getPatternById } from '@/data/patterns';
 
-interface MyCommentCardProps {
+interface MyCommentItemProps {
   comment: Comment;
+  isLast?: boolean;
 }
 
 const rootTypeRoutes: Record<string, (rootId: string) => string | null> = {
-  pattern: (rootId) => null,
+  pattern: () => null,
   article: (rootId) => `/articles/${rootId}`,
-  post: (rootId) => null,
-  note: (rootId) => null,
+  post: () => null,
+  note: () => null,
 };
 
-export function MyCommentCard({ comment }: MyCommentCardProps) {
+export function MyCommentItem({ comment, isLast = false }: MyCommentItemProps) {
   const router = useRouter();
   const { openModal } = usePatternCommentModalContext();
 
@@ -32,55 +31,48 @@ export function MyCommentCard({ comment }: MyCommentCardProps) {
     const route = rootTypeRoutes[comment.rootType]?.(comment.rootId);
     if (route) {
       router.push(route);
-      return;
     }
-
-    // post 和 note 暂无对应页面，暂不跳转
   };
 
   const hasReplies = comment.replyCount && comment.replyCount > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[12px] p-4 shadow-sm"
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs text-[#6E6E73]">在</span>
+    <div className={`mycomment-item px-4 py-4 ${isLast ? '' : 'border-b border-[#E5E5EA]'}`}>
+      <div className="mycomment-item-header flex items-center gap-1.5 mb-2">
+        <span className="text-[13px] text-[#6E6E73]">在</span>
         <button
           onClick={handleRootClick}
-          className="text-xs font-medium text-[#007AFF] active:opacity-50 transition-opacity truncate max-w-[200px]"
+          className="mycomment-item-target text-[13px] font-medium text-[#007AFF] active:opacity-50 transition-opacity truncate max-w-[180px]"
         >
           {comment.rootId}
         </button>
-        <span className="text-xs text-[#6E6E73]">下评论</span>
+        <span className="text-[13px] text-[#6E6E73]">下评论</span>
       </div>
 
-      <p className="text-[#1D1D1F] text-sm leading-relaxed mb-3">
+      <p className="mycomment-item-content text-[15px] text-[#1D1D1F] leading-snug mb-3">
         {comment.content}
       </p>
 
-      <div className="flex items-center gap-3">
-        <span className="text-xs text-[#6E6E73]">
+      <div className="mycomment-item-meta flex items-center gap-4">
+        <span className="text-[13px] text-[#6E6E73]">
           {formatRelativeTime(comment.createdAt)}
         </span>
 
-        <div className="flex items-center gap-1 text-xs text-[#6E6E73]">
-          <Heart size={12} />
+        <div className="flex items-center gap-1 text-[13px] text-[#6E6E73]">
+          <Heart size={13} className="text-[#C7C7CC]" />
           <span>{comment.likes > 0 ? comment.likes : '0'}</span>
         </div>
 
         {hasReplies && (
           <button
             onClick={handleRootClick}
-            className="flex items-center gap-1 text-xs text-[#007AFF] active:opacity-50 transition-opacity"
+            className="mycomment-item-replies flex items-center gap-1 text-[13px] text-[#007AFF] active:opacity-50 transition-opacity"
           >
-            <MessageSquare size={12} />
+            <MessageSquare size={13} />
             <span>{comment.replyCount} 条回复</span>
           </button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

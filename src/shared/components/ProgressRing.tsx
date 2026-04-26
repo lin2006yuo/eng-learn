@@ -33,7 +33,7 @@ export function ProgressRing({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="#E5E7EB"
+            stroke="#E5E5EA"
             strokeWidth={strokeWidth}
           />
           <motion.circle
@@ -41,7 +41,7 @@ export function ProgressRing({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="#58CC71"
+            stroke="#007AFF"
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -55,13 +55,13 @@ export function ProgressRing({
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-2xl font-bold text-text-primary"
+            className="text-2xl font-bold text-[#1D1D1F]"
           >
             {current}/{total}
           </motion.span>
         </div>
       </div>
-      <p className="mt-3 text-sm font-medium text-text-secondary">{label}</p>
+      <p className="mt-3 text-sm font-medium text-[#6E6E73]">{label}</p>
     </div>
   );
 }

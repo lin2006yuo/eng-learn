@@ -1,4 +1,3 @@
-import { Button, Card } from '@/shared/components';
 import type { PostSummary } from '../types';
 import { PostStatusBadge } from './PostStatusBadge';
 
@@ -10,28 +9,37 @@ interface PostManageListProps {
 
 export function PostManageList({ posts, onEdit, onDelete }: PostManageListProps) {
   return (
-    <div className="post-manage-list space-y-4">
-      {posts.map((post) => (
-        <Card key={post.id} className="post-manage-card">
-          <div className="mb-3 flex items-start justify-between gap-3">
+    <div className="post-manage-list">
+      {posts.map((post, index) => (
+        <div
+          key={post.id}
+          className={`post-manage-item py-4 ${index !== posts.length - 1 ? 'border-b border-[#E5E5EA]' : ''}`}
+        >
+          <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <h3 className="mb-2 text-xl font-bold text-text-primary">{post.title}</h3>
-              <div className="flex items-center gap-3 text-xs text-text-secondary">
+              <h3 className="text-[18px] font-semibold text-[#1D1D1F] leading-tight mb-2">{post.title}</h3>
+              <div className="flex items-center gap-3 text-[13px] text-[#6E6E73]">
                 <span>{post.viewCount} 浏览</span>
                 <span>最后更新 {new Date(post.updatedAt).toLocaleString('zh-CN')}</span>
               </div>
             </div>
             <PostStatusBadge status={post.status} />
           </div>
-          <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1" onClick={() => onEdit(post.id)}>
-              编辑帖子
-            </Button>
-            <Button variant="ghost" className="flex-1" onClick={() => onDelete(post.id)}>
+          <div className="mt-3 flex items-center gap-4">
+            <button
+              className="post-manage-edit text-[14px] font-medium text-[#007AFF] active:opacity-50 transition-opacity"
+              onClick={() => onEdit(post.id)}
+            >
+              编辑
+            </button>
+            <button
+              className="post-manage-delete text-[14px] font-medium text-[#6E6E73] active:opacity-50 transition-opacity"
+              onClick={() => onDelete(post.id)}
+            >
               删除
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
       ))}
     </div>
   );

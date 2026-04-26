@@ -55,82 +55,57 @@ export function CommentItem({
   return (
     <>
       <div
-        className={`py-4 border-b border-gray-50 last:border-b-0 ${
+        className={`comment-item py-4 ${
           isDeleting ? 'opacity-50' : ''
-        } ${isFocused ? 'rounded-subtle-card bg-primary/5 px-2' : ''}`}
+        } ${isFocused ? 'bg-[#007AFF]/5' : ''}`}
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            {comment.userAvatar ? (
-              <img
-                src={comment.userAvatar}
-                alt={comment.userName}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-sm font-medium text-primary">
-                {comment.userName.charAt(0)}
-              </span>
-            )}
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-text-primary text-sm">
-                {comment.userName}
-              </span>
-              {isOwnComment && (
-                <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
-                  我
-                </span>
-              )}
-              <span className="text-xs text-text-tertiary">
-                {formatRelativeTime(comment.createdAt)}
-              </span>
-            </div>
-          </div>
+        <div className="comment-item-header flex items-center gap-2 mb-2">
+          <span className="comment-item-user-name text-[15px] font-medium text-[#1D1D1F]">
+            {comment.userName}
+          </span>
+          {isOwnComment && (
+            <span className="comment-item-own-badge text-[12px] text-[#007AFF]">
+              我
+            </span>
+          )}
+          <span className="text-[#C7C7CC]">·</span>
+          <span className="comment-item-time text-[13px] text-[#6E6E73]">
+            {formatRelativeTime(comment.createdAt)}
+          </span>
         </div>
 
         {!hideAnchorSummary ? <CommentAnchorSummary comment={comment} /> : null}
 
-        <p className="text-text-primary text-sm leading-relaxed pl-12">
+        <p className="comment-item-content text-[#1D1D1F] text-[15px] leading-snug">
           {comment.content}
         </p>
 
-        <div className="flex items-center gap-4 mt-3 pl-12">
+        <div className="comment-item-actions flex items-center gap-4 mt-2">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1 text-xs transition-colors ${
-              comment.isLiked
-                ? 'text-red-500'
-                : 'text-text-tertiary hover:text-text-secondary'
+            className={`comment-item-like-button text-[13px] font-medium transition-colors ${
+              comment.isLiked ? 'text-[#FF3B30]' : 'text-[#6E6E73]'
             }`}
           >
-            <Heart
-              size={14}
-              fill={comment.isLiked ? 'currentColor' : 'none'}
-              className={comment.isLiked ? 'scale-110' : ''}
-            />
-            <span>{comment.likes > 0 ? comment.likes : '点赞'}</span>
+            {comment.isLiked ? '♥' : '♡'} {comment.likes > 0 ? comment.likes : '点赞'}
           </button>
 
           {!isOwnComment && (
             <button
               onClick={handleReplyClick}
-              className="flex items-center gap-1 text-xs text-text-tertiary hover:text-text-secondary transition-colors"
+              className="comment-item-reply-button text-[13px] font-medium text-[#6E6E73] active:opacity-50 transition-opacity"
             >
-              <MessageCircle size={14} />
-              <span>回复</span>
+              回复
             </button>
           )}
 
           {isOwnComment && (
             <>
-              <span className="text-text-tertiary">·</span>
+              <span className="text-[#C7C7CC]">·</span>
               <button
                 onClick={() => setShowConfirm(true)}
                 disabled={isDeleting}
-                className="text-xs text-text-tertiary hover:text-red-500 transition-colors"
+                className="comment-item-delete-button text-[13px] font-medium text-[#6E6E73] active:opacity-50 transition-opacity"
               >
                 删除
               </button>
@@ -139,7 +114,7 @@ export function CommentItem({
         </div>
 
         {showReplyInput && (
-          <div className="mt-3 pl-12">
+          <div className="comment-item-reply-input mt-3">
             <CommentInput
               rootId={targetId}
               rootType={rootType}
@@ -151,7 +126,7 @@ export function CommentItem({
         )}
 
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-3 pl-12 space-y-3">
+          <div className="comment-item-replies mt-3 space-y-3">
             {comment.replies.map((reply) => (
               <ReplyItem
                 key={reply.id}

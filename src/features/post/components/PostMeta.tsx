@@ -20,13 +20,14 @@ function formatDate(value: string | null) {
 
 export function PostMeta({ authorName, publishedAt, status, viewCount }: PostMetaProps) {
   return (
-    <div className="post-meta-container flex flex-wrap items-center gap-3 text-sm text-text-secondary">
-      <span className="post-meta-author">作者 {authorName}</span>
+    <div className="post-meta-container flex flex-wrap items-center gap-2 text-[13px] text-[#6E6E73]">
+      <span className="post-meta-author">{authorName}</span>
+      <span className="text-[#C7C7CC]">·</span>
       <span className="post-meta-date">{formatDate(publishedAt)}</span>
+      <span className="text-[#C7C7CC]">·</span>
       <span className="post-meta-views">{viewCount} 浏览</span>
-      <span className="post-meta-status rounded-badge bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
-        {statusLabelMap[status]}
-      </span>
+      <span className="text-[#C7C7CC]">·</span>
+      <span className="post-meta-status">{statusLabelMap[status]}</span>
     </div>
   );
 }

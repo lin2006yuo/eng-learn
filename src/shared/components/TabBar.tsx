@@ -1,60 +1,67 @@
+'use client';
+
 import { motion } from 'framer-motion';
-import { LayoutGrid, Trophy } from 'lucide-react';
-import { useAppStore } from '@/shared/store/appStore';
+import { Home, User } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useUnreadCount } from '@/features/notification/hooks/useUnreadCount';
 import { TabBarBadge } from '@/shared/components/TabBarBadge';
-import type { TabType } from '@/shared/types';
 
-const tabs: { id: TabType; label: string; icon: typeof LayoutGrid }[] = [
-  { id: 'square', label: '广场', icon: LayoutGrid },
-  { id: 'profile', label: '我的', icon: Trophy },
+interface Tab {
+  id: string;
+  label: string;
+  icon: typeof Home;
+  path: string;
+}
+
+const tabs: Tab[] = [
+  { id: 'square', label: '广场', icon: Home, path: '/' },
+  { id: 'profile', label: '我的', icon: User, path: '/profile' },
 ];
 
 export function TabBar() {
-  const { currentTab, setCurrentTab } = useAppStore();
+  const router = useRouter();
+  const pathname = usePathname();
   const { total: unreadCount } = useUnreadCount();
 
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return pathname === '/' || pathname === '/square';
+    }
+    return pathname === path;
+  };
+
+  const handleTabClick = (path: string) => {
+    router.push(path);
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 safe-bottom z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-[#D1D1D6]/50 safe-bottom z-50">
       <div className="max-w-[430px] mx-auto flex items-center justify-around py-2 px-4">
         {tabs.map((tab) => {
-          const isActive = currentTab === tab.id;
+          const active = isActive(tab.path);
           const Icon = tab.icon;
           const showBadge = tab.id === 'profile' && unreadCount > 0;
 
           return (
             <button
               key={tab.id}
-              onClick={() => setCurrentTab(tab.id)}
-              className="relative flex flex-col items-center gap-1 py-2 px-6 min-w-[80px]"
+              onClick={() => handleTabClick(tab.path)}
+              className="relative flex flex-col items-center gap-0.5 py-2 px-6 min-w-[80px]"
             >
-              <motion.div
-                animate={{
-                  scale: isActive ? 1.1 : 1,
-                  color: isActive ? '#58CC71' : '#9CA3AF',
-                }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              >
-                <Icon
-                  size={24}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  className={isActive ? 'text-primary' : 'text-gray-400'}
-                />
-              </motion.div>
+              <Icon
+                size={24}
+                strokeWidth={active ? 2.5 : 1.5}
+                className={`transition-colors ${
+                  active ? 'text-[#007AFF]' : 'text-[#8E8E93]'
+                }`}
+              />
               <span
-                className={`text-xs font-medium transition-colors ${
-                  isActive ? 'text-primary' : 'text-gray-400'
+                className={`text-[10px] transition-colors ${
+                  active ? 'text-[#007AFF] font-semibold' : 'text-[#8E8E93] font-medium'
                 }`}
               >
                 {tab.label}
               </span>
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute -top-2 w-1 h-1 rounded-full bg-primary"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
               {showBadge && <TabBarBadge count={unreadCount} />}
             </button>
           );

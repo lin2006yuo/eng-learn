@@ -1,13 +1,12 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useRef, useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useRef, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import useSWR from 'swr';
 import { apiGet } from '@/shared/utils/api';
 import { VirtualPatternList, type VirtualPatternListRef } from '@/features/pattern';
 import { CommentsModal } from '@/features/comment';
-import { QuickNav, QuickNavFab, StudyDayNav, usePatternCommentModalContext } from '@/shared';
-import { useScrollSpy } from '@/shared/hooks/useScrollSpy';
+import { StudyDayNav, usePatternCommentModalContext } from '@/shared';
 import { commentBus } from '@/shared/utils/eventBus';
 import type { Pattern } from '@/shared/types';
 
@@ -22,8 +21,6 @@ export function PatternLearnPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const listRef = useRef<VirtualPatternListRef>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [showFab, setShowFab] = useState(true);
 
   const urlDay = parseInt(searchParams.get('day') ?? '', 10);
   const selectedDay = Number.isFinite(urlDay) ? urlDay : 1;
@@ -55,37 +52,6 @@ export function PatternLearnPage() {
     });
     return unsubscribe;
   }, [mutate, patternsList]);
-  const patternNumbers = patternsList.map((p) =>
-    parseInt(p.id.replace('pattern-', ''), 10)
-  );
-  const elementIds = patternsList.map((_, idx) => `pattern-idx-${idx}`);
-  const activeId = useScrollSpy(elementIds, {
-    rootMargin: '-40% 0px -40% 0px',
-    threshold: 0,
-  });
-
-  useEffect(() => {
-    if (activeId) {
-      const index = parseInt(activeId.replace('pattern-idx-', ''), 10);
-      setActiveIndex(index);
-      setShowFab(false);
-    }
-  }, [activeId]);
-
-  const handleActiveIndexChange = (index: number) => {
-    setActiveIndex(index);
-    setShowFab(false);
-  };
-
-  const handleSelect = (index: number) => {
-    if (listRef.current) {
-      listRef.current.scrollToIndex(index);
-    }
-  };
-
-  const handleBackToSquare = () => {
-    router.push('/');
-  };
 
   const handleDaySelect = (day: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -94,8 +60,6 @@ export function PatternLearnPage() {
     } else {
       params.set('day', String(day));
     }
-    setActiveIndex(0);
-    setShowFab(true);
 
     router.push(`${pathname}?${params.toString()}`);
 
@@ -107,28 +71,28 @@ export function PatternLearnPage() {
     });
   };
 
+  const handleBackToSquare = () => {
+    router.push('/');
+  };
+
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-        className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm px-5 py-3 flex items-center gap-3"
-      >
-        <motion.button
-          whileTap={{ scale: 0.9 }}
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-[#FAFAFA]/95 backdrop-blur-sm px-5 py-3 flex items-center gap-3">
+        <button
           onClick={handleBackToSquare}
-          className="w-10 h-10 rounded-full bg-white shadow-card flex items-center justify-center text-text-primary hover:bg-gray-50 transition-colors"
+          className="w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity"
         >
-          <ArrowLeft size={22} />
-        </motion.button>
-        <h2 className="text-xl font-bold text-text-primary">
+          <ArrowLeft size={20} className="text-[#007AFF]" />
+        </button>
+        <h2 className="text-[17px] font-semibold text-[#1D1D1F]">
           Day {selectedDay}
         </h2>
-      </motion.div>
+      </div>
 
+      {/* Day Nav */}
       {totalDays > 0 && (
-        <div className="sticky top-[64px] z-30">
+        <div className="sticky top-[48px] z-30">
           <StudyDayNav
             totalDays={totalDays}
             activeDay={selectedDay}
@@ -137,36 +101,19 @@ export function PatternLearnPage() {
         </div>
       )}
 
-      {showFab && (
-        <QuickNavFab
-          total={patternsList.length}
-          activeIndex={activeIndex}
-          onSelect={handleSelect}
-          patternNumbers={patternNumbers}
-        />
-      )}
-      <div className="sticky top-[128px] z-30">
-        <QuickNav
-          total={patternsList.length}
-          activeIndex={activeIndex}
-          onSelect={handleSelect}
-          patternNumbers={patternNumbers}
-        />
-      </div>
-
+      {/* Pattern List */}
       {patternsList.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-text-secondary">
-          <span className="text-6xl mb-4">📚</span>
-          <p className="text-lg">Day {selectedDay} 暂无句型安排</p>
+        <div className="flex flex-col items-center justify-center py-20 text-[#6E6E73]">
+          <p className="text-[15px]">Day {selectedDay} 暂无句型安排</p>
         </div>
       ) : (
         <VirtualPatternList
           ref={listRef}
           patterns={patternsList}
-          onActiveIndexChange={handleActiveIndexChange}
         />
       )}
 
+      {/* Comment Modal */}
       <AnimatePresence>
         {isModalOpen && targetId && (
           <CommentsModal targetId={targetId} />

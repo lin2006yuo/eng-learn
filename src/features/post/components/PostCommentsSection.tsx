@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronRight } from 'lucide-react';
 import { CommentInput } from '@/features/comment/components/CommentInput';
 import { CommentItem } from '@/features/comment/components/CommentItem';
 import { useCommentStore } from '@/features/comment/store/commentStore';
 import { filterNormalComments } from '@/features/comment/utils';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { Button, Card } from '@/shared/components';
 
 interface PostCommentsSectionProps {
   postId: string;
@@ -30,54 +30,59 @@ export function PostCommentsSection({ postId }: PostCommentsSectionProps) {
   }, [postId, fetchComments]);
 
   return (
-    <Card className="post-comments-container">
-      <div className="post-comments-header mb-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm text-text-secondary">互动区</p>
-          <h2 className="text-2xl font-bold text-text-primary">帖子评论</h2>
-        </div>
-        <div className="rounded-badge bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-          {visibleComments.length} 条
-        </div>
+    <div className="post-comments-container mt-8">
+      {/* Header */}
+      <div className="post-comments-header px-5 pb-3 border-b border-[#E5E5EA] flex items-center justify-between">
+        <h2 className="text-[18px] font-semibold text-[#1D1D1F]">评论</h2>
+        <span className="text-[13px] text-[#6E6E73]">{visibleComments.length} 条</span>
       </div>
 
+      {/* Loading */}
       {loading ? (
-        <div className="post-comments-loading py-10 text-center text-text-secondary">加载评论中...</div>
+        <div className="post-comments-loading py-10 text-center text-[#6E6E73] text-[15px]">
+          加载评论中...
+        </div>
       ) : null}
 
+      {/* Comments List */}
       {!loading && visibleComments.length > 0 ? (
-        <div className="post-comments-list rounded-subtle-card bg-gray-50 px-4 shadow-sm">
-          {visibleComments.map((comment) => (
-            <CommentItem
+        <div className="post-comments-list px-5">
+          {visibleComments.map((comment, index) => (
+            <div
               key={comment.id}
-              comment={comment}
-              targetId={postId}
-              rootType="post"
-            />
+              className={`post-comments-item ${index !== visibleComments.length - 1 ? 'border-b border-[#E5E5EA]' : ''}`}
+            >
+              <CommentItem
+                comment={comment}
+                targetId={postId}
+                rootType="post"
+              />
+            </div>
           ))}
         </div>
       ) : null}
 
+      {/* Empty State */}
       {!loading && visibleComments.length === 0 ? (
-        <div className="post-comments-empty rounded-subtle-card bg-gray-50 px-6 py-10 text-center">
-          <div className="mb-3 text-3xl">💬</div>
-          <p className="mb-1 text-lg font-semibold text-text-primary">还没有评论</p>
-          <p className="text-sm text-text-secondary">欢迎留下你的看法。</p>
+        <div className="post-comments-empty py-10 text-center">
+          <p className="text-[15px] text-[#6E6E73]">还没有评论，欢迎留下你的看法</p>
         </div>
       ) : null}
 
-      {user ? (
-        <div className="post-comments-input mt-4 overflow-hidden rounded-subtle-card border border-gray-100">
+      {/* Input or Login */}
+      <div className="post-comments-footer mt-4 pt-4 border-t border-[#E5E5EA] px-5">
+        {user ? (
           <CommentInput rootId={postId} rootType="post" />
-        </div>
-      ) : (
-        <div className="post-comments-login mt-4 rounded-subtle-card bg-secondary/10 p-4">
-          <p className="mb-3 text-sm text-text-secondary">登录后即可参与帖子评论与回复。</p>
-          <Button onClick={() => router.push(`/login?from=${encodeURIComponent(`/posts/${postId}`)}`)}>
-            立即登录
-          </Button>
-        </div>
-      )}
-    </Card>
+        ) : (
+          <button
+            onClick={() => router.push(`/login?from=${encodeURIComponent(`/posts/${postId}`)}`)}
+            className="post-comments-login w-full flex items-center justify-center gap-1 text-[14px] font-medium text-[#007AFF] active:opacity-50 transition-opacity"
+          >
+            <span>登录后即可参与评论</span>
+            <ChevronRight size={16} className="text-[#C7C7CC]" />
+          </button>
+        )}
+      </div>
+    </div>
   );
 }

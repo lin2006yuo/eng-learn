@@ -5,4 +5,3 @@ export { useArticleModalRoute } from './useArticleModalRoute';
 export { PostModalProvider, usePostModalContext } from './PostModalContext';
 export { usePostModalRoute } from './usePostModalRoute';
 export { useScrollSpy, scrollToElement } from './useScrollSpy';
-export { useCopy } from './useCopy';

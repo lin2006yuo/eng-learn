@@ -1,21 +1,19 @@
-import { cn } from '@/shared/utils/cn';
 import type { PostStatus } from '../types';
 
 interface PostStatusBadgeProps {
   status: PostStatus;
 }
 
-const statusConfig: Record<PostStatus, { label: string; className: string }> = {
-  draft: { label: '草稿', className: 'bg-gray-100 text-text-secondary' },
-  published: { label: '已发布', className: 'bg-primary/10 text-primary' },
-  archived: { label: '已下线', className: 'bg-secondary/10 text-secondary' },
+const statusLabelMap: Record<PostStatus, string> = {
+  draft: '草稿',
+  published: '已发布',
+  archived: '已下线',
 };
 
 export function PostStatusBadge({ status }: PostStatusBadgeProps) {
-  const config = statusConfig[status];
   return (
-    <span className={cn('rounded-badge px-3 py-1 text-xs font-semibold', config.className)}>
-      {config.label}
+    <span className="post-status-badge text-[13px] text-[#6E6E73]">
+      {statusLabelMap[status]}
     </span>
   );
 }

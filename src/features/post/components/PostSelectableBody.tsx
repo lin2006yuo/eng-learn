@@ -50,7 +50,7 @@ export function PostSelectableBody(props: PostSelectableBodyProps) {
         rootId={rootId}
         rootType="post"
         text={text}
-        className="post-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary"
+        className="post-detail-content whitespace-pre-wrap text-[16px] leading-8 text-[#1D1D1F]"
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={dataPath}
@@ -71,7 +71,9 @@ export function PostSelectableBody(props: PostSelectableBodyProps) {
         activeCommentIndex={activeCommentIndex}
         targetId={rootId}
         rootType="post"
+        blockId={dataPath}
         onCommentChange={setActiveCommentIndex}
+        onSegmentChange={setActiveSegmentIndex}
         onClose={() => setActiveSegmentIndex(null)}
       />
     </div>

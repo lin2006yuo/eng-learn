@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { User, Lock, Smile } from 'lucide-react';
-import { Card, Button } from '@/shared/components';
+import { ArrowLeft } from 'lucide-react';
 import { signIn, signUp } from '@/lib/auth-client';
 
 export default function LoginPage() {
@@ -68,162 +67,127 @@ export default function LoginPage() {
     }
   };
 
+  const toggleMode = () => {
+    setIsRegister(!isRegister);
+    setError('');
+    setNickname('');
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-[430px] mx-auto min-h-screen flex flex-col items-center justify-center px-5 py-8">
-        {/* Logo */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="text-6xl mb-4"
-        >
-          🦉
-        </motion.div>
-
-        {/* 标题 */}
-        <motion.h1
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.1 }}
-          className="text-2xl font-bold text-text-primary mb-1"
-        >
-          {isRegister ? '创建账号' : '欢迎回来'}
-        </motion.h1>
-
-        <motion.p
+    <div className="min-h-screen bg-[#FAFAFA]">
+      <div className="max-w-[430px] mx-auto min-h-screen flex flex-col px-5 pt-12">
+        {/* Back */}
+        <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-text-secondary mb-8"
+          onClick={() => router.back()}
+          className="w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity mb-6"
         >
-          {isRegister ? '开始你的学习之旅' : '继续你的英语学习之旅'}
-        </motion.p>
+          <ArrowLeft size={20} className="text-[#007AFF]" />
+        </motion.button>
 
-        {/* 登录卡片 */}
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.3 }}
-          className="w-full"
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          className="mb-10"
         >
-          <Card animate={false} className="p-6">
-            {/* 错误提示 */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mb-4 p-3 bg-red-50 rounded-2xl"
-              >
-                <p className="text-red-500 text-sm text-center">{error}</p>
-              </motion.div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* 用户名输入 */}
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
-                  <User size={20} />
-                </div>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-search-bg rounded-2xl
-                           text-text-primary placeholder:text-text-secondary
-                           focus:outline-none focus:ring-2 focus:ring-primary/30
-                           transition-all duration-200"
-                  placeholder="用户名"
-                  required
-                  minLength={3}
-                  maxLength={31}
-                />
-              </div>
-
-              {/* 昵称输入 - 仅在注册时显示 */}
-              {isRegister && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="relative"
-                >
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
-                    <Smile size={20} />
-                  </div>
-                  <input
-                    type="text"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-search-bg rounded-2xl
-                             text-text-primary placeholder:text-text-secondary
-                             focus:outline-none focus:ring-2 focus:ring-primary/30
-                             transition-all duration-200"
-                    placeholder="昵称（用于显示，选填）"
-                    maxLength={20}
-                  />
-                </motion.div>
-              )}
-
-              {/* 密码输入 */}
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
-                  <Lock size={20} />
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-search-bg rounded-2xl
-                           text-text-primary placeholder:text-text-secondary
-                           focus:outline-none focus:ring-2 focus:ring-primary/30
-                           transition-all duration-200"
-                  placeholder="密码"
-                  required
-                  maxLength={255}
-                />
-              </div>
-
-              {/* 提交按钮 */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                disabled={loading}
-                className="w-full mt-2"
-              >
-                {loading ? '处理中...' : isRegister ? '创建账号' : '登录'}
-              </Button>
-            </form>
-
-            {/* 切换登录/注册 */}
-            <div className="mt-6 text-center">
-              <p className="text-text-secondary text-sm">
-                {isRegister ? '已有账号？' : '还没有账号？'}
-                <button
-                  onClick={() => {
-                    setIsRegister(!isRegister);
-                    setError('');
-                    setNickname('');
-                  }}
-                  className="ml-1 text-primary font-semibold hover:underline transition-colors"
-                >
-                  {isRegister ? '去登录' : '去注册'}
-                </button>
-              </p>
-            </div>
-          </Card>
+          <h1 className="text-[30px] font-bold text-[#1D1D1F] tracking-tight leading-[1.1] mb-1">
+            {isRegister ? '创建账号' : '登录'}
+          </h1>
+          <p className="text-[15px] text-[#6E6E73]">
+            {isRegister ? '开始你的英语学习之旅' : '继续你的学习之旅'}
+          </p>
         </motion.div>
 
-        {/* 底部装饰 */}
-        <motion.p
+        {/* Form */}
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30, delay: 0.08 }}
+          className="space-y-4"
+        >
+          {/* Error */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 py-3 bg-[#FF3B30]/10 rounded-[10px]"
+            >
+              <p className="text-[13px] text-[#FF3B30] text-center font-medium">{error}</p>
+            </motion.div>
+          )}
+
+          {/* Username */}
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-4 py-3.5 bg-white text-[17px] text-[#1D1D1F] rounded-[12px] placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all"
+            placeholder="用户名"
+            required
+            minLength={3}
+            maxLength={31}
+            autoComplete="username"
+          />
+
+          {/* Nickname (register only) */}
+          {isRegister && (
+            <motion.input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full px-4 py-3.5 bg-white text-[17px] text-[#1D1D1F] rounded-[12px] placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all"
+              placeholder="昵称（选填）"
+              maxLength={20}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              autoComplete="name"
+            />
+          )}
+
+          {/* Password */}
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3.5 bg-white text-[17px] text-[#1D1D1F] rounded-[12px] placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all"
+            placeholder="密码"
+            required
+            maxLength={255}
+            autoComplete={isRegister ? 'new-password' : 'current-password'}
+          />
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 bg-[#007AFF] text-white text-[17px] font-semibold rounded-[12px] active:opacity-80 transition-opacity disabled:opacity-50 mt-2"
+          >
+            {loading ? '处理中...' : isRegister ? '创建账号' : '登录'}
+          </button>
+        </motion.form>
+
+        {/* Toggle */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 text-sm text-text-secondary"
+          transition={{ delay: 0.15 }}
+          className="mt-6 text-center"
         >
-          句型英语 · 让学习更简单
-        </motion.p>
+          <p className="text-[15px] text-[#6E6E73]">
+            {isRegister ? '已有账号？' : '还没有账号？'}
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="ml-1.5 text-[#007AFF] font-semibold"
+            >
+              {isRegister ? '去登录' : '去注册'}
+            </button>
+          </p>
+        </motion.div>
       </div>
     </div>
   );

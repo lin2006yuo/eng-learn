@@ -59,7 +59,7 @@ export function NotificationReplyInput({ rootType, rootId, targetId, actorId, on
   };
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-100">
+    <div className="notif-reply-input pt-3 border-t border-[#E5E5EA]">
       <div className="flex gap-3 items-end">
         <div className="flex-1 relative">
           <input
@@ -71,12 +71,12 @@ export function NotificationReplyInput({ rootType, rootId, targetId, actorId, on
             placeholder="回复..."
             maxLength={MAX_LENGTH}
             disabled={isSubmitting}
-            className="w-full bg-gray-50 rounded-input px-4 py-2.5 pr-12 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+            className="notif-reply-input-field w-full bg-transparent text-[15px] text-[#1D1D1F] placeholder:text-[#C7C7CC] focus:outline-none disabled:opacity-50"
           />
           {currentLength > 250 && (
             <span
-              className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs ${
-                currentLength >= MAX_LENGTH ? 'text-red-500' : 'text-text-tertiary'
+              className={`absolute right-0 top-1/2 -translate-y-1/2 text-xs ${
+                currentLength >= MAX_LENGTH ? 'text-[#FF3B30]' : 'text-[#6E6E73]'
               }`}
             >
               {currentLength}/{MAX_LENGTH}
@@ -87,16 +87,11 @@ export function NotificationReplyInput({ rootType, rootId, targetId, actorId, on
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`
-            flex items-center justify-center
-            w-9 h-9 rounded-full
-            transition-all duration-200
-            ${
-              canSubmit
-                ? 'bg-primary text-white hover:bg-primary-dark active:scale-95'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }
-          `}
+          className={`notif-reply-input-submit flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
+            canSubmit
+              ? 'bg-[#007AFF] text-white active:opacity-50'
+              : 'bg-[#E5E5EA] text-[#C7C7CC] cursor-not-allowed'
+          }`}
         >
           {isSubmitting ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

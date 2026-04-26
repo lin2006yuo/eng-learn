@@ -1,32 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  /* 品牌色 */
-  --color-primary: #58CC71;
-  --color-primary-dark: #4AB563;
-  --color-secondary: #FF9600;
+  /* iOS Blue 品牌色 */
+  --color-primary: #007AFF;
+  --color-primary-dark: #0056CC;
+  --color-primary-light: #E8F0FE;
 
   /* 背景色 */
-  --color-background: #FFF7E8;
+  --color-background: #FAFAFA;
   --color-card: #FFFFFF;
-  --color-search-bg: #F3F4F6;
 
   /* 文字色 */
-  --color-text-primary: #1F2937;
-  --color-text-secondary: #6B7280;
+  --color-text-primary: #1D1D1F;
+  --color-text-secondary: #6E6E73;
+  --color-text-tertiary: #C7C7CC;
 
-  /* ===== 圆角 Token 系统 ===== */
-  /* 基础 Token: 存储实际 px 值 */
-  --radius-xs: 6px;
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  /* 边框色 */
+  --color-border: #E5E5EA;
+  --color-border-light: #F5F5F7;
+
+  /* 收藏色 */
+  --color-favorite: #FF3B30;
+  --color-favorite-light: #FF3B30/10;
+
+  /* 图标背景色 */
+  --color-icon-bg-blue: #E8F0FE;
+  --color-icon-bg-purple: #F3E8FF;
+  --color-icon-bg-green: #E6F9F0;
+
+  /* 语义色 */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* 圆角 (减小圆角更简约) */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
   /* 语义 Token: 映射用途 → 基础 Token */
-  --radius-button: var(--radius-full);
-  --radius-input: var(--radius-full);
+  --radius-button: var(--radius-md);
+  --radius-input: var(--radius-sm);
   --radius-card: var(--radius-lg);
   --radius-subtle-card: var(--radius-md);
   --radius-list: var(--radius-sm);
@@ -34,9 +52,9 @@
   --radius-modal: var(--radius-lg);
   --radius-avatar: var(--radius-full);
 
-  /* 阴影 */
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.12);
+  /* 阴影 (减弱阴影, 用边框替代) */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   /* 字体 */
   --font-sans: 'Inter', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -86,6 +104,18 @@
   border-bottom-right-radius: var(--radius-card);
 }
 
+/* ===== 边框工具类 ===== */
+@utility border-card {
+  border: 1px solid var(--color-border);
+}
+@utility border-card-hover {
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s;
+  &:hover {
+    border-color: var(--color-border-light);
+  }
+}
+
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
@@ -116,7 +146,51 @@ body {
 
 /* 选中文字样式 */
 ::selection {
-  background-color: rgba(88, 204, 113, 0.2);
+  background-color: rgba(0, 122, 255, 0.2);
+}
+
+/* ===== 颜色工具类 ===== */
+@utility bg-border {
+  background-color: var(--color-border);
+}
+@utility text-text-tertiary {
+  color: var(--color-text-tertiary);
+}
+@utility bg-primary-light {
+  background-color: var(--color-primary-light);
+}
+@utility bg-favorite {
+  background-color: var(--color-favorite);
+}
+@utility text-favorite {
+  color: var(--color-favorite);
+}
+@utility bg-favorite-light {
+  background-color: var(--color-favorite-light);
+}
+@utility bg-icon-blue {
+  background-color: var(--color-icon-bg-blue);
+}
+@utility bg-icon-purple {
+  background-color: var(--color-icon-bg-purple);
+}
+@utility bg-icon-green {
+  background-color: var(--color-icon-bg-green);
+}
+@utility bg-border-light {
+  background-color: var(--color-border-light);
+}
+@utility text-success {
+  color: var(--color-success);
+}
+@utility text-warning {
+  color: var(--color-warning);
+}
+@utility text-error {
+  color: var(--color-error);
+}
+@utility text-info {
+  color: var(--color-info);
 }
 
 /* 动画关键帧 */

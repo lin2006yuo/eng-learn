@@ -70,11 +70,11 @@ export const VirtualPatternList = forwardRef<VirtualPatternListRef, VirtualPatte
     const virtualItems = virtualizer.getVirtualItems();
 
     if (!isReady) {
-      return <div ref={listRef} className="px-5" style={{ height: '100vh' }} />;
+      return <div ref={listRef} className="px-5 bg-[#FAFAFA]" style={{ height: '100vh' }} />;
     }
 
     return (
-      <div ref={listRef} className="px-5">
+      <div ref={listRef} className="px-5 bg-[#FAFAFA]">
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
@@ -98,6 +98,7 @@ export const VirtualPatternList = forwardRef<VirtualPatternListRef, VirtualPatte
               <PatternCard
                 pattern={patterns[virtualItem.index]}
                 index={virtualItem.index}
+                isLast={virtualItem.index === patterns.length - 1}
               />
             </div>
           ))}

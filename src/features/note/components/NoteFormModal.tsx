@@ -52,22 +52,31 @@ export function NoteFormModal({ isOpen, onClose, onSave, initialContent = '' }: 
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="relative bg-white rounded-modal w-full max-w-xl h-[80vh] flex flex-col"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="relative bg-[#FAFAFA] w-full max-w-xl h-[80vh] flex flex-col rounded-[8px]"
           >
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 flex-shrink-0">
-              <h3 className="text-xl font-bold text-text-primary">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E5EA] flex-shrink-0">
+              <h3 className="text-[17px] font-semibold text-[#1D1D1F]">
                 {isEditing ? '编辑笔记' : '新增笔记'}
               </h3>
-              <button
-                onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleSave}
+                  className="text-[15px] font-medium text-[#007AFF] active:opacity-50 transition-opacity disabled:text-[#C7C7CC]"
+                  disabled={!content.trim()}
+                >
+                  保存
+                </button>
+                <button
+                  onClick={handleClose}
+                  className="w-9 h-9 flex items-center justify-center text-[#C7C7CC] active:opacity-50 transition-opacity"
+                >
+                  <X size={22} />
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 p-5 min-h-0">
@@ -78,26 +87,16 @@ export function NoteFormModal({ isOpen, onClose, onSave, initialContent = '' }: 
                   setError('');
                 }}
                 placeholder="想写什么就写什么..."
-                className="w-full h-full p-4 rounded-subtle-card bg-gray-50 border-2 border-transparent focus:border-[#58CC71] focus:bg-white resize-none outline-none transition-colors text-text-primary placeholder:text-gray-400 text-lg leading-relaxed"
+                className="w-full h-full p-0 bg-transparent border-0 resize-none outline-none text-[16px] text-[#1D1D1F] placeholder:text-[#C7C7CC] leading-snug"
                 autoFocus
               />
             </div>
 
-            <div className="p-5 border-t border-gray-100 flex-shrink-0">
-              <div className="flex items-center justify-between mb-4">
-                <span className={`text-sm ${error ? 'text-red-500' : 'text-transparent'}`}>
-                  {error}
-                </span>
+            {error && (
+              <div className="px-5 pb-3">
+                <span className="text-[13px] text-[#FF3B30]">{error}</span>
               </div>
-
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSave}
-                className="w-full py-4 rounded-subtle-card font-bold text-lg transition-colors bg-[#58CC71] text-white hover:bg-[#4BB563]"
-              >
-                保存笔记
-              </motion.button>
-            </div>
+            )}
           </motion.div>
         </div>
       )}

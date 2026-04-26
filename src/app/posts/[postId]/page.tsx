@@ -1,10 +1,8 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { PostDetail } from '@/features/post/components/PostDetail';
-import { PostCommentsSection } from '@/features/post/components/PostCommentsSection';
-import { PostEmptyState } from '@/features/post/components/PostEmptyState';
+import { PostDetailHeader } from '@/features/post/components/PostDetailHeader';
+import { PostDetailShell } from '@/features/post/components/PostDetailShell';
 import { usePostDetail } from '@/features/post/hooks/usePostDetail';
 
 export const dynamic = 'force-dynamic';
@@ -16,39 +14,20 @@ export default function PostDetailPage() {
   const { data, isLoading, isError, refetch } = usePostDetail(postId);
 
   return (
-    <div className="post-detail-page min-h-screen bg-background px-5 pb-10 pt-6">
-      <div className="post-detail-page-header mb-6 flex items-center gap-3">
-        <button
-          onClick={() => router.back()}
-          className="post-detail-back-btn flex h-10 w-10 items-center justify-center rounded-full bg-white text-text-primary shadow-card"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <p className="text-sm text-text-secondary">帖子详情</p>
-          <h1 className="text-2xl font-bold text-text-primary">帖子内容</h1>
-        </div>
+    <div className="post-detail-page min-h-screen bg-[#FAFAFA]">
+      <div className="post-detail-page-header sticky top-0 z-40 bg-[#FAFAFA]/95 px-5 backdrop-blur-sm">
+        <PostDetailHeader onBack={() => router.back()} />
       </div>
 
-      {isLoading ? (
-        <div className="post-detail-loading py-20 text-center text-text-secondary">加载帖子详情中...</div>
-      ) : null}
-
-      {!isLoading && isError ? (
-        <PostEmptyState
-          title="帖子不可用"
-          description="这个帖子可能已下线或暂时无法访问。"
-          actionText="重试"
-          onAction={() => refetch()}
+      <div className="post-detail-page-content pb-10 pt-4">
+        <PostDetailShell
+          post={data}
+          postId={postId}
+          isLoading={isLoading}
+          isError={isError}
+          onRetry={refetch}
         />
-      ) : null}
-
-      {!isLoading && !isError && data ? (
-        <div className="space-y-4">
-          <PostDetail post={data} />
-          <PostCommentsSection postId={postId} />
-        </div>
-      ) : null}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Card } from '@/shared/components';
 import { parseArticlePath, ArticleField } from '@/shared/utils/blockId';
 import type { PostDetailData } from '../types';
 import { PostMeta } from './PostMeta';
@@ -10,29 +9,30 @@ interface PostDetailProps {
 
 export function PostDetail({ post }: PostDetailProps) {
   return (
-    <div className="post-detail-container space-y-4">
-      <Card className="post-detail-header">
-        <div className="post-detail-badge mb-4 inline-flex rounded-badge bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          交流帖子
-        </div>
-        <h1 className="post-detail-title mb-3 text-3xl font-bold leading-tight text-text-primary">
+    <div className="post-detail-container">
+      {/* Header Section */}
+      <div className="post-detail-header pb-4 border-b border-[#E5E5EA]">
+        <h1 className="post-detail-title text-[22px] font-bold leading-tight tracking-tight text-[#1D1D1F]">
           {post.title}
         </h1>
-        <PostMeta
-          authorName={post.authorName}
-          publishedAt={post.publishedAt}
-          status={post.status}
-          viewCount={post.viewCount}
-        />
-      </Card>
+        <div className="post-detail-meta mt-4">
+          <PostMeta
+            authorName={post.authorName}
+            publishedAt={post.publishedAt}
+            status={post.status}
+            viewCount={post.viewCount}
+          />
+        </div>
+      </div>
 
-      <Card className="post-detail-body">
+      {/* Content Section */}
+      <div className="post-detail-body py-6">
         <PostSelectableBody
           rootId={post.id}
           dataPath={parseArticlePath(ArticleField.Content)}
           text={post.content}
         />
-      </Card>
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { MyCommentCard } from '@/features/comment/components/MyCommentCard';
+import { MyCommentItem } from '@/features/comment/components/MyCommentItem';
 import { useMyComments } from '@/features/comment/hooks/useMyComments';
 
 export function MyCommentsPage() {
@@ -36,42 +36,46 @@ export function MyCommentsPage() {
   }, [router]);
 
   return (
-    <div className="min-h-full bg-background">
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg border-b border-gray-100">
-        <div className="max-w-[430px] mx-auto px-5 py-4 flex items-center gap-3">
+    <div className="mycomments-page-container min-h-full bg-[#FAFAFA]">
+      <header className="mycomments-page-header sticky top-0 z-10 bg-[#FAFAFA]/95 backdrop-blur-sm">
+        <div className="max-w-[430px] mx-auto px-4 h-12 flex items-center gap-3">
           <button
             onClick={handleBack}
-            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center"
+            className="mycomments-page-back p-2 -ml-2 text-[#007AFF] active:opacity-50 transition-opacity"
           >
-            <ArrowLeft size={18} className="text-text-primary" />
+            <ArrowLeft size={20} />
           </button>
-          <h1 className="text-lg font-bold text-text-primary flex items-center gap-2">
-            <MessageSquare size={20} className="text-primary" />
+          <h1 className="mycomments-page-title text-[17px] font-semibold text-[#1D1D1F]">
             我的评论
           </h1>
         </div>
       </header>
 
       {authLoading ? (
-        <div className="max-w-[430px] mx-auto px-5 space-y-3 pb-6">
+        <div className="max-w-[430px] mx-auto">
           <LoadingSkeleton />
         </div>
       ) : (
         <div
-          className="max-w-[430px] mx-auto px-5 space-y-3 pb-6 overflow-auto"
+          className="max-w-[430px] mx-auto overflow-auto"
           onScroll={handleScroll}
-          style={{ maxHeight: 'calc(100vh - 180px)' }}
+          style={{ maxHeight: 'calc(100vh - 48px)' }}
         >
           {isLoading && <LoadingSkeleton />}
 
           {!isLoading && comments.length === 0 && <EmptyState />}
 
-          {!isLoading && comments.map((comment) => (
-            <MyCommentCard
-              key={comment.id}
-              comment={comment}
-            />
-          ))}
+          {!isLoading && comments.length > 0 && (
+            <div className="mycomments-page-list">
+              {comments.map((comment, index) => (
+                <MyCommentItem
+                  key={comment.id}
+                  comment={comment}
+                  isLast={index === comments.length - 1}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -80,33 +84,31 @@ export function MyCommentsPage() {
 
 function LoadingSkeleton() {
   return (
-    <>
+    <div className="mycomments-page-skeleton">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white rounded-subtle-card p-4 shadow-card animate-pulse">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-20 h-3 bg-gray-200 rounded" />
-            <div className="w-32 h-3 bg-gray-200 rounded" />
+        <div
+          key={i}
+          className="mycomments-skeleton-item px-4 py-4 border-b border-[#E5E5EA] animate-pulse"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-3 bg-[#E5E5EA] rounded" />
+            <div className="w-24 h-3 bg-[#E5E5EA] rounded" />
+            <div className="w-10 h-3 bg-[#E5E5EA] rounded" />
           </div>
-          <div className="w-full h-4 bg-gray-200 rounded mb-2" />
-          <div className="w-2/3 h-4 bg-gray-200 rounded mb-3" />
-          <div className="flex gap-3">
-            <div className="w-16 h-3 bg-gray-200 rounded" />
-            <div className="w-12 h-3 bg-gray-200 rounded" />
-          </div>
+          <div className="w-full h-4 bg-[#E5E5EA] rounded mb-2" />
+          <div className="w-2/3 h-4 bg-[#E5E5EA] rounded" />
         </div>
       ))}
-    </>
+    </div>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-        <MessageSquare size={36} className="text-gray-300" />
-      </div>
-      <p className="text-text-secondary text-sm">还没有评论</p>
-      <p className="text-text-tertiary text-xs mt-1">去句型广场发表第一条评论吧</p>
+    <div className="mycomments-page-empty flex flex-col items-center justify-center py-20">
+      <MessageSquare size={48} className="text-[#C7C7CC] mb-4" />
+      <p className="text-[15px] text-[#6E6E73]">还没有评论</p>
+      <p className="text-[13px] text-[#C7C7CC] mt-1">去句型广场发表第一条评论吧</p>
     </div>
   );
 }

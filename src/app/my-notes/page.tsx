@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, FileText } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNoteStore } from '@/features/note/store/noteStore';
 import { NoteCard } from '@/features/note/components/NoteCard';
@@ -63,39 +63,38 @@ export default function MyNotesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <header className="sticky top-0 bg-background z-10 px-5 py-4">
+    <div className="min-h-screen bg-[#FAFAFA] pb-20">
+      <header className="sticky top-0 bg-[#FAFAFA]/95 backdrop-blur-sm z-10 px-5 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => router.back()}
-              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"
-            >
-              <ArrowLeft size={20} className="text-gray-600" />
-            </motion.button>
-            <h1 className="text-xl font-bold text-text-primary">我的笔记</h1>
-          </div>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleAdd}
-            className="w-10 h-10 rounded-full bg-[#58CC71] text-white flex items-center justify-center shadow-lg hover:bg-[#4BB563] transition-colors"
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-[#007AFF] active:opacity-50 transition-opacity"
           >
-            <Plus size={24} />
-          </motion.button>
+            <ArrowLeft size={20} />
+            <span className="text-[17px] font-semibold">返回</span>
+          </button>
+
+          <h1 className="text-[17px] font-semibold text-[#1D1D1F]">我的笔记</h1>
+
+          <button
+            onClick={handleAdd}
+            className="text-[14px] font-medium text-[#007AFF] active:opacity-50 transition-opacity"
+          >
+            新增
+          </button>
         </div>
       </header>
 
-      <div className="px-5 py-4">
+      <div className="px-5">
         {notes.length === 0 ? (
           <EmptyState onAdd={handleAdd} />
         ) : (
-          <div className="space-y-4">
+          <div>
             {notes.map((note, index) => (
               <NoteCard
                 key={note.id}
                 note={note}
-                index={index}
+                isLast={index === notes.length - 1}
                 onClick={() => handleEdit(note)}
                 onDelete={() => handleDelete(note)}
               />
@@ -126,28 +125,21 @@ export default function MyNotesPage() {
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="w-24 h-24 rounded-full bg-[#58CC71]/10 flex items-center justify-center mb-6"
-      >
-        <FileText size={48} className="text-[#58CC71]" />
-      </motion.div>
-      <h3 className="text-xl font-bold text-text-primary mb-2">
+      <div className="w-16 h-16 rounded-[12px] bg-[#E8F0FE] flex items-center justify-center mb-4">
+        <FileText size={28} className="text-[#1A73E8]" />
+      </div>
+      <h3 className="text-[18px] font-semibold text-[#1D1D1F] mb-1">
         还没有笔记
       </h3>
-      <p className="text-text-secondary mb-8 text-center">
-        点击右上角 + 按钮添加你的第一条笔记
+      <p className="text-[14px] text-[#6E6E73] mb-6 text-center">
+        点击右上角"新增"按钮添加你的第一条笔记
       </p>
-      <motion.button
-        whileTap={{ scale: 0.95 }}
+      <button
         onClick={onAdd}
-        className="flex items-center gap-2 px-6 py-3.5 bg-[#58CC71] text-white rounded-subtle-card font-semibold hover:bg-[#4BB563] transition-colors"
+        className="text-[15px] font-medium text-[#007AFF] active:opacity-50 transition-opacity"
       >
-        <Plus size={20} />
         新增笔记
-      </motion.button>
+      </button>
     </div>
   );
 }

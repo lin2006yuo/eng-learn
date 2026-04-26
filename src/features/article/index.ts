@@ -7,6 +7,8 @@ export * from './hooks/useArticleMutations';
 export * from './components/ArticleList';
 export * from './components/ArticleCard';
 export * from './components/ArticleDetail';
+export * from './components/ArticleDetailHeader';
+export * from './components/ArticleDetailShell';
 export * from './components/ArticleCommentsSection';
 export * from './components/ArticleManageList';
 export * from './components/ArticleEditorForm';

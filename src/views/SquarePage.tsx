@@ -1,170 +1,207 @@
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { BookOpen, MessageCircle, FileText, ArrowRight, Bell } from 'lucide-react';
-import { useAppStore } from '@/shared/store/appStore';
+import { motion, type Variants } from 'framer-motion';
+import {
+  ArrowRight,
+  BookOpen,
+  MessageCircle,
+  FileText,
+  Moon,
+  Sunrise,
+  Sun,
+  CloudSun,
+  Sunset,
+  Lightbulb,
+} from 'lucide-react';
 
-interface SquareFeature {
+interface ModuleItem {
   route?: string;
   title: string;
   description: string;
-  emoji: string;
-  comingSoon?: boolean;
+  icon: typeof BookOpen;
+  iconBg: string;
+  iconColor: string;
 }
 
-const mainFeature: SquareFeature = {
-  route: '/pattern-learn',
-  title: '句型学习',
-  description: '掌握核心英语句型',
-  emoji: '📚',
-};
-
-const secondaryFeatures: SquareFeature[] = [
+const modules: ModuleItem[] = [
+  {
+    route: '/pattern-learn',
+    title: '句型学习',
+    description: '50 个核心句型',
+    icon: BookOpen,
+    iconBg: '#E8F0FE',
+    iconColor: '#1A73E8',
+  },
   {
     route: '/posts',
     title: '学习交流',
-    description: '与学友讨论互动',
-    emoji: '💬',
+    description: '讨论与互动',
+    icon: MessageCircle,
+    iconBg: '#F3E8FF',
+    iconColor: '#7C3AED',
   },
   {
     route: '/articles',
     title: '文章分享',
-    description: '分享学习心得与资源',
-    emoji: '📝',
+    description: '心得与资源',
+    icon: FileText,
+    iconBg: '#E6F9F0',
+    iconColor: '#059669',
+  },
+];
+
+const dailyTips = [
+  {
+    en: 'The only way to do great work is to love what you do.',
+    zh: '做出伟大工作的唯一方法就是热爱你所做的事。',
+    author: 'Steve Jobs',
+  },
+  {
+    en: 'It does not matter how slowly you go as long as you do not stop.',
+    zh: '不怕慢，就怕站。',
+    author: 'Confucius',
+  },
+  {
+    en: 'Learning is a treasure that will follow its owner everywhere.',
+    zh: '学习是随身携带的宝藏。',
+    author: 'Chinese Proverb',
   },
 ];
 
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 6) return { emoji: '🌙', text: '夜深了,注意休息' };
-  if (hour < 9) return { emoji: '🌅', text: '早上好,开始今天的学习吧' };
-  if (hour < 12) return { emoji: '☀️', text: '上午好,继续保持学习' };
-  if (hour < 14) return { emoji: '🌞', text: '中午好,学习一会吧' };
-  if (hour < 18) return { emoji: '🌤️', text: '下午好,开始今天的学习吧' };
-  if (hour < 22) return { emoji: '🌆', text: '晚上好,充实一下自己吧' };
-  return { emoji: '🌙', text: '夜深了,注意休息' };
+  if (hour < 6) return { icon: Moon, label: '深夜' };
+  if (hour < 9) return { icon: Sunrise, label: '早安' };
+  if (hour < 12) return { icon: Sun, label: '上午好' };
+  if (hour < 14) return { icon: Sun, label: '午后好' };
+  if (hour < 18) return { icon: CloudSun, label: '下午好' };
+  if (hour < 22) return { icon: Sunset, label: '晚上好' };
+  return { icon: Moon, label: '深夜' };
 }
+
+function getDailyTip() {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
+  );
+  return dailyTips[dayOfYear % dailyTips.length];
+}
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.03, delayChildren: 0.02 },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 400, damping: 32 },
+  },
+};
 
 export function SquarePage() {
   const router = useRouter();
-  const { currentTab } = useAppStore();
 
-  if (currentTab !== 'square') return null;
-
-  const handleFeatureClick = (feature: SquareFeature) => {
-    if (feature.route) {
-      router.push(feature.route);
-    } else if (feature.comingSoon) {
-      useAppStore.getState().showToast('即将上线,敬请期待 🎉');
-    }
+  const handleNavigate = (route?: string) => {
+    if (route) router.push(route);
   };
 
   const greeting = getGreeting();
+  const GreetingIcon = greeting.icon;
+  const tip = getDailyTip();
 
   return (
-    <div className="min-h-full pb-24 px-5 pt-6">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-        className="mb-6"
-      >
-        <p className="text-sm text-text-secondary mb-1">
-          {greeting.emoji} {greeting.text}
-        </p>
-        <h1 className="text-3xl font-bold text-text-primary mb-1">
-          🎓 学习广场
-        </h1>
-        <p className="text-sm text-text-secondary">
-          探索更多学习可能
-        </p>
-      </motion.div>
+    <motion.div
+      className="min-h-full bg-[#FAFAFA]"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* ===== Header ===== */}
+      <div className="px-5 pt-12 pb-4">
+        <motion.div
+          className="flex items-center gap-2 text-[#8E8E93] text-xs font-medium mb-5"
+          variants={itemVariants}
+        >
+          <GreetingIcon size={14} />
+          <span>{greeting.label}</span>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.1 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => handleFeatureClick(mainFeature)}
-        className="relative overflow-hidden rounded-card bg-gradient-to-br from-primary to-primary-dark p-6 mb-6 cursor-pointer shadow-card"
-      >
-        <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
-        <div className="absolute -bottom-12 -right-12 w-40 h-40 rounded-full bg-white/10" />
-
-        <div className="relative z-10">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-16 h-16 rounded-subtle-card bg-white/20 flex items-center justify-center">
-              <span className="text-4xl">{mainFeature.emoji}</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <ArrowRight size={20} className="text-white" />
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-bold text-white mb-2">
-            {mainFeature.title}
-          </h2>
-          <p className="text-sm text-white/80 mb-6">
-            {mainFeature.description}
-          </p>
-
-          <div className="inline-flex items-center gap-2 px-5 py-3 rounded-badge bg-white text-primary font-semibold shadow-md">
-            <span>开始学习</span>
-            <ArrowRight size={16} />
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.p
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25, delay: 0.2 }}
-        className="text-sm font-semibold text-text-secondary mb-3"
-      >
-        更多功能
-      </motion.p>
-
-      <div className="grid grid-cols-2 gap-4">
-        {secondaryFeatures.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              type: 'spring',
-              stiffness: 400,
-              damping: 25,
-              delay: 0.3 + index * 0.1,
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFeatureClick(feature)}
-            className="bg-white rounded-subtle-card p-5 shadow-card cursor-pointer relative overflow-hidden"
-          >
-            {feature.comingSoon && (
-              <div className="absolute top-2 right-2">
-                <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
-                  敬请期待
-                </span>
-              </div>
-            )}
-
-            <div className="w-12 h-12 rounded-subtle-card bg-primary/10 flex items-center justify-center mb-3">
-              <span className="text-2xl">{feature.emoji}</span>
-            </div>
-
-            <h3 className="text-base font-bold text-text-primary mb-1 pr-16">
-              {feature.title}
-            </h3>
-            <p className="text-xs text-text-secondary mb-3">
-              {feature.description}
-            </p>
-
-            <div className="flex items-center gap-1 text-primary text-xs font-semibold">
-              <Bell size={12} />
-              <span>{feature.comingSoon ? '上线提醒' : '立即进入'}</span>
-            </div>
-          </motion.div>
-        ))}
+        <motion.h1
+          className="text-[30px] font-bold tracking-tight text-[#1D1D1F] leading-[1.1] mb-1"
+          variants={itemVariants}
+        >
+          句型英语
+        </motion.h1>
+        <motion.p
+          className="text-[15px] text-[#6E6E73]"
+          variants={itemVariants}
+        >
+          你的每日英语角
+        </motion.p>
       </div>
-    </div>
+
+      {/* ===== Modules ===== */}
+      <div className="px-5 pb-24">
+        {modules.map((mod, index) => {
+          const ModIcon = mod.icon;
+          const isLast = index === modules.length - 1;
+          return (
+            <motion.div
+              key={mod.title}
+              variants={itemVariants}
+            >
+              <button
+                onClick={() => handleNavigate(mod.route)}
+                className="w-full flex items-center gap-4 py-4 active:opacity-60 transition-opacity text-left"
+              >
+                <div
+                  className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: mod.iconBg }}
+                >
+                  <ModIcon size={20} style={{ color: mod.iconColor }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[16px] font-semibold text-[#1D1D1F] tracking-tight">
+                    {mod.title}
+                  </h3>
+                  <p className="text-[13px] text-[#6E6E73] mt-0.5">
+                    {mod.description}
+                  </p>
+                </div>
+                <ArrowRight size={16} className="text-[#C7C7CC] flex-shrink-0" />
+              </button>
+              {!isLast && (
+                <div className="h-px bg-[#F0F0F0] ml-[60px]" />
+              )}
+            </motion.div>
+          );
+        })}
+
+        {/* ===== Daily Tip ===== */}
+        <div className="mt-6 pt-5 border-t border-[#E5E5EA]">
+          <motion.div variants={itemVariants}>
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <Lightbulb size={12} className="text-[#FF9F0A]" />
+              <span className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">
+                Daily
+              </span>
+            </div>
+            <p className="text-[15px] text-[#1D1D1F] leading-relaxed mb-1.5 font-medium">
+              "{tip.en}"
+            </p>
+            <p className="text-[13px] text-[#6E6E73] leading-relaxed">
+              {tip.zh}
+            </p>
+            <p className="text-[11px] text-[#8E8E93] mt-2.5">
+              — {tip.author}
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

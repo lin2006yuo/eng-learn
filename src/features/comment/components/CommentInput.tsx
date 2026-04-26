@@ -94,17 +94,17 @@ export function CommentInput(props: CommentInputProps) {
   return (
     <div
       className={cn(
-        'bg-white p-4',
-        variant === 'page' ? 'border-t border-gray-100 safe-area-bottom' : '',
+        'comment-input',
+        variant === 'page' ? 'safe-area-bottom' : '',
       )}
     >
       {anchor && !hideAnchorSummary ? (
-        <div className="mb-3 rounded-subtle-card bg-primary/10 px-3 py-2 text-sm text-text-primary">
+        <div className="comment-input-anchor mb-3 text-[13px] text-[#6E6E73]">
           评论片段: "{anchor.selectedText}"
         </div>
       ) : null}
-      <div className="flex gap-3 items-end">
-        <div className="flex-1 relative">
+      <div className="comment-input-row flex gap-3 items-center">
+        <div className="comment-input-field flex-1 relative">
           <input
             ref={inputRef}
             type="text"
@@ -114,41 +114,24 @@ export function CommentInput(props: CommentInputProps) {
             placeholder={placeholder}
             maxLength={MAX_LENGTH}
             disabled={isSubmitting}
-            className="w-full bg-gray-100 rounded-input px-4 py-3 pr-12 text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+            className="comment-input-input w-full bg-transparent text-[15px] text-[#1D1D1F] placeholder:text-[#C7C7CC] focus:outline-none disabled:opacity-50"
           />
-          {currentLength > 250 && (
-            <span
-              className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs ${
-                currentLength >= MAX_LENGTH ? 'text-red-500' : 'text-text-tertiary'
-              }`}
-            >
-              {currentLength}/{MAX_LENGTH}
-            </span>
-          )}
         </div>
 
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`
-            flex items-center justify-center
-            w-11 h-11 rounded-full
-            transition-all duration-200
-            ${
-              canSubmit
-                ? 'bg-primary text-white hover:bg-primary-dark active:scale-95'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }
-          `}
+          className="comment-input-send-button text-[15px] font-medium text-[#007AFF] disabled:text-[#C7C7CC] active:opacity-50 transition-opacity"
         >
-          {isSubmitting ? (
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <Send size={18} className={content.trim() ? 'translate-x-0.5' : ''} />
-          )}
+          {isSubmitting ? '...' : '发送'}
         </button>
       </div>
 
+      {currentLength > 200 && (
+        <div className="comment-input-counter mt-1 text-right text-[12px] text-[#C7C7CC]">
+          {currentLength}/{MAX_LENGTH}
+        </div>
+      )}
     </div>
   );
 }

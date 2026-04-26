@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Trash2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { ArticleEditorForm } from '@/features/article/components/ArticleEditorForm';
 import { ArticleEmptyState } from '@/features/article/components/ArticleEmptyState';
 import { useArticleMutations, useManageArticleDetail } from '@/features/article/hooks/useArticleMutations';
@@ -29,7 +28,7 @@ export default function ManageArticleDetailPage() {
   }, [articleId, loading, router, user]);
 
   if (loading || !user) {
-    return <div className="min-h-screen bg-background px-5 py-10 text-center text-text-secondary">加载中...</div>;
+    return <div className="min-h-screen bg-[#FAFAFA] px-5 py-10 text-center text-[#6E6E73]">加载中...</div>;
   }
 
   const handleDelete = async () => {
@@ -38,36 +37,26 @@ export default function ManageArticleDetailPage() {
   };
 
   return (
-    <div className="article-manage-edit min-h-screen bg-background">
-      <div className="mx-auto max-w-[430px] px-5 pb-10 pt-6">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="article-manage-edit-header mb-6 flex items-center justify-between"
+    <div className="article-manage-edit min-h-screen bg-[#FAFAFA]">
+      <div className="article-manage-edit-header sticky top-0 z-40 flex items-center justify-between bg-[#FAFAFA]/95 px-5 py-3 backdrop-blur-sm">
+        <button
+          onClick={() => router.back()}
+          className="article-manage-edit-back h-10 w-10 flex items-center justify-center active:opacity-50 transition-opacity"
         >
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="article-manage-edit-back flex h-10 w-10 items-center justify-center rounded-full bg-white text-text-primary shadow-card transition-transform active:scale-95"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <div>
-              <p className="text-xs text-text-secondary">文章编辑</p>
-              <h1 className="text-xl font-bold text-text-primary">编辑文章</h1>
-            </div>
-          </div>
-          <button
-            onClick={() => setConfirmDelete(true)}
-            disabled={deleteArticle.isPending}
-            className="article-manage-edit-delete flex h-10 w-10 items-center justify-center rounded-full text-red-400 transition-colors hover:bg-red-50 hover:text-red-500 active:scale-95 disabled:opacity-50"
-          >
-            <Trash2 size={18} />
-          </button>
-        </motion.div>
+          <ArrowLeft size={20} className="text-[#007AFF]" />
+        </button>
+        <h2 className="text-[17px] font-semibold text-[#1D1D1F]">编辑文章</h2>
+        <button
+          onClick={() => setConfirmDelete(true)}
+          disabled={deleteArticle.isPending}
+          className="article-manage-edit-delete h-10 w-10 flex items-center justify-center text-[#FF3B30] active:opacity-50 transition-opacity disabled:opacity-50"
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
 
-        {isLoading ? <div className="py-20 text-center text-text-secondary">加载编辑内容中...</div> : null}
+      <div className="mx-auto max-w-[430px]">
+        {isLoading ? <div className="py-20 text-center text-[#6E6E73]">加载编辑内容中...</div> : null}
         {!isLoading && isError ? (
           <ArticleEmptyState title="加载失败" description="文章详情暂时不可用。" actionText="重试" onAction={() => refetch()} />
         ) : null}

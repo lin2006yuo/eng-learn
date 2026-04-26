@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MessageCircle } from 'lucide-react';
 import { useCommentStore } from '@/features/comment/store/commentStore';
 import { filterNormalComments } from '@/features/comment/utils';
 import type { RootType } from '@/features/comment/types';
@@ -75,62 +75,63 @@ export function CommentsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background flex flex-col">
-      <div className="flex items-center gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-b border-gray-100 flex-shrink-0">
+    <div className="pattern-comments-page fixed inset-0 z-[100] bg-[#FAFAFA] flex flex-col">
+      <div className="pattern-comments-header flex items-center gap-3 px-4 py-3 bg-[#FAFAFA]/95 backdrop-blur-sm flex-shrink-0 sticky top-0 z-10">
         <button
           onClick={handleClose}
-          className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="pattern-comments-back-button p-2 -ml-2 rounded-full hover:bg-[#F5F5F7] transition-colors"
         >
-          <ArrowLeft size={24} className="text-text-primary" />
+          <ArrowLeft size={20} className="text-[#007AFF]" />
         </button>
-        <h1 className="text-lg font-bold text-text-primary">
+        <h1 className="pattern-comments-title text-[17px] font-semibold text-[#1D1D1F]">
           {title || '评论'} {targetComments.length > 0 && `(${targetComments.length})`}
         </h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-4 pb-24">
-          {pattern && (
-            <div className="bg-white rounded-subtle-card p-4 mb-4 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xl">{pattern.emoji}</span>
-                <span className="text-sm text-text-secondary">{rootTitleMap[rootType]}</span>
-              </div>
-              <h3 className="font-bold text-text-primary mb-1">{pattern.title}</h3>
-              <p className="text-sm text-text-secondary">{pattern.translation}</p>
+      <div className="pattern-comments-list flex-1 overflow-y-auto">
+        {pattern && (
+          <div className="pattern-comments-pattern-info px-5 py-4 border-b border-[#E5E5EA]">
+            <div className="pattern-comments-pattern-label flex items-center gap-2 mb-1.5">
+              <span className="pattern-comments-pattern-icon text-[13px] text-[#6E6E73]">{rootTitleMap[rootType]}</span>
             </div>
-          )}
+            <h3 className="pattern-comments-pattern-title text-[16px] font-semibold text-[#1D1D1F]">{pattern.title}</h3>
+            <p className="pattern-comments-pattern-translation text-[14px] text-[#6E6E73] mt-0.5">{pattern.translation}</p>
+          </div>
+        )}
 
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            </div>
-          )}
+        {loading && (
+          <div className="pattern-comments-loading flex items-center justify-center py-12">
+            <div className="w-6 h-6 border-2 border-[#007AFF]/30 border-t-[#007AFF] rounded-full animate-spin" />
+          </div>
+        )}
 
-          {!loading && orderedComments.length > 0 && (
-            <div className="bg-white rounded-subtle-card px-4 shadow-sm">
-              {orderedComments.map((comment) => (
+        {!loading && orderedComments.length > 0 && (
+          <div className="pattern-comments-comments-list px-4">
+            {orderedComments.map((comment, index) => (
+              <div
+                key={comment.id}
+                className={`pattern-comments-comment-item ${index < orderedComments.length - 1 ? 'border-b border-[#E5E5EA]' : ''}`}
+              >
                 <CommentItem
-                  key={comment.id}
                   comment={comment}
                   targetId={targetId!}
                   rootType={rootType}
                   isFocused={comment.id === focusCommentId}
                 />
-              ))}
-            </div>
-          )}
-
-          {!loading && targetComments.length === 0 && (
-            <div className="text-center text-text-secondary py-16">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <span className="text-3xl">💬</span>
               </div>
-              <p className="text-lg font-medium mb-2">暂无评论</p>
-              <p className="text-sm">{emptyDescriptionMap[rootType]}</p>
+            ))}
+          </div>
+        )}
+
+        {!loading && targetComments.length === 0 && (
+          <div className="pattern-comments-empty text-center text-[#6E6E73] py-16">
+            <div className="pattern-comments-empty-icon w-16 h-16 mx-auto mb-4 rounded-full bg-[#F5F5F7] flex items-center justify-center">
+              <MessageCircle size={28} className="text-[#C7C7CC]" />
             </div>
-          )}
-        </div>
+            <p className="pattern-comments-empty-title text-[16px] font-medium text-[#1D1D1F] mb-1">暂无评论</p>
+            <p className="pattern-comments-empty-description text-[14px]">{emptyDescriptionMap[rootType]}</p>
+          </div>
+        )}
       </div>
 
       {targetId && <CommentInput rootId={targetId} rootType={rootType} />}

@@ -50,7 +50,7 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         rootId={rootId}
         rootType="article"
         text={text}
-        className="article-detail-content whitespace-pre-wrap text-base leading-8 text-text-primary"
+        className="article-detail-content whitespace-pre-wrap text-[16px] leading-8 text-[#1D1D1F]"
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={dataPath}
@@ -71,7 +71,9 @@ export function ArticleSelectableBody(props: ArticleSelectableBodyProps) {
         activeCommentIndex={activeCommentIndex}
         targetId={rootId}
         rootType="article"
+        blockId={dataPath}
         onCommentChange={setActiveCommentIndex}
+        onSegmentChange={setActiveSegmentIndex}
         onClose={() => setActiveSegmentIndex(null)}
       />
     </div>

@@ -18,7 +18,7 @@ export function SearchInput({
       animate={{ opacity: 1, y: 0 }}
       className="relative"
     >
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C7C7CC]">
         <Search size={20} />
       </div>
       <input
@@ -26,9 +26,9 @@ export function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-search-bg rounded-input py-4 pl-12 pr-12 text-base
-                   placeholder:text-gray-400 focus:outline-none focus:ring-2 
-                   focus:ring-primary/30 transition-all"
+        className="w-full bg-[#F5F5F7] rounded-[12px] py-4 pl-12 pr-12 text-[16px]
+                   placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 
+                   focus:ring-[#007AFF]/30 transition-all"
       />
       {value && (
         <motion.button
@@ -37,8 +37,8 @@ export function SearchInput({
           exit={{ opacity: 0, scale: 0.8 }}
           onClick={() => onChange('')}
           className="absolute right-4 top-1/2 -translate-y-1/2 
-                     w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center
-                     text-white hover:bg-gray-400 transition-colors"
+                     w-6 h-6 bg-[#C7C7CC] rounded-full flex items-center justify-center
+                     text-white active:opacity-50 transition-opacity"
         >
           <X size={14} />
         </motion.button>

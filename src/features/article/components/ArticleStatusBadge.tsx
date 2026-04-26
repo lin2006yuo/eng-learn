@@ -6,15 +6,15 @@ interface ArticleStatusBadgeProps {
 }
 
 const statusConfig: Record<ArticleStatus, { label: string; className: string }> = {
-  draft: { label: '草稿', className: 'bg-gray-100 text-text-secondary' },
-  published: { label: '已发布', className: 'bg-primary/10 text-primary' },
-  archived: { label: '已下线', className: 'bg-secondary/10 text-secondary' },
+  draft: { label: '草稿', className: 'bg-[#F5F5F7] text-[#6E6E73]' },
+  published: { label: '已发布', className: 'bg-[#007AFF]/10 text-[#007AFF]' },
+  archived: { label: '已下线', className: 'bg-[#F5F5F7] text-[#6E6E73]' },
 };
 
 export function ArticleStatusBadge({ status }: ArticleStatusBadgeProps) {
   const config = statusConfig[status];
   return (
-    <span className={cn('rounded-badge px-3 py-1 text-xs font-semibold', config.className)}>
+    <span className={cn('rounded-full px-3 py-1 text-[12px] font-semibold', config.className)}>
       {config.label}
     </span>
   );

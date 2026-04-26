@@ -19,21 +19,21 @@ export function CommentCarousel(props: CommentCarouselProps) {
       <button
         type="button"
         onClick={onPrev}
-        className="comment-carousel-prev p-1 rounded-full hover:bg-primary/10 transition-colors"
+        className="comment-carousel-prev p-1 rounded-full active:bg-[#F5F5F7] transition-colors"
       >
-        <ChevronLeft size={16} className="text-text-secondary" />
+        <ChevronLeft size={16} className="text-[#6E6E73]" />
       </button>
 
-      <span className="comment-carousel-indicator text-xs text-text-tertiary">
+      <span className="comment-carousel-indicator text-[13px] text-[#6E6E73]">
         {currentIndex + 1} / {totalCount}
       </span>
 
       <button
         type="button"
         onClick={onNext}
-        className="comment-carousel-next p-1 rounded-full hover:bg-primary/10 transition-colors"
+        className="comment-carousel-next p-1 rounded-full active:bg-[#F5F5F7] transition-colors"
       >
-        <ChevronRight size={16} className="text-text-secondary" />
+        <ChevronRight size={16} className="text-[#6E6E73]" />
       </button>
     </div>
   );

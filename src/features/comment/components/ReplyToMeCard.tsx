@@ -44,43 +44,43 @@ export function ReplyToMeCard({ comment, onReply }: ReplyToMeCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-subtle-card p-4 shadow-card"
+      className="bg-white rounded-[12px] p-4 shadow-sm"
     >
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
-          <span className="text-xs font-medium text-secondary">
+        <div className="w-7 h-7 rounded-full bg-[#F5F5F7] flex items-center justify-center flex-shrink-0">
+          <span className="text-xs font-medium text-[#007AFF]">
             {comment.userName.charAt(0)}
           </span>
         </div>
-        <span className="text-sm font-medium text-text-primary">
+        <span className="text-sm font-medium text-[#1D1D1F]">
           {comment.userName}
         </span>
-        <span className="text-xs text-text-secondary">回复了你</span>
+        <span className="text-xs text-[#6E6E73]">回复了你</span>
       </div>
 
       <div className="flex items-center gap-2 mb-2 ml-9">
-        <span className="text-xs text-text-secondary">在</span>
+        <span className="text-xs text-[#6E6E73]">在</span>
         <button
           onClick={handleRootClick}
-          className="text-xs font-medium text-primary hover:underline truncate max-w-[200px]"
+          className="text-xs font-medium text-[#007AFF] active:opacity-50 transition-opacity truncate max-w-[200px]"
         >
           {comment.rootId}
         </button>
       </div>
 
-      <div className="ml-9 bg-gray-50 rounded-list p-3 mb-3">
-        <p className="text-text-primary text-sm leading-relaxed">
+      <div className="ml-9 bg-[#F5F5F7] rounded-[8px] p-3 mb-3">
+        <p className="text-[#1D1D1F] text-sm leading-relaxed">
           {comment.content}
         </p>
       </div>
 
       <div className="flex items-center justify-between ml-9">
         <div className="flex items-center gap-3">
-          <span className="text-xs text-text-tertiary">
+          <span className="text-xs text-[#6E6E73]">
             {formatRelativeTime(comment.createdAt)}
           </span>
 
-          <div className="flex items-center gap-1 text-xs text-text-tertiary">
+          <div className="flex items-center gap-1 text-xs text-[#6E6E73]">
             <Heart size={12} />
             <span>{comment.likes > 0 ? comment.likes : '0'}</span>
           </div>
@@ -88,7 +88,7 @@ export function ReplyToMeCard({ comment, onReply }: ReplyToMeCardProps) {
 
         <button
           onClick={handleReplyClick}
-          className="flex items-center gap-1 text-xs text-text-tertiary hover:text-primary transition-colors"
+          className="flex items-center gap-1 text-xs text-[#6E6E73] active:text-[#007AFF] transition-colors"
         >
           <Reply size={12} />
           回复

@@ -11,15 +11,15 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, delay = 0, onClick }: StatCardProps) {
   return (
-    <Card delay={delay} className={`flex items-center gap-4 ${onClick ? 'cursor-pointer hover:bg-gray-50 active:scale-[0.98] transition-all' : ''}`} onClick={onClick}>
+    <Card delay={delay} className={`flex items-center gap-4 ${onClick ? 'cursor-pointer active:opacity-50 transition-opacity' : ''}`} onClick={onClick}>
       {icon && (
-        <div className="w-12 h-12 rounded-subtle-card bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-12 h-12 rounded-[12px] bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF]">
           {icon}
         </div>
       )}
       <div>
-        <p className="text-2xl font-bold text-text-primary">{value}</p>
-        <p className="text-sm text-text-secondary">{title}</p>
+        <p className="text-2xl font-bold text-[#1D1D1F]">{value}</p>
+        <p className="text-sm text-[#6E6E73]">{title}</p>
       </div>
     </Card>
   );

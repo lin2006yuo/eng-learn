@@ -16,8 +16,8 @@ interface NotificationItemProps {
 const notificationConfig = {
   label: '评论',
   icon: MessageSquare,
-  color: 'text-primary',
-  bgColor: 'bg-primary/10',
+  color: 'text-[#007AFF]',
+  bgColor: 'bg-[#007AFF]/10',
 } as const;
 
 export function NotificationItem({ notification }: NotificationItemProps) {
@@ -51,44 +51,44 @@ export function NotificationItem({ notification }: NotificationItemProps) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-subtle-card p-4 shadow-card"
+      className="bg-white rounded-[12px] p-4 shadow-sm"
     >
       <div className="flex items-start gap-3">
-        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
-          <span className="text-xs font-medium text-secondary">
+        <div className="w-7 h-7 rounded-full bg-[#F5F5F7] flex items-center justify-center flex-shrink-0">
+          <span className="text-xs font-medium text-[#007AFF]">
             {notification.actorName.charAt(0)}
           </span>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium text-text-primary">
+            <span className="text-sm font-medium text-[#1D1D1F]">
               {notification.actorName}
             </span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${config.bgColor} ${config.color}`}>
               {config.label}
             </span>
-            <span className="text-xs text-text-secondary">回复了你</span>
+            <span className="text-xs text-[#6E6E73]">回复了你</span>
           </div>
 
           <button
             onClick={handleClick}
             className="flex items-center gap-2 w-full text-left group"
           >
-            <Icon size={12} className="text-text-tertiary flex-shrink-0" />
-            <span className="text-xs text-text-primary truncate group-hover:text-primary transition-colors">
+            <Icon size={12} className="text-[#C7C7CC] flex-shrink-0" />
+            <span className="text-xs text-[#1D1D1F] truncate group-active:opacity-50 transition-opacity">
               {notification.targetContent}
             </span>
           </button>
 
-          <div className="mt-1.5 text-xs text-text-tertiary">
+          <div className="mt-1.5 text-xs text-[#6E6E73]">
             {formatTime(notification.createdAt)}
           </div>
 
           <div className="mt-2 flex items-center gap-2">
             <button
               onClick={handleToggleReply}
-              className="flex items-center gap-1 text-xs text-primary hover:underline"
+              className="flex items-center gap-1 text-xs text-[#007AFF] active:opacity-50 transition-opacity"
             >
               <Reply size={12} />
               <span>{showReplyInput ? '取消回复' : '回复'}</span>

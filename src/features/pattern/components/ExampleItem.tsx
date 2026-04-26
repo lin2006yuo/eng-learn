@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-import { useCopy } from '@/shared/hooks/useCopy';
 import { parsePatternExamplePath, PatternExampleLang } from '@/shared/utils/blockId';
 import type { Example } from '@/shared/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,10 +19,7 @@ function getCommentOffsetForSegment(segmentIndex: number, segments: Array<{ comm
 }
 
 export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
-  const { copy, isCopied } = useCopy();
   const { comments, fetchComments } = useCommentStore();
-  const copyId = `${patternId}-${example.id}`;
-  const copied = isCopied(copyId);
   const [activeCommentIndex, setActiveCommentIndex] = useState(0);
   const [activeFocus, setActiveFocus] = useState<{ blockId: string; segmentIndex: number } | null>(null);
   const patternComments = comments[`pattern-${patternId}`] || [];
@@ -59,11 +54,6 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   );
   const activeSegments = activeFocus?.blockId === zhBlockId ? zhAnchorSegments : enAnchorSegments;
 
-  const handleCopy = () => {
-    if (window.getSelection()?.toString().trim()) return;
-    copy(example.en, copyId);
-  };
-
   const handleAnchorClick = (blockId: string) => (segmentIndex: number) => {
     const nextSegments = blockId === zhBlockId ? zhAnchorSegments : enAnchorSegments;
     setActiveCommentIndex(getCommentOffsetForSegment(segmentIndex, nextSegments));
@@ -71,24 +61,15 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      onClick={handleCopy}
-      className={`
-        py-3 px-4 -mx-4 rounded-xl cursor-pointer
-        transition-all duration-200
-        ${copied ? 'bg-primary/10' : 'hover:bg-gray-50'}
-        active:scale-[0.98]
-      `}
+    <div
+      className="example-item px-3 py-1.5 -mx-3 rounded-[10px]"
     >
       <SelectableText
         blockId={enBlockId}
         rootId={patternId}
         rootType="pattern"
         text={example.en}
-        className={`text-base font-semibold mb-1 transition-colors ${copied ? 'text-primary' : 'text-text-primary'}`}
+        className="example-item-en text-[16px] text-[#3A3A3C] leading-snug"
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={enBlockId}
@@ -103,7 +84,7 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
         rootId={patternId}
         rootType="pattern"
         text={example.zh}
-        className="text-sm text-text-secondary"
+        className="example-item-zh text-[14px] text-[#6E6E73] leading-snug"
         renderText={(textValue) => (
           <AnchorHighlightText
             blockId={zhBlockId}
@@ -121,9 +102,11 @@ export function ExampleItem({ example, patternId, index }: ExampleItemProps) {
         activeCommentIndex={activeCommentIndex}
         targetId={patternId}
         rootType="pattern"
+        blockId={activeFocus?.blockId ?? enBlockId}
         onCommentChange={setActiveCommentIndex}
+        onSegmentChange={(segmentIndex) => setActiveFocus(prev => prev ? { ...prev, segmentIndex } : null)}
         onClose={() => setActiveFocus(null)}
       />
-    </motion.div>
+    </div>
   );
 }
