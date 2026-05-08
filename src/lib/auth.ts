@@ -7,6 +7,7 @@ import * as schema from '@/lib/db/schema';
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || 'eng-learn-local-secret-key-2026-for-dev-only-please-change-in-production',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  trustedOrigins: ['http://localhost:3000'],
   database: drizzleAdapter(getDb(), {
     provider: 'sqlite',
     schema: {

@@ -12,6 +12,7 @@ test-results/
 .env.local
 .env
 .env*.local
+.env.remote
 
 # SQLite 数据库文件
 *.db
