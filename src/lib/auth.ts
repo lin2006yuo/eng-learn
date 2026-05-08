@@ -4,10 +4,16 @@ import { username } from 'better-auth/plugins';
 import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 
+function getBaseURL(): string {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  return 'http://localhost:3000';
+}
+
+const baseURL = getBaseURL();
+
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || 'eng-learn-local-secret-key-2026-for-dev-only-please-change-in-production',
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-  trustedOrigins: ['http://localhost:3000'],
+  baseURL,
   database: drizzleAdapter(getDb(), {
     provider: 'sqlite',
     schema: {
