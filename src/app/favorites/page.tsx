@@ -220,14 +220,9 @@ function TagListItem({ tag, count, isEditMode, onClick, onDelete }: TagListItemP
 function EmptyState({ onCreate }: { onCreate: () => void }) {
   return (
     <div className="favorites-empty flex flex-col items-center justify-center py-16">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="w-20 h-20 rounded-full bg-[#E8F0FE] flex items-center justify-center mb-6"
-      >
+      <div className="w-20 h-20 rounded-full bg-[#E8F0FE] flex items-center justify-center mb-6">
         <Heart size={32} className="text-[#1A73E8]" />
-      </motion.div>
+      </div>
 
       <h3 className="favorites-empty-title text-[18px] font-semibold text-[#1D1D1F] mb-2">
         还没有收藏标签
@@ -236,14 +231,13 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         创建你的第一个收藏标签吧！
       </p>
 
-      <motion.button
-        whileTap={{ scale: 0.96 }}
+      <button
         onClick={onCreate}
         className="favorites-empty-btn flex items-center gap-2 px-6 py-3.5 bg-[#007AFF] text-white rounded-[12px] text-[17px] font-semibold active:opacity-50 transition-opacity"
       >
         <Plus size={20} />
         创建标签
-      </motion.button>
+      </button>
     </div>
   );
 }

@@ -75,7 +75,6 @@ export function NotesPage() {
               <NoteCard
                 key={note.id}
                 note={note}
-                index={index}
                 isLast={index === notes.length - 1}
                 onClick={() => handleEdit(note)}
                 onDelete={() => handleDelete(note)}
