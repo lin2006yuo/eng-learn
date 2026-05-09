@@ -1,4 +1,4 @@
-import { parseArticlePath, ArticleField } from '@/shared/utils/blockId';
+import { parsePostPath, PostField } from '@/shared/utils/blockId';
 import type { PostDetailData } from '../types';
 import { PostMeta } from './PostMeta';
 import { PostSelectableBody } from './PostSelectableBody';
@@ -29,7 +29,7 @@ export function PostDetail({ post }: PostDetailProps) {
       <div className="post-detail-body py-6">
         <PostSelectableBody
           rootId={post.id}
-          dataPath={parseArticlePath(ArticleField.Content)}
+          dataPath={parsePostPath(PostField.Content)}
           text={post.content}
         />
       </div>

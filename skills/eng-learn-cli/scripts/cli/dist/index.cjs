@@ -10533,7 +10533,7 @@ var require_public_api = __commonJS({
       }
       return doc;
     }
-    function parse2(src, reviver, options) {
+    function parse3(src, reviver, options) {
       let _reviver = void 0;
       if (typeof reviver === "function") {
         _reviver = reviver;
@@ -10574,7 +10574,7 @@ var require_public_api = __commonJS({
         return value.toString(options);
       return new Document.Document(value, _replacer, options).toString(options);
     }
-    exports2.parse = parse2;
+    exports2.parse = parse3;
     exports2.parseAllDocuments = parseAllDocuments;
     exports2.parseDocument = parseDocument;
     exports2.stringify = stringify;
@@ -10656,9 +10656,6 @@ var {
   Option,
   Help
 } = import_index.default;
-
-// src/index.ts
-var import_fs4 = require("fs");
 
 // src/config.ts
 var import_fs = require("fs");
@@ -10859,9 +10856,14 @@ async function logoutCmd(format) {
   console.log(format === "table" ? formatTable([out]) : formatJson(out));
 }
 async function whoamiCmd(format) {
+  const config2 = loadConfig();
+  if (!config2.agentKey) {
+    console.error(formatJson({ ok: false, error: "No registered account. Please run `register` first." }));
+    process.exit(1);
+  }
   const res = await client.get("/auth/get-session");
   if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
+    console.error(formatJson({ ok: false, error: "Session expired. Please run `login` to re-authenticate." }));
     process.exit(1);
   }
   console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
@@ -10882,15 +10884,22 @@ async function getCurrentUserId() {
 }
 
 // src/commands/article.ts
-async function articleListCmd(scope, format) {
-  const query = scope === "manage" ? "?scope=manage" : "";
-  const res = await client.get(`/articles${query}`);
+function pickFields(rows) {
+  return rows.map(({ id, title, summary, authorId }) => ({ id, title, summary, authorId }));
+}
+async function articleListCmd(scope, status, format) {
+  const params = new URLSearchParams();
+  if (scope === "manage") params.set("scope", "manage");
+  if (status) params.set("status", status);
+  const qs = params.toString();
+  const res = await client.get(`/articles${qs ? "?" + qs : ""}`);
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));
     process.exit(1);
   }
-  const data = res.data;
-  console.log(format === "table" ? formatTable(data) : formatJson(data));
+  const body = res.data;
+  const rows = pickFields(body.data);
+  console.log(format === "table" ? formatTable(rows) : formatJson(rows));
 }
 async function articleCreateCmd(title, summary, content, status, format) {
   const res = await client.post("/articles", { title, summary, content, status });
@@ -11017,8 +11026,99 @@ async function createComments(articleId, content, comments, format) {
   return result;
 }
 
-// src/commands/post.ts
+// src/commands/postFromYaml.ts
 var import_fs3 = require("fs");
+var import_yaml2 = __toESM(require_dist(), 1);
+async function postCreateFromYamlCmd(filePath, format) {
+  let yamlContent;
+  try {
+    yamlContent = (0, import_fs3.readFileSync)(filePath, "utf-8");
+  } catch {
+    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
+    process.exit(1);
+  }
+  let parsed;
+  try {
+    parsed = (0, import_yaml2.parse)(yamlContent);
+  } catch {
+    console.error(formatJson({ ok: false, error: "Invalid YAML syntax" }));
+    process.exit(1);
+  }
+  const { title, status, content, comments } = parsed.post;
+  if (!title || !content || !status) {
+    console.error(formatJson({ ok: false, error: "Missing required fields: title, content, status" }));
+    process.exit(1);
+  }
+  const res = await client.post("/posts", { title, content, status });
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  const postId = res.data?.data?.id || res.data?.id;
+  console.log(formatJson({ ok: true, message: "Post created", postId }));
+  if (comments && comments.length > 0) {
+    const results = await createComments2(postId, content, comments, format);
+    console.log(formatJson({
+      ok: true,
+      message: `Created ${results.success}/${results.total} comments`,
+      failed: results.failed
+    }));
+  }
+}
+async function createComments2(postId, content, comments, format) {
+  const result = { success: 0, total: comments.length, failed: [] };
+  for (let i = 0; i < comments.length; i++) {
+    const comment2 = comments[i];
+    const startOffset = content.indexOf(comment2.selectedText);
+    if (startOffset === -1) {
+      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: "Text not found in post" });
+      continue;
+    }
+    const prefixStart = Math.max(0, startOffset - comment2.prefixText.length);
+    const actualPrefix = content.slice(prefixStart, startOffset);
+    if (comment2.prefixText && actualPrefix !== comment2.prefixText) {
+      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Prefix mismatch: expected "${comment2.prefixText}", got "${actualPrefix}"` });
+      continue;
+    }
+    const endOffset = startOffset + comment2.selectedText.length;
+    const actualSuffix = content.slice(endOffset, endOffset + comment2.suffixText.length);
+    if (comment2.suffixText && actualSuffix !== comment2.suffixText) {
+      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Suffix mismatch: expected "${comment2.suffixText}", got "${actualSuffix}"` });
+      continue;
+    }
+    const anchor = {
+      rootType: "post",
+      rootId: postId,
+      selectedText: comment2.selectedText,
+      startOffset,
+      endOffset,
+      prefixText: comment2.prefixText,
+      suffixText: comment2.suffixText,
+      extra: { blockId: "post:content" }
+    };
+    const body = {
+      targetType: "post",
+      targetId: postId,
+      rootType: "post",
+      rootId: postId,
+      content: comment2.content.trim(),
+      anchor
+    };
+    const res = await client.post("/comments", body);
+    if (!res.ok) {
+      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `${res.error} (content length: ${comment2.content.trim().length})` });
+      continue;
+    }
+    result.success++;
+    if (format === "json") {
+      console.log(formatJson({ ok: true, comment: res.data.anchor }));
+    }
+  }
+  return result;
+}
+
+// src/commands/post.ts
+var import_fs4 = require("fs");
 async function postListCmd(scope, format) {
   const query = scope === "manage" ? "?scope=manage" : "";
   const res = await client.get(`/posts${query}`);
@@ -11066,7 +11166,7 @@ async function postCreateFromTextCmd(title, content, status, format) {
   await postCreateCmd(title, content, status, format);
 }
 async function postCreateFromFileCmd(title, filePath, status, format) {
-  const content = (0, import_fs3.readFileSync)(filePath, "utf-8");
+  const content = (0, import_fs4.readFileSync)(filePath, "utf-8");
   await postCreateCmd(title, content, status, format);
 }
 
@@ -11295,22 +11395,22 @@ program2.command("update-nickname").description("Update your nickname").argument
   await updateNicknameCmd(nickname, getFormat(program2));
 });
 var article = program2.command("article").description("Article management");
-article.command("list").description("List articles").argument("[scope]", "scope: public or manage", "public").action(async (scope) => {
-  await articleListCmd(scope, getFormat(program2));
+article.command("list").description("List articles").argument("[scope]", "scope: public or manage", "public").option("--status <status>", "filter by status: draft, published, archived").action(async (scope, options) => {
+  await articleListCmd(scope, options.status, getFormat(program2));
 });
-article.command("create").description("Create article").requiredOption("--title <title>", "article title").requiredOption("--summary <summary>", "article summary").option("--content <content>", "article content").option("--file <path>", "read content from file").requiredOption("--status <status>", "draft or published").action(async (options) => {
-  let content = options.content;
-  if (options.file) {
-    content = (0, import_fs4.readFileSync)(options.file, "utf-8");
+article.command("create").description("Create article").requiredOption("--title <title>", "article title").requiredOption("--summary <summary>", "article summary").option("--content <content>", "article content").option("--yaml <path>", "create from YAML file (with optional fragment comments)").requiredOption("--status <status>", "draft or published").action(async (options) => {
+  if (options.yaml) {
+    await articleCreateFromYamlCmd(options.yaml, getFormat(program2));
+    return;
   }
-  if (!content) {
-    console.error("Error: Either --content or --file is required");
+  if (!options.content) {
+    console.error("Error: Either --content or --yaml is required");
     process.exit(1);
   }
   await articleCreateCmd(
     options.title,
     options.summary,
-    content,
+    options.content,
     options.status,
     getFormat(program2)
   );
@@ -11329,25 +11429,22 @@ article.command("update").description("Update article").argument("<id>", "articl
 article.command("delete").description("Delete article").argument("<id>", "article id").action(async (id) => {
   await articleDeleteCmd(id, getFormat(program2));
 });
-article.command("yaml-create").description("Create article from YAML file (with optional fragment comments)").argument("<file>", "YAML file path").action(async (file) => {
-  await articleCreateFromYamlCmd(file, getFormat(program2));
-});
 var post = program2.command("post").description("Post management");
 post.command("list").description("List posts").argument("[scope]", "scope: public or manage", "public").action(async (scope) => {
   await postListCmd(scope, getFormat(program2));
 });
-post.command("create").description("Create post").requiredOption("--title <title>", "post title").option("--content <content>", "post content").option("--file <path>", "read content from file").requiredOption("--status <status>", "draft or published").action(async (options) => {
-  let content = options.content;
-  if (options.file) {
-    content = (0, import_fs4.readFileSync)(options.file, "utf-8");
+post.command("create").description("Create post").requiredOption("--title <title>", "post title").option("--content <content>", "post content").option("--yaml <path>", "create from YAML file (with optional fragment comments)").requiredOption("--status <status>", "draft or published").action(async (options) => {
+  if (options.yaml) {
+    await postCreateFromYamlCmd(options.yaml, getFormat(program2));
+    return;
   }
-  if (!content) {
-    console.error("Error: Either --content or --file is required");
+  if (!options.content) {
+    console.error("Error: Either --content or --yaml is required");
     process.exit(1);
   }
   await postCreateCmd(
     options.title,
-    content,
+    options.content,
     options.status,
     getFormat(program2)
   );

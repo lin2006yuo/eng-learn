@@ -4,6 +4,10 @@ export enum ArticleField {
   Content = 'content',
 }
 
+export enum PostField {
+  Content = 'content',
+}
+
 export enum PatternExampleLang {
   En = 'en',
   Zh = 'zh',
@@ -11,6 +15,10 @@ export enum PatternExampleLang {
 
 export function parseArticlePath(field: ArticleField): string {
   return `article:${field}`;
+}
+
+export function parsePostPath(field: PostField): string {
+  return `post:${field}`;
 }
 
 export function parsePatternExamplePath(

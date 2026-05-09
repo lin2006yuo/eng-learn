@@ -2,15 +2,27 @@ import { client } from '../client.js';
 import { formatJson } from '../formatters/json.js';
 import { formatTable } from '../formatters/table.js';
 
-export async function articleListCmd(scope: string, format: 'json' | 'table'): Promise<void> {
-  const query = scope === 'manage' ? '?scope=manage' : '';
-  const res = await client.get(`/articles${query}`);
+function pickFields(rows: Record<string, unknown>[]) {
+  return rows.map(({ id, title, summary, authorId }) => ({ id, title, summary, authorId }));
+}
+
+export async function articleListCmd(
+  scope: string,
+  status: string | undefined,
+  format: 'json' | 'table'
+): Promise<void> {
+  const params = new URLSearchParams();
+  if (scope === 'manage') params.set('scope', 'manage');
+  if (status) params.set('status', status);
+  const qs = params.toString();
+  const res = await client.get(`/articles${qs ? '?' + qs : ''}`);
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));
     process.exit(1);
   }
-  const data = res.data as Record<string, unknown>[];
-  console.log(format === 'table' ? formatTable(data) : formatJson(data));
+  const body = res.data as { data: Record<string, unknown>[] };
+  const rows = pickFields(body.data);
+  console.log(format === 'table' ? formatTable(rows) : formatJson(rows));
 }
 
 export async function articleCreateCmd(

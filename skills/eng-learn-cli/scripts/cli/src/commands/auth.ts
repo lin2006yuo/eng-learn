@@ -41,9 +41,14 @@ export async function logoutCmd(format: 'json' | 'table'): Promise<void> {
 }
 
 export async function whoamiCmd(format: 'json' | 'table'): Promise<void> {
+  const config = loadConfig();
+  if (!config.agentKey) {
+    console.error(formatJson({ ok: false, error: 'No registered account. Please run `register` first.' }));
+    process.exit(1);
+  }
   const res = await client.get('/auth/get-session');
   if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
+    console.error(formatJson({ ok: false, error: 'Session expired. Please run `login` to re-authenticate.' }));
     process.exit(1);
   }
   console.log(format === 'table' ? formatTable([res.data as Record<string, unknown>]) : formatJson(res.data));

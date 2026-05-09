@@ -50,7 +50,6 @@
  *     --suffixText "，大家可以多交流。"
  */
 import { Command } from 'commander';
-import { readFileSync } from 'fs';
 import { loadConfig, saveConfig, useLocalConfig } from './config.js';
 import { registerCmd, loginCmd, logoutCmd, whoamiCmd, updateNicknameCmd } from './commands/auth.js';
 import {
@@ -61,6 +60,7 @@ import {
   articleDeleteCmd,
 } from './commands/article.js';
 import { articleCreateFromYamlCmd } from './commands/articleFromYaml.js';
+import { postCreateFromYamlCmd } from './commands/postFromYaml.js';
 import {
   postListCmd,
   postCreateCmd,
@@ -150,8 +150,9 @@ article
   .command('list')
   .description('List articles')
   .argument('[scope]', 'scope: public or manage', 'public')
-  .action(async (scope: string) => {
-    await articleListCmd(scope, getFormat(program));
+  .option('--status <status>', 'filter by status: draft, published, archived')
+  .action(async (scope: string, options: { status?: string }) => {
+    await articleListCmd(scope, options.status, getFormat(program));
   });
 
 article
@@ -160,21 +161,21 @@ article
   .requiredOption('--title <title>', 'article title')
   .requiredOption('--summary <summary>', 'article summary')
   .option('--content <content>', 'article content')
-  .option('--file <path>', 'read content from file')
+  .option('--yaml <path>', 'create from YAML file (with optional fragment comments)')
   .requiredOption('--status <status>', 'draft or published')
   .action(async (options: Record<string, string | undefined>) => {
-    let content = options.content;
-    if (options.file) {
-      content = readFileSync(options.file, 'utf-8');
+    if (options.yaml) {
+      await articleCreateFromYamlCmd(options.yaml, getFormat(program));
+      return;
     }
-    if (!content) {
-      console.error('Error: Either --content or --file is required');
+    if (!options.content) {
+      console.error('Error: Either --content or --yaml is required');
       process.exit(1);
     }
     await articleCreateCmd(
       options.title as string,
       options.summary as string,
-      content,
+      options.content,
       options.status as string,
       getFormat(program)
     );
@@ -213,14 +214,6 @@ article
     await articleDeleteCmd(id, getFormat(program));
   });
 
-article
-  .command('yaml-create')
-  .description('Create article from YAML file (with optional fragment comments)')
-  .argument('<file>', 'YAML file path')
-  .action(async (file: string) => {
-    await articleCreateFromYamlCmd(file, getFormat(program));
-  });
-
 const post = program.command('post').description('Post management');
 
 post
@@ -236,20 +229,20 @@ post
   .description('Create post')
   .requiredOption('--title <title>', 'post title')
   .option('--content <content>', 'post content')
-  .option('--file <path>', 'read content from file')
+  .option('--yaml <path>', 'create from YAML file (with optional fragment comments)')
   .requiredOption('--status <status>', 'draft or published')
   .action(async (options: Record<string, string | undefined>) => {
-    let content = options.content;
-    if (options.file) {
-      content = readFileSync(options.file, 'utf-8');
+    if (options.yaml) {
+      await postCreateFromYamlCmd(options.yaml, getFormat(program));
+      return;
     }
-    if (!content) {
-      console.error('Error: Either --content or --file is required');
+    if (!options.content) {
+      console.error('Error: Either --content or --yaml is required');
       process.exit(1);
     }
     await postCreateCmd(
       options.title as string,
-      content,
+      options.content,
       options.status as string,
       getFormat(program)
     );
