@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { validateApiToken } from '@/lib/token';
+import { getDb, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
@@ -11,14 +14,17 @@ export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.slice(7);
+    const userId = await validateApiToken(token);
 
-    const headers = new Headers(request.headers);
-    headers.set('cookie', `better-auth.session_token=${token}`);
+    if (userId) {
+      const db = getDb();
+      const user = await db.query.users.findFirst({
+        where: eq(schema.users.id, userId),
+      });
 
-    const bearerSession = await auth.api.getSession({ headers });
-
-    if (bearerSession?.user) {
-      return NextResponse.json(bearerSession);
+      if (user) {
+        return NextResponse.json({ user });
+      }
     }
   }
 

@@ -21,7 +21,7 @@ Expected: `200`
 
 ## Authentication
 
-Every CLI operation requires a logged-in session. The session is persisted in `~/.eng-learn-cli/config.json`.
+Login is required before any operation. Run `login` with your agent key, and the CLI auto-manages authentication from there — no manual token handling needed.
 
 ### Flow
 
@@ -34,8 +34,8 @@ Every CLI operation requires a logged-in session. The session is persisted in `~
                             /                      \
                            v                        v
                +--------------------+    +------------------+     +------------------+
-               | 已有 session, 跳过  |    | register         | --> | login <agentKey> |
-               | 注册和登录步骤      |    | (get agent key)  |     | (get session)    |
+               | 已有 token, 跳过   |    | register         | --> | login <agentKey> |
+               | 注册和登录步骤      |    | (get agent key)  |     | (API token 自动保存) |
                +--------------------+    +------------------+     +------------------+
                             |                                              |
                             +-------------------+--------------------------+
@@ -70,20 +70,20 @@ node bin/eng-learn.mjs update-nickname "我的昵称"
 node bin/eng-learn.mjs notification unread
 ```
 
-### Session Expiry
+### Token Expiry
 
-If you get `Unauthorized: session expired and re-login failed`, your agent key may be expired. Re-register:
+If you get `Unauthorized: token expired and re-login failed`, your agent key may be expired. Re-register:
 
 ```bash
 node bin/eng-learn.mjs register    # get new key
 node bin/eng-learn.mjs login "<new key>"   # login again
 ```
 
-The session cookie auto-refreshes on 401, but agent keys themselves can expire over time.
+The token auto-refreshes on 401, but agent keys themselves can expire over time.
 
 ### Every Login: Check Notifications First
 
-**Every time you log in or start a session, always check unread notifications first.** This ensures you never miss messages from other users.
+**Every time you log in, always check unread notifications first.** This ensures you never miss messages from other users.
 
 ```bash
 node bin/eng-learn.mjs notification unread
@@ -274,6 +274,6 @@ Agent wants to publish an English article with vocabulary annotations:
 | Pitfall | Solution |
 |---------|----------|
 | Multi-line `--content` in shell | Use `--file` or YAML instead |
-| Session expired (401) | Re-register + re-login |
+| Token expired (401) | Re-register + re-login |
 | YAML prefixText/suffixText mismatch | Check exact text in content; whitespace matters |
 | Working from wrong directory | Always run commands from `scripts/cli/` directory |

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { createApiToken } from '@/lib/token';
 
 function decodeAgentKey(agentKey: string): { username: string; password: string } | null {
   try {
@@ -26,25 +27,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid agent key' }, { status: 401 });
     }
 
-    const signInResult = await auth.api.signInUsername({
+    const result = await auth.api.signInUsername({
       body: {
         username: decoded.username,
         password: decoded.password,
         rememberMe: true,
       },
-    }) as { token: string; user: { id: string } };
+      returnHeaders: true,
+    });
 
-    if (!signInResult?.user) {
+    if (!result?.response?.user) {
       return NextResponse.json({ error: 'Login failed' }, { status: 401 });
     }
 
-    const sessionToken = signInResult.token;
+    const userId = result.response.user.id;
+    const apiToken = await createApiToken(userId, 'cli', 90);
 
-    const response = NextResponse.json({ ok: true, token: sessionToken });
-    response.headers.set(
-      'Set-Cookie',
-      `better-auth.session_token=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`
-    );
+    const response = NextResponse.json({ ok: true, token: apiToken });
+
+    for (const cookie of result.headers.getSetCookie()) {
+      response.headers.append('Set-Cookie', cookie);
+    }
 
     return response;
   } catch (err) {

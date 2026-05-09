@@ -61,7 +61,7 @@ export class ApiClient {
         if (refreshed) {
           return this.request(method, path, body, options);
         }
-        return { ok: false, error: 'Unauthorized: session expired and re-login failed' };
+        return { ok: false, error: 'Unauthorized: token expired and re-login failed' };
       }
 
       const text = await res.text();
