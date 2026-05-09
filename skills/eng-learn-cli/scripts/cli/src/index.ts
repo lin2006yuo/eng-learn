@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * eng-learn CLI
  *
@@ -406,3 +405,5 @@ notification
 export function run(): void {
   program.parse();
 }
+
+run();

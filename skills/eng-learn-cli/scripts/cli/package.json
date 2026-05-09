@@ -4,19 +4,19 @@
   "description": "CLI tool for eng-learn system",
   "type": "module",
   "bin": {
-    "eng-learn": "./bin/eng-learn.mjs"
+    "eng-learn": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
-    "chalk": "^5.4.0",
     "commander": "^13.0.0",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
     "typescript": "^5.7.0"
   },
   "engines": {
