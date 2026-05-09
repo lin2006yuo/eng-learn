@@ -40,7 +40,7 @@ export function SelectionPopover() {
   return (
     <div
       ref={popoverRef}
-      className="comment-selection-popover fixed z-[120] -translate-x-1/2 -translate-y-full"
+      className="comment-selection-popover fixed z-[120] -translate-x-1/2"
       style={{ left: position.x, top: position.y }}
     >
       <button

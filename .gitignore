@@ -3,6 +3,7 @@ node_modules/
 .vscode/
 .trae/
 dist/
+!skills/eng-learn-cli/scripts/cli/dist/
 docs/
 playwright-report/
 test-results/

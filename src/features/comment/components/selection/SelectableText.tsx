@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { RootType } from '@/features/comment/types';
 import { buildSelectionAnchor } from '@/features/comment/utils';
 import { useSelectionStore } from '@/features/comment/store/selectionStore';
@@ -18,10 +18,11 @@ export function SelectableText(props: SelectableTextProps) {
   const { blockId, rootId, rootType, text, className, renderText } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const { setSelection } = useSelectionStore();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const content = useMemo(() => (renderText ? renderText(text) : text), [renderText, text]);
 
-  const handleSelection = () => {
+  const handleSelection = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -46,20 +47,39 @@ export function SelectableText(props: SelectableTextProps) {
       nextAnchor,
       {
         x: centerX,
-        y: rect.top - 12,
+        y: rect.bottom + 12,
       },
       {
         x: centerX,
         y: rect.bottom + 12,
       },
     );
-  };
+  }, [blockId, rootId, rootType, text, setSelection]);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(() => {
+        debounceRef.current = null;
+        handleSelection();
+      }, 150);
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [handleSelection]);
 
   return (
     <div
       ref={containerRef}
       onMouseUp={handleSelection}
-      onTouchEnd={handleSelection}
       className={className}
     >
       {content}

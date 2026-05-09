@@ -5,7 +5,6 @@ CLI tool for eng-learn system. Allows agents to interact with the system via com
 ## Installation
 
 ```bash
-cd cli
 npm install
 npm run build
 npm link
@@ -14,7 +13,6 @@ npm link
 Or use directly without global install:
 
 ```bash
-cd cli
 npm install
 npm run build
 node bin/eng-learn.mjs --help

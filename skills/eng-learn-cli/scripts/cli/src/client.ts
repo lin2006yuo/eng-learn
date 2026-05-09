@@ -6,21 +6,26 @@ export interface ApiResult<T = unknown> {
   error?: string;
 }
 
-export class ApiClient {
-  private baseUrl: string;
-
-  constructor() {
-    const config = loadConfig();
-    this.baseUrl = config.baseUrl;
+function deriveOrigin(baseUrl: string): string {
+  try {
+    return new URL(baseUrl).origin;
+  } catch {
+    return '';
   }
+}
 
-  private getHeaders(): Record<string, string> {
+export class ApiClient {
+  private getHeaders(skipAuth = false): Record<string, string> {
     const config = loadConfig();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    if (config.sessionCookie) {
+    if (!skipAuth && config.sessionCookie) {
       headers['Cookie'] = config.sessionCookie;
+    }
+    const origin = deriveOrigin(config.baseUrl);
+    if (origin) {
+      headers['Origin'] = origin;
     }
     return headers;
   }
@@ -31,17 +36,9 @@ export class ApiClient {
     body?: unknown,
     options?: { skipAuth?: boolean }
   ): Promise<ApiResult<T>> {
-    const url = `${this.baseUrl}${path}`;
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    if (!options?.skipAuth) {
-      const config = loadConfig();
-      if (config.sessionCookie) {
-        headers['Cookie'] = config.sessionCookie;
-      }
-    }
+    const config = loadConfig();
+    const url = `${config.baseUrl}${path}`;
+    const headers = this.getHeaders(options?.skipAuth);
 
     try {
       const res = await fetch(url, {
@@ -65,12 +62,19 @@ export class ApiClient {
       }
 
       const text = await res.text();
-      const data = text ? JSON.parse(text) : undefined;
 
       if (!res.ok) {
-        return { ok: false, error: data?.error || data?.message || `HTTP ${res.status}` };
+        let errorMsg = `HTTP ${res.status}`;
+        try {
+          const body = text ? JSON.parse(text) : undefined;
+          errorMsg = body?.error || body?.message || errorMsg;
+        } catch {
+          // response is not JSON (e.g. HTML redirect)
+        }
+        return { ok: false, error: errorMsg };
       }
 
+      const data = text ? JSON.parse(text) : undefined;
       return { ok: true, data };
     } catch (err) {
       return { ok: false, error: err instanceof Error ? err.message : String(err) };
@@ -81,7 +85,7 @@ export class ApiClient {
     const config = loadConfig();
     if (!config.agentKey) return false;
 
-    const res = await fetch(`${this.baseUrl}/agent/login`, {
+    const res = await fetch(`${config.baseUrl}/agent/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ agentKey: config.agentKey }),

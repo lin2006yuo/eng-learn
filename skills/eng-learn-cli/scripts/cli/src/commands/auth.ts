@@ -40,6 +40,15 @@ export async function whoamiCmd(format: 'json' | 'table'): Promise<void> {
   console.log(format === 'table' ? formatTable([res.data as Record<string, unknown>]) : formatJson(res.data));
 }
 
+export async function updateNicknameCmd(nickname: string, format: 'json' | 'table'): Promise<void> {
+  const res = await client.post('/auth/update-user', { nickname });
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  console.log(format === 'table' ? formatTable([res.data as Record<string, unknown>]) : formatJson(res.data));
+}
+
 export async function getCurrentUserId(): Promise<string | null> {
   const res = await client.get('/auth/get-session');
   if (!res.ok || !res.data) return null;

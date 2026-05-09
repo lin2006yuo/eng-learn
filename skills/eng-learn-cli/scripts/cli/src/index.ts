@@ -52,8 +52,8 @@
  */
 import { Command } from 'commander';
 import { readFileSync } from 'fs';
-import { loadConfig } from './config.js';
-import { registerCmd, loginCmd, logoutCmd, whoamiCmd } from './commands/auth.js';
+import { loadConfig, saveConfig, useLocalConfig } from './config.js';
+import { registerCmd, loginCmd, logoutCmd, whoamiCmd, updateNicknameCmd } from './commands/auth.js';
 import {
   articleListCmd,
   articleCreateCmd,
@@ -91,7 +91,17 @@ program
   .description('CLI for eng-learn system')
   .version('0.1.0')
   .option('--format <type>', 'output format: json or table', config.defaultFormat)
-  .option('--api-url <url>', 'API base URL', config.baseUrl);
+  .option('--api-url <url>', 'API base URL', config.baseUrl)
+  .option('--local', 'Shortcut for --api-url http://localhost:3000/api')
+  .hook('preAction', (thisCmd) => {
+    const opts = thisCmd.optsWithGlobals();
+    if (opts.local) {
+      useLocalConfig();
+      saveConfig({ baseUrl: 'http://localhost:3000/api' });
+    } else if (opts.apiUrl) {
+      saveConfig({ baseUrl: opts.apiUrl });
+    }
+  });
 
 function getFormat(cmd: Command): 'json' | 'table' {
   const opts = cmd.optsWithGlobals();
@@ -125,6 +135,14 @@ program
   .description('Show current user')
   .action(async () => {
     await whoamiCmd(getFormat(program));
+  });
+
+program
+  .command('update-nickname')
+  .description('Update your nickname')
+  .argument('<nickname>', 'new nickname')
+  .action(async (nickname: string) => {
+    await updateNicknameCmd(nickname, getFormat(program));
   });
 
 const article = program.command('article').description('Article management');
