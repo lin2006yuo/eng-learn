@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ArrowLeft, Plus, Trash2, Heart, Star, Bookmark, Briefcase, Lightbulb, Flag, Hash } from 'lucide-react';
@@ -84,13 +85,13 @@ export default function FavoritesPage() {
         <>
           <header className="favorites-header sticky top-0 bg-[#FAFAFA]/95 backdrop-blur-sm z-10 px-5 py-4">
             <div className="flex items-center justify-between">
-              <button
-                onClick={() => router.push('/')}
+              <Link
+                href="/"
                 className="favorites-back flex items-center gap-2 text-[#007AFF] active:opacity-50 transition-opacity"
               >
                 <ArrowLeft size={20} />
                 <span className="text-[17px] font-semibold">返回</span>
-              </button>
+              </Link>
 
               <h1 className="favorites-title text-[17px] font-semibold text-[#1D1D1F]">收藏管理</h1>
 

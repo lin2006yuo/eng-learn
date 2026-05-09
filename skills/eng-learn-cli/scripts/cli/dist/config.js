@@ -5,7 +5,7 @@ const CONFIG_DIR = process.env.ENG_LEARN_CONFIG_DIR
     ? process.env.ENG_LEARN_CONFIG_DIR
     : join(homedir(), '.eng-learn-cli');
 const DEFAULT_CONFIG = {
-    baseUrl: process.env.ENG_LEARN_API_URL || 'https://readtalk.cn/api',
+    baseUrl: process.env.ENG_LEARN_API_URL || 'https://www.readtalk.cn/api',
     defaultFormat: 'json',
 };
 let configPath = join(CONFIG_DIR, 'config.json');
@@ -30,7 +30,7 @@ export function saveConfig(config) {
 }
 export function clearSession() {
     const config = loadConfig();
-    delete config.sessionCookie;
+    delete config.apiToken;
     saveConfig(config);
 }
 //# sourceMappingURL=config.js.map

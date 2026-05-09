@@ -1,5 +1,4 @@
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import Link from 'next/link';
 import { motion, type Variants } from 'framer-motion';
 import {
   ArrowRight,
@@ -104,18 +103,6 @@ const itemVariants: Variants = {
 };
 
 export function SquarePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.prefetch('/posts');
-    router.prefetch('/articles');
-    router.prefetch('/pattern-learn');
-  }, [router]);
-
-  const handleNavigate = (route?: string) => {
-    if (route) router.push(route);
-  };
-
   const greeting = getGreeting();
   const GreetingIcon = greeting.icon;
   const tip = getDailyTip();
@@ -161,8 +148,8 @@ export function SquarePage() {
               key={mod.title}
               variants={itemVariants}
             >
-              <button
-                onClick={() => handleNavigate(mod.route)}
+              <Link
+                href={mod.route!}
                 className="w-full flex items-center gap-4 py-4 active:opacity-60 transition-opacity text-left"
               >
                 <div
@@ -180,7 +167,7 @@ export function SquarePage() {
                   </p>
                 </div>
                 <ArrowRight size={16} className="text-[#C7C7CC] flex-shrink-0" />
-              </button>
+              </Link>
               {!isLast && (
                 <div className="h-px bg-[#F0F0F0] ml-[60px]" />
               )}

@@ -1,4 +1,5 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
@@ -71,20 +72,16 @@ export function PatternLearnPage() {
     });
   };
 
-  const handleBackToSquare = () => {
-    router.push('/');
-  };
-
   return (
     <>
       {/* Header */}
       <div className="sticky top-0 z-40 bg-[#FAFAFA]/95 backdrop-blur-sm px-5 py-3 flex items-center gap-3">
-        <button
-          onClick={handleBackToSquare}
+        <Link
+          href="/"
           className="w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity"
         >
           <ArrowLeft size={20} className="text-[#007AFF]" />
-        </button>
+        </Link>
         <h2 className="text-[17px] font-semibold text-[#1D1D1F]">
           Day {selectedDay}
         </h2>

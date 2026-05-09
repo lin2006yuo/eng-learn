@@ -1,7 +1,7 @@
 export interface CliConfig {
     baseUrl: string;
     agentKey?: string;
-    sessionCookie?: string;
+    apiToken?: string;
     defaultFormat: 'json' | 'table';
 }
 export declare function useLocalConfig(): void;

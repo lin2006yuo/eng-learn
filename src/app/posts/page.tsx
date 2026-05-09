@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { PostEmptyState } from '@/features/post/components/PostEmptyState';
@@ -28,12 +29,12 @@ export default function PostsPage() {
       {/* Header */}
       <div className="post-page-header sticky top-0 z-40 bg-[#FAFAFA]/95 px-5 py-3 flex items-center justify-between backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/')}
+          <Link
+            href="/"
             className="post-back-btn w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity"
           >
             <ArrowLeft size={20} className="text-[#007AFF]" />
-          </button>
+          </Link>
           <h2 className="text-[17px] font-semibold text-[#1D1D1F]">交流帖子</h2>
         </div>
         <button

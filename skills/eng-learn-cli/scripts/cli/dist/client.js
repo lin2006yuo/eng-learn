@@ -7,14 +7,21 @@ function deriveOrigin(baseUrl) {
         return '';
     }
 }
+function extractToken(data) {
+    if (data && typeof data === 'object' && 'token' in data) {
+        const token = data.token;
+        return typeof token === 'string' ? token : undefined;
+    }
+    return undefined;
+}
 export class ApiClient {
     getHeaders(skipAuth = false) {
         const config = loadConfig();
         const headers = {
             'Content-Type': 'application/json',
         };
-        if (!skipAuth && config.sessionCookie) {
-            headers['Cookie'] = config.sessionCookie;
+        if (!skipAuth && config.apiToken) {
+            headers['Authorization'] = `Bearer ${config.apiToken}`;
         }
         const origin = deriveOrigin(config.baseUrl);
         if (origin) {
@@ -40,10 +47,6 @@ export class ApiClient {
                 }
                 return { ok: false, error: 'Unauthorized: session expired and re-login failed' };
             }
-            const setCookie = res.headers.get('set-cookie');
-            if (setCookie) {
-                saveConfig({ sessionCookie: setCookie });
-            }
             const text = await res.text();
             if (!res.ok) {
                 let errorMsg = `HTTP ${res.status}`;
@@ -57,6 +60,10 @@ export class ApiClient {
                 return { ok: false, error: errorMsg };
             }
             const data = text ? JSON.parse(text) : undefined;
+            const token = extractToken(data);
+            if (token) {
+                saveConfig({ apiToken: token });
+            }
             return { ok: true, data };
         }
         catch (err) {
@@ -74,9 +81,11 @@ export class ApiClient {
         });
         if (!res.ok)
             return false;
-        const setCookie = res.headers.get('set-cookie');
-        if (setCookie) {
-            saveConfig({ sessionCookie: setCookie });
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : undefined;
+        const token = extractToken(data);
+        if (token) {
+            saveConfig({ apiToken: token });
             return true;
         }
         return false;

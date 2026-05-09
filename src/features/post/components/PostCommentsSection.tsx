@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { CommentInput } from '@/features/comment/components/CommentInput';
 import { CommentItem } from '@/features/comment/components/CommentItem';
@@ -14,7 +14,6 @@ interface PostCommentsSectionProps {
 }
 
 export function PostCommentsSection({ postId }: PostCommentsSectionProps) {
-  const router = useRouter();
   const { user } = useAuth();
   const { comments, loading, fetchComments } = useCommentStore();
   const storeKey = `post-${postId}`;
@@ -74,13 +73,13 @@ export function PostCommentsSection({ postId }: PostCommentsSectionProps) {
         {user ? (
           <CommentInput rootId={postId} rootType="post" />
         ) : (
-          <button
-            onClick={() => router.push(`/login?from=${encodeURIComponent(`/posts/${postId}`)}`)}
+          <Link
+            href={`/login?from=${encodeURIComponent(`/posts/${postId}`)}`}
             className="post-comments-login w-full flex items-center justify-center gap-1 text-[14px] font-medium text-[#007AFF] active:opacity-50 transition-opacity"
           >
             <span>登录后即可参与评论</span>
             <ChevronRight size={16} className="text-[#C7C7CC]" />
-          </button>
+          </Link>
         )}
       </div>
     </div>

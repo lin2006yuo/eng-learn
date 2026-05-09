@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
@@ -8,7 +7,6 @@ import { useUnreadCount } from '@/features/notification';
 import { NotificationListItem } from '@/features/notification/components/NotificationListItem';
 
 export default function MyNotificationsPage() {
-  const router = useRouter();
   const { notifications, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useNotifications();
   const { refetch: refetchUnread } = useUnreadCount();
   const hasMarkedRead = useRef(false);
@@ -25,8 +23,8 @@ export default function MyNotificationsPage() {
   );
 
   const handleBack = useCallback(() => {
-    router.back();
-  }, [router]);
+    window.history.back();
+  }, []);
 
   useEffect(() => {
     if (!hasMarkedRead.current) {

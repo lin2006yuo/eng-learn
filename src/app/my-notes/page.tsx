@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, FileText } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useNoteStore } from '@/features/note/store/noteStore';
 import { NoteCard } from '@/features/note/components/NoteCard';
 import { NoteFormModal } from '@/features/note/components/NoteFormModal';
@@ -12,7 +11,6 @@ import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import type { Note } from '@/features/note/types';
 
 export default function MyNotesPage() {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -67,7 +65,7 @@ export default function MyNotesPage() {
       <header className="sticky top-0 bg-[#FAFAFA]/95 backdrop-blur-sm z-10 px-5 py-4">
         <div className="flex items-center justify-between">
           <button
-            onClick={() => router.back()}
+            onClick={() => window.history.back()}
             className="flex items-center gap-1 text-[#007AFF] active:opacity-50 transition-opacity"
           >
             <ArrowLeft size={20} />

@@ -80,7 +80,7 @@ export default function LoginPage() {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          onClick={() => router.back()}
+          onClick={() => window.history.back()}
           className="w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity mb-6"
         >
           <ArrowLeft size={20} className="text-[#007AFF]" />

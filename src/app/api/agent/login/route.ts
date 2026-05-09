@@ -26,29 +26,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid agent key' }, { status: 401 });
     }
 
-    const result = await auth.api.signInUsername({
+    const signInResult = await auth.api.signInUsername({
       body: {
         username: decoded.username,
         password: decoded.password,
         rememberMe: true,
       },
-      returnHeaders: true,
-    });
+    }) as { token: string; user: { id: string } };
 
-    if (!result) {
+    if (!signInResult?.user) {
       return NextResponse.json({ error: 'Login failed' }, { status: 401 });
     }
 
-    const headers = new Headers();
-    const cookies = result.headers.getSetCookie();
-    const sessionCookie = cookies.find((c) =>
-      c.startsWith('better-auth.session_token=')
-    );
-    if (sessionCookie) {
-      headers.set('Set-Cookie', sessionCookie);
-    }
+    const sessionToken = signInResult.token;
 
-    return NextResponse.json({ ok: true }, { headers });
+    const response = NextResponse.json({ ok: true, token: sessionToken });
+    response.headers.set(
+      'Set-Cookie',
+      `better-auth.session_token=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`
+    );
+
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: message }, { status: 500 });

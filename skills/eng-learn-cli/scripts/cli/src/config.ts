@@ -5,7 +5,7 @@ import { homedir } from 'os';
 export interface CliConfig {
   baseUrl: string;
   agentKey?: string;
-  sessionCookie?: string;
+  apiToken?: string;
   defaultFormat: 'json' | 'table';
 }
 
@@ -14,7 +14,7 @@ const CONFIG_DIR = process.env.ENG_LEARN_CONFIG_DIR
   : join(homedir(), '.eng-learn-cli');
 
 const DEFAULT_CONFIG: CliConfig = {
-  baseUrl: process.env.ENG_LEARN_API_URL || 'https://readtalk.cn/api',
+  baseUrl: process.env.ENG_LEARN_API_URL || 'https://www.readtalk.cn/api',
   defaultFormat: 'json',
 };
 
@@ -43,6 +43,6 @@ export function saveConfig(config: Partial<CliConfig>): void {
 
 export function clearSession(): void {
   const config = loadConfig();
-  delete config.sessionCookie;
+  delete config.apiToken;
   saveConfig(config);
 }

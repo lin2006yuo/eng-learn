@@ -1,5 +1,5 @@
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUnreadCount } from '@/features/notification';
 import LogoutButton from '@/features/auth/components/LogoutButton';
@@ -20,7 +20,7 @@ interface MenuItem {
   icon: typeof Star;
   iconBg: string;
   iconColor: string;
-  onClick: () => void;
+  href: string;
   badgeCount?: number;
 }
 
@@ -53,21 +53,9 @@ const itemVariants: Variants = {
 };
 
 export function ProfilePage() {
-  const router = useRouter();
   const { user, loading: authLoading, refetch: refetchAuth } = useAuth();
   const [showEditNickname, setShowEditNickname] = useState(false);
   const { total: unreadCount } = useUnreadCount();
-
-  useEffect(() => {
-    router.prefetch('/favorites');
-    router.prefetch('/my-notes');
-    router.prefetch('/my-comments');
-    router.prefetch('/my-notifications');
-    router.prefetch('/articles/manage');
-    router.prefetch('/posts/manage');
-  }, [router]);
-
-  const handleGoLogin = () => router.push('/login');
 
   const handleNicknameUpdated = () => {
     void refetchAuth?.();
@@ -87,16 +75,10 @@ export function ProfilePage() {
           <LoggedInView
             user={user}
             onEditNickname={() => setShowEditNickname(true)}
-            onGoComments={() => router.push('/my-comments')}
-            onGoFavorites={() => router.push('/favorites')}
-            onGoNotifications={() => router.push('/my-notifications')}
-            onGoNotes={() => router.push('/my-notes')}
-            onGoManageArticles={() => router.push('/articles/manage')}
-            onGoManagePosts={() => router.push('/posts/manage')}
             unreadCount={unreadCount}
           />
         ) : (
-          <LoggedOutView onLogin={handleGoLogin} />
+          <LoggedOutView />
         )}
       </div>
 
@@ -133,22 +115,10 @@ function LoadingSkeleton() {
 function LoggedInView({
   user,
   onEditNickname,
-  onGoComments,
-  onGoFavorites,
-  onGoNotifications,
-  onGoNotes,
-  onGoManageArticles,
-  onGoManagePosts,
   unreadCount,
 }: {
   user: { nickname?: string; username: string; role?: string };
   onEditNickname: () => void;
-  onGoComments: () => void;
-  onGoFavorites: () => void;
-  onGoNotifications: () => void;
-  onGoNotes: () => void;
-  onGoManageArticles: () => void;
-  onGoManagePosts: () => void;
   unreadCount: number;
 }) {
   const menuItems: MenuItem[] = [
@@ -157,28 +127,28 @@ function LoggedInView({
       icon: Star,
       iconBg: '#E8F0FE',
       iconColor: '#1A73E8',
-      onClick: onGoFavorites,
+      href: '/favorites',
     },
     {
       title: '我的笔记',
       icon: FileText,
       iconBg: '#E6F9F0',
       iconColor: '#059669',
-      onClick: onGoNotes,
+      href: '/my-notes',
     },
     {
       title: '我的评论',
       icon: MessageSquare,
       iconBg: '#F3E8FF',
       iconColor: '#7C3AED',
-      onClick: onGoComments,
+      href: '/my-comments',
     },
     {
       title: '我的消息',
       icon: Bell,
       iconBg: '#FFF4E5',
       iconColor: '#F59E0B',
-      onClick: onGoNotifications,
+      href: '/my-notifications',
       badgeCount: unreadCount,
     },
     {
@@ -186,14 +156,14 @@ function LoggedInView({
       icon: LayoutDashboard,
       iconBg: '#E8F0FE',
       iconColor: '#1A73E8',
-      onClick: onGoManageArticles,
+      href: '/articles/manage',
     },
     {
       title: '我的帖子',
       icon: MessageCircle,
       iconBg: '#F3E8FF',
       iconColor: '#7C3AED',
-      onClick: onGoManagePosts,
+      href: '/posts/manage',
     },
   ];
 
@@ -247,8 +217,8 @@ function LoggedInView({
           const isLast = index === menuItems.length - 1;
           return (
             <motion.div key={item.title} variants={itemVariants}>
-              <button
-                onClick={item.onClick}
+              <Link
+                href={item.href}
                 className="w-full flex items-center gap-4 py-4 active:opacity-60 transition-opacity text-left relative"
               >
                 <div
@@ -266,7 +236,7 @@ function LoggedInView({
                   </span>
                 ) : null}
                 <ArrowRight size={16} className="text-[#C7C7CC] flex-shrink-0" />
-              </button>
+              </Link>
               {!isLast && (
                 <div className="h-px bg-[#F0F0F0] ml-[60px]" />
               )}
@@ -278,7 +248,7 @@ function LoggedInView({
   );
 }
 
-function LoggedOutView({ onLogin }: { onLogin: () => void }) {
+function LoggedOutView() {
   return (
     <div className="px-5 pt-12">
       <motion.p
@@ -297,14 +267,17 @@ function LoggedOutView({ onLogin }: { onLogin: () => void }) {
         </p>
       </motion.div>
 
-      <motion.button
+      <motion.div
         variants={itemVariants}
         whileTap={{ scale: 0.98 }}
-        onClick={onLogin}
-        className="w-full py-3.5 text-[17px] font-semibold text-[#007AFF] bg-[#007AFF]/10 rounded-[12px] active:bg-[#007AFF]/15 transition-colors"
       >
-        登录
-      </motion.button>
+        <Link
+          href="/login"
+          className="block w-full py-3.5 text-[17px] font-semibold text-[#007AFF] bg-[#007AFF]/10 rounded-[12px] active:bg-[#007AFF]/15 transition-colors text-center"
+        >
+          登录
+        </Link>
+      </motion.div>
     </div>
   );
 }

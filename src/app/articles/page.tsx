@@ -1,25 +1,24 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { ArticleEmptyState } from '@/features/article/components/ArticleEmptyState';
 import { ArticleList } from '@/features/article/components/ArticleList';
 import { useArticleList } from '@/features/article/hooks/useArticleList';
 
 export default function ArticlesPage() {
-  const router = useRouter();
   const { data, isLoading, isError, refetch } = useArticleList();
 
   return (
     <div className="article-page-container min-h-screen bg-[#FAFAFA]">
       {/* Header */}
       <div className="article-page-header sticky top-0 z-40 bg-[#FAFAFA]/95 backdrop-blur-sm px-5 py-3 flex items-center gap-3">
-        <button
-          onClick={() => router.push('/')}
+        <Link
+          href="/"
           className="article-back-btn w-10 h-10 flex items-center justify-center active:opacity-50 transition-opacity"
         >
           <ArrowLeft size={20} className="text-[#007AFF]" />
-        </button>
+        </Link>
         <h2 className="text-[17px] font-semibold text-[#1D1D1F]">文章分享</h2>
       </div>
 

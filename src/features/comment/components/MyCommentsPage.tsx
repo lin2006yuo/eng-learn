@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -8,7 +7,6 @@ import { MyCommentItem } from '@/features/comment/components/MyCommentItem';
 import { useMyComments } from '@/features/comment/hooks/useMyComments';
 
 export function MyCommentsPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
   const {
@@ -32,8 +30,8 @@ export function MyCommentsPage() {
   );
 
   const handleBack = useCallback(() => {
-    router.back();
-  }, [router]);
+    window.history.back();
+  }, []);
 
   return (
     <div className="mycomments-page-container min-h-full bg-[#FAFAFA]">
