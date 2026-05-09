@@ -6,8 +6,6 @@ import { ArticleEmptyState } from '@/features/article/components/ArticleEmptySta
 import { ArticleList } from '@/features/article/components/ArticleList';
 import { useArticleList } from '@/features/article/hooks/useArticleList';
 
-export const dynamic = 'force-dynamic';
-
 export default function ArticlesPage() {
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useArticleList();

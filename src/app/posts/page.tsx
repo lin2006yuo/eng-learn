@@ -8,8 +8,6 @@ import { usePostMutations } from '@/features/post/hooks/usePostMutations';
 import { usePostList } from '@/features/post/hooks/usePostList';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
-export const dynamic = 'force-dynamic';
-
 export default function PostsPage() {
   const router = useRouter();
   const { user } = useAuth();

@@ -5,8 +5,6 @@ import { PostDetailHeader } from '@/features/post/components/PostDetailHeader';
 import { PostDetailShell } from '@/features/post/components/PostDetailShell';
 import { usePostDetail } from '@/features/post/hooks/usePostDetail';
 
-export const dynamic = 'force-dynamic';
-
 export default function PostDetailPage() {
   const router = useRouter();
   const params = useParams<{ postId: string }>();

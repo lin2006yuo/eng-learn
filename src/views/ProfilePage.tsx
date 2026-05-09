@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUnreadCount } from '@/features/notification';
 import LogoutButton from '@/features/auth/components/LogoutButton';
@@ -57,6 +57,15 @@ export function ProfilePage() {
   const { user, loading: authLoading, refetch: refetchAuth } = useAuth();
   const [showEditNickname, setShowEditNickname] = useState(false);
   const { total: unreadCount } = useUnreadCount();
+
+  useEffect(() => {
+    router.prefetch('/favorites');
+    router.prefetch('/my-notes');
+    router.prefetch('/my-comments');
+    router.prefetch('/my-notifications');
+    router.prefetch('/articles/manage');
+    router.prefetch('/posts/manage');
+  }, [router]);
 
   const handleGoLogin = () => router.push('/login');
 

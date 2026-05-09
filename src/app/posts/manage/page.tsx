@@ -10,8 +10,6 @@ import { useManagePostListQuery } from '@/features/post/hooks/useManagePostList'
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 
-export const dynamic = 'force-dynamic';
-
 export default function ManagePostsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();

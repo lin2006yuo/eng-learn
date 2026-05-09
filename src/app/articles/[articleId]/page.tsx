@@ -5,8 +5,6 @@ import { ArticleDetailHeader } from '@/features/article/components/ArticleDetail
 import { ArticleDetailShell } from '@/features/article/components/ArticleDetailShell';
 import { useArticleDetail } from '@/features/article/hooks/useArticleDetail';
 
-export const dynamic = 'force-dynamic';
-
 export default function ArticleDetailPage() {
   const router = useRouter();
   const params = useParams<{ articleId: string }>();

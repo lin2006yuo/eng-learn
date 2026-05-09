@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import {
   ArrowRight,
@@ -104,6 +105,12 @@ const itemVariants: Variants = {
 
 export function SquarePage() {
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/posts');
+    router.prefetch('/articles');
+    router.prefetch('/pattern-learn');
+  }, [router]);
 
   const handleNavigate = (route?: string) => {
     if (route) router.push(route);

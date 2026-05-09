@@ -10,8 +10,6 @@ import { useManageArticleList } from '@/features/article/hooks/useManageArticleL
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 
-export const dynamic = 'force-dynamic';
-
 export default function ManageArticlesPage() {
   const router = useRouter();
   const { user, loading } = useAuth();

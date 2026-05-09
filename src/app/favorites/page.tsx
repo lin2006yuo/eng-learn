@@ -10,8 +10,6 @@ import type { FavoriteTag } from '@/features/favorite/types';
 
 import { useEffect } from 'react';
 
-export const dynamic = 'force-dynamic';
-
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
   heart: Heart,
   star: Star,

@@ -120,7 +120,7 @@ The YAML approach (`yaml-create`) is the recommended way because it:
 - Auto-validates `selectedText` / `prefixText` / `suffixText` against article content
 - Reports mismatches immediately instead of silently creating broken anchors
 
-**YAML file format** (reference: `cli/sample-cet6-article.yaml`):
+**YAML file format** (reference: `./references/sample-cet6-article.yaml`):
 
 ```yaml
 article:

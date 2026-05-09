@@ -10,8 +10,6 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { useAppStore } from '@/shared/store/appStore';
 
-export const dynamic = 'force-dynamic';
-
 export default function ManagePostDetailPage() {
   const router = useRouter();
   const { postId } = useParams<{ postId: string }>();
