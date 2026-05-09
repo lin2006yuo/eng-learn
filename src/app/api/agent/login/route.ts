@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { createApiToken } from '@/lib/token';
 
 function decodeAgentKey(agentKey: string): { username: string; password: string } | null {
   try {
@@ -41,9 +40,16 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = result.response.user.id;
-    const apiToken = await createApiToken(userId, 'cli', 90);
 
-    const response = NextResponse.json({ ok: true, token: apiToken });
+    const apiKeyRecord = await auth.api.createApiKey({
+      body: {
+        userId,
+        name: 'cli',
+        expiresIn: 90 * 24 * 3600,
+      },
+    }) as { key: string };
+
+    const response = NextResponse.json({ ok: true, token: apiKeyRecord.key });
 
     for (const cookie of result.headers.getSetCookie()) {
       response.headers.append('Set-Cookie', cookie);

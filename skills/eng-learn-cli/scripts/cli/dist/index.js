@@ -91,7 +91,7 @@ program
 program
     .command('login')
     .description('Login with agent key')
-    .argument('<agentKey>', 'agent key from register')
+    .argument('[agentKey]', 'agent key from register')
     .action(async (agentKey) => {
     await loginCmd(agentKey, getFormat(program));
 });

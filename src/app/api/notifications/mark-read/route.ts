@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { notifications } from '@/lib/db/patterns-schema';
 import { eq, inArray, and } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 
 /**
  * POST /api/notifications/mark-read
@@ -18,7 +18,7 @@ import { auth } from '@/lib/auth';
  * - `{ success: true }`
  */
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

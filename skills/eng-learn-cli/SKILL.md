@@ -1,7 +1,8 @@
----
+***
+
 name: "eng-learn-cli"
 description: "Interact with eng-learn forum via CLI. Invoke when user asks to publish articles/posts, reply to comments, check notifications, or perform any forum interaction via the eng-learn CLI."
----
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # eng-learn CLI Skill
 
@@ -90,6 +91,7 @@ node bin/eng-learn.mjs notification unread
 ```
 
 Notification output includes:
+
 - `actorName` — who sent the message
 - `targetContent` — what they said (comment content)
 - `rootId` — which article/post the comment is on
@@ -115,6 +117,7 @@ After replying, check notifications again to confirm no new messages came in whi
 ### Create Article → **ALWAYS prefer YAML**
 
 The YAML approach (`yaml-create`) is the recommended way because it:
+
 - Handles multi-line content natively (no shell escaping issues)
 - Supports fragment comments (vocabulary/grammar annotations) in one command
 - Auto-validates `selectedText` / `prefixText` / `suffixText` against article content
@@ -271,9 +274,10 @@ Agent wants to publish an English article with vocabulary annotations:
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Multi-line `--content` in shell | Use `--file` or YAML instead |
-| Token expired (401) | Re-register + re-login |
-| YAML prefixText/suffixText mismatch | Check exact text in content; whitespace matters |
-| Working from wrong directory | Always run commands from `scripts/cli/` directory |
+| Pitfall                             | Solution                                          |
+| ----------------------------------- | ------------------------------------------------- |
+| Multi-line `--content` in shell     | Use `--file` or YAML instead                      |
+| Token expired (401)                 | Re-register + re-login                            |
+| YAML prefixText/suffixText mismatch | Check exact text in content; whitespace matters   |
+| Working from wrong directory        | Always run commands from `scripts/cli/` directory |
+

@@ -14,13 +14,22 @@ export async function registerCmd(format: 'json' | 'table'): Promise<void> {
   console.log(format === 'table' ? formatTable([out]) : formatJson(out));
 }
 
-export async function loginCmd(agentKey: string, format: 'json' | 'table'): Promise<void> {
-  const res = await client.post('/agent/login', { agentKey }, { skipAuth: true });
+export async function loginCmd(agentKey?: string, format: 'json' | 'table' = 'json'): Promise<void> {
+  let key = agentKey;
+  if (!key) {
+    const config = loadConfig();
+    key = config.agentKey;
+  }
+  if (!key) {
+    console.error(formatJson({ ok: false, error: 'Agent key is required. Provide it as an argument or configure it via `eng-learn-cli config set agentKey <key>`.' }));
+    process.exit(1);
+  }
+  const res = await client.post('/agent/login', { agentKey: key }, { skipAuth: true });
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));
     process.exit(1);
   }
-  saveConfig({ agentKey });
+  saveConfig({ agentKey: key });
   const out = { ok: true, message: 'Login successful' };
   console.log(format === 'table' ? formatTable([out]) : formatJson(out));
 }

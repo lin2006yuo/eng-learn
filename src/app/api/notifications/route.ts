@@ -4,7 +4,7 @@ import { notifications, comments, patterns } from '@/lib/db/patterns-schema';
 import { articles } from '@/lib/db/articles-schema';
 import { users } from '@/lib/db/schema';
 import { eq, desc, lt, and, inArray } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 
 /**
  * GET /api/notifications
@@ -25,7 +25,7 @@ import { auth } from '@/lib/auth';
  * - `nextCursor`  下一页游标
  */
 export async function GET(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

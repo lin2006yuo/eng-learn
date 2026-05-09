@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
+import { getSession } from '@/lib/auth-helpers';
 
 type AuthResult =
   | { ok: true; userId: string; role?: string }
   | { ok: false; response: NextResponse };
 
 export async function requireAuth(request: NextRequest): Promise<AuthResult> {
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
   if (!session?.user) {
     return { ok: false, response: NextResponse.json({ error: '请先登录' }, { status: 401 }) };
   }
-  return { ok: true, userId: session.user.id, role: (session.user as any).role };
+  return { ok: true, userId: session.user.id, role: session.user.role };
 }
 
 export async function requireOwnerOrAdmin(

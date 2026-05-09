@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { comments, commentLikes, notifications } from '@/lib/db/patterns-schema';
 import { eq, and, inArray } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 
 /**
  * DELETE /api/comments/:commentId
@@ -21,7 +21,7 @@ export async function DELETE(
   { params }: { params: Promise<{ commentId: string }> }
 ) {
   const db = getDb();
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

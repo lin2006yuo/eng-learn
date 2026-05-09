@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { notifications } from '@/lib/db/patterns-schema';
 import { eq, sql, and } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 
 /**
  * GET /api/notifications/unread-count
@@ -13,7 +13,7 @@ import { auth } from '@/lib/auth';
  * - `data.total`  当前用户未读通知数量
  */
 export async function GET(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

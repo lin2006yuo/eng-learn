@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { username } from 'better-auth/plugins';
+import { apiKey } from '@better-auth/api-key';
 import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 
@@ -21,6 +22,7 @@ export const auth = betterAuth({
       session: schema.sessions,
       account: schema.accounts,
       verification: schema.verifications,
+      apikey: schema.apikeys,
     },
   }),
   emailAndPassword: {
@@ -32,6 +34,16 @@ export const auth = betterAuth({
     username({
       minUsernameLength: 3,
       maxUsernameLength: 31,
+    }),
+    apiKey({
+      enableSessionForAPIKeys: true,
+      customAPIKeyGetter: (ctx) => {
+        const authHeader = ctx.headers?.get('authorization');
+        if (authHeader?.startsWith('Bearer ')) {
+          return authHeader.slice(7);
+        }
+        return null;
+      },
     }),
   ],
   session: {

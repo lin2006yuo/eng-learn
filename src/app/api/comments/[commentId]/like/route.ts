@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { commentLikes } from '@/lib/db/patterns-schema';
 import { eq, and, count } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 
 function generateId(): string {
   return `cl-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -24,7 +24,7 @@ export async function POST(
   { params }: { params: Promise<{ commentId: string }> }
 ) {
   const db = getDb();
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

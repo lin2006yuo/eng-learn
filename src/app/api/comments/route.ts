@@ -5,7 +5,7 @@ import { posts } from '@/lib/db/posts-schema';
 import { commentAnchors, comments, notifications, patterns } from '@/lib/db/patterns-schema';
 import { users } from '@/lib/db/schema';
 import { eq, inArray, and } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth-helpers';
 import {
   fetchCommentsByRoot,
   fetchCommentsByUser,
@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
   const currentUserId = session?.user?.id || null;
 
   const mode = determineQueryMode(params);
@@ -278,7 +278,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   const db = getDb();
-  const session = await auth.api.getSession({ headers: request.headers });
+  const session = await getSession(request);
 
   if (!session?.user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

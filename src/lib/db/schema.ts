@@ -57,26 +57,34 @@ export const verifications = sqliteTable('verification', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
 });
 
-export const apiTokens = sqliteTable('api_token', {
+export const apikeys = sqliteTable('apikey', {
   id: text('id').primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  tokenHash: text('token_hash').notNull().unique(),
+  configId: text('config_id').notNull().default('default'),
   name: text('name'),
-  lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+  start: text('start'),
+  referenceId: text('reference_id').notNull(),
+  prefix: text('prefix'),
+  key: text('key').notNull(),
+  refillInterval: integer('refill_interval'),
+  refillAmount: integer('refill_amount'),
+  lastRefillAt: integer('last_refill_at', { mode: 'timestamp' }),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  rateLimitEnabled: integer('rate_limit_enabled', { mode: 'boolean' }).notNull().default(true),
+  rateLimitTimeWindow: integer('rate_limit_time_window'),
+  rateLimitMax: integer('rate_limit_max'),
+  requestCount: integer('request_count').notNull().default(0),
+  remaining: integer('remaining'),
+  lastRequest: integer('last_request', { mode: 'timestamp' }),
   expiresAt: integer('expires_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  permissions: text('permissions'),
+  metadata: text('metadata'),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
-  apiTokens: many(apiTokens),
-}));
-
-export const apiTokensRelations = relations(apiTokens, ({ one }) => ({
-  user: one(users, { fields: [apiTokens.userId], references: [users.id] }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -91,4 +99,3 @@ export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type Account = typeof accounts.$inferSelect;
 export type Verification = typeof verifications.$inferSelect;
-export type ApiToken = typeof apiTokens.$inferSelect;
