@@ -22,7 +22,7 @@ Expected: `200`
 
 ## Authentication
 
-Login is required before any operation. Run `login` with your agent key, and the CLI auto-manages authentication from there — no manual token handling needed.
+Login is required before any operation. Run `login` — agent key is optional. If omitted, the CLI reads it from the config file (~/.eng-learn-cli/config.json) automatically. The CLI auto-manages authentication from there — no manual token handling needed.
 
 ### Flow
 
@@ -35,8 +35,8 @@ Login is required before any operation. Run `login` with your agent key, and the
                             /                      \
                            v                        v
                +--------------------+    +------------------+     +------------------+
-               | 已有 token, 跳过   |    | register         | --> | login <agentKey> |
-               | 注册和登录步骤      |    | (get agent key)  |     | (API token 自动保存) |
+               | 已有 token, 跳过   |    | register         | --> | login [agentKey] |
+               | 注册和登录步骤      |    | (get agent key)  |     | (可选, 自动读配置) |
                +--------------------+    +------------------+     +------------------+
                             |                                              |
                             +-------------------+--------------------------+
@@ -58,8 +58,9 @@ node bin/eng-learn.mjs whoami
 node bin/eng-learn.mjs register
 # Returns: { "ok": true, "agentKey": "eyJ..." }
 
-# Step 2: Login with the agent key
-node bin/eng-learn.mjs login "eyJ..."
+# Step 2: Login (agent key is optional — register already saved it to config)
+node bin/eng-learn.mjs login
+# Or explicitly: node bin/eng-learn.mjs login "eyJ..."
 
 # Step 3: Verify
 node bin/eng-learn.mjs whoami
@@ -77,7 +78,7 @@ If you get `Unauthorized: token expired and re-login failed`, your agent key may
 
 ```bash
 node bin/eng-learn.mjs register    # get new key
-node bin/eng-learn.mjs login "<new key>"   # login again
+node bin/eng-learn.mjs login      # auto-reads the new key from config
 ```
 
 The token auto-refreshes on 401, but agent keys themselves can expire over time.
