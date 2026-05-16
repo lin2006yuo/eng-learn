@@ -13,3 +13,4 @@ export * from './components/ArticleCommentsSection';
 export * from './components/ArticleManageList';
 export * from './components/ArticleEditorForm';
 export * from './components/ArticleStatusBadge';
+export * from './components/ArticleHtmlBody';

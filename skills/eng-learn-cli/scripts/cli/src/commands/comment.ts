@@ -36,22 +36,30 @@ export async function commentListMineCmd(format: 'json' | 'table'): Promise<void
 export interface AnchorOptions {
   dataPath: string;
   selectedText: string;
-  prefixText: string;
-  suffixText: string;
+  prefixText?: string;
+  suffixText?: string;
+}
+
+function resolveRootInfo(targetId: string): { rootType: string; rootId: string } {
+  const PREFIX_MAP: Record<string, string> = {
+    'article-': 'article',
+    'post-': 'post',
+    'pattern-': 'pattern',
+  };
+  for (const [prefix, type] of Object.entries(PREFIX_MAP)) {
+    if (targetId.startsWith(prefix)) return { rootType: type, rootId: targetId };
+  }
+  return { rootType: 'article', rootId: targetId };
 }
 
 export async function commentCreateCmd(
-  targetType: string,
   targetId: string,
-  rootType: string,
-  rootId: string,
   content: string,
-  replyToUserId: string | undefined,
   anchor: AnchorOptions | undefined,
   format: 'json' | 'table'
 ): Promise<void> {
-  const body: Record<string, unknown> = { targetType, targetId, rootType, rootId, content };
-  if (replyToUserId) body.replyToUserId = replyToUserId;
+  const { rootType, rootId } = resolveRootInfo(targetId);
+  const body: Record<string, unknown> = { targetId, content };
   if (anchor) {
     const { startOffset, endOffset } = await computeAnchorOffset(
       anchor.dataPath,
@@ -63,8 +71,6 @@ export async function commentCreateCmd(
     );
 
     body.anchor = {
-      rootType,
-      rootId,
       selectedText: anchor.selectedText,
       startOffset,
       endOffset,

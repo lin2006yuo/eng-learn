@@ -9,6 +9,8 @@ export function SelectionCommentPopover() {
   const {
     composerAnchor,
     composerPosition,
+    rootId,
+    rootType,
     closeComposer,
   } = useSelectionStore();
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -49,8 +51,8 @@ export function SelectionCommentPopover() {
         className="comment-selection-composer-card w-full max-w-[398px] rounded-[12px] bg-white shadow-lg px-4 py-3"
       >
         <CommentInput
-          rootId={composerAnchor.rootId}
-          rootType={composerAnchor.rootType}
+          rootId={rootId!}
+          rootType={rootType!}
           anchor={composerAnchor}
           autoFocus
           variant="floating"

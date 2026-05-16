@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { client } from '../client.js';
 import { formatJson } from '../formatters/json.js';
 import { formatTable } from '../formatters/table.js';
@@ -30,14 +31,33 @@ export async function articleCreateCmd(
   summary: string,
   content: string,
   status: string,
+  contentType: string,
   format: 'json' | 'table'
 ): Promise<void> {
-  const res = await client.post('/articles', { title, summary, content, status });
+  const res = await client.post('/articles', { title, summary, content, status, contentType });
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));
     process.exit(1);
   }
   console.log(format === 'table' ? formatTable([res.data as Record<string, unknown>]) : formatJson(res.data));
+}
+
+export async function articleCreateFromContentFileCmd(
+  title: string,
+  summary: string,
+  filePath: string,
+  status: string,
+  contentType: string,
+  format: 'json' | 'table'
+): Promise<void> {
+  let content: string;
+  try {
+    content = readFileSync(filePath, 'utf-8');
+  } catch {
+    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
+    process.exit(1);
+  }
+  await articleCreateCmd(title, summary, content, status, contentType, format);
 }
 
 export async function articleGetCmd(id: string, format: 'json' | 'table'): Promise<void> {

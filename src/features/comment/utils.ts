@@ -1,4 +1,4 @@
-import type { Comment, CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
+import type { Comment, CreateCommentAnchorRequest } from '@/features/comment/types';
 
 export function flattenPages(pages: Comment[][]): Comment[] {
   if (!pages) return [];
@@ -21,8 +21,6 @@ export function groupCommentsByRoot(comments: Comment[]): Map<string, Comment[]>
 
 interface BuildSelectionAnchorOptions {
   blockId: string;
-  rootId: string;
-  rootType: RootType;
   text: string;
   container: HTMLElement;
   selection: Selection | null;
@@ -33,7 +31,7 @@ export function clearBrowserSelection() {
 }
 
 export function buildSelectionAnchor(options: BuildSelectionAnchorOptions): CreateCommentAnchorRequest | null {
-  const { blockId, rootId, rootType, text, container, selection } = options;
+  const { blockId, text, container, selection } = options;
 
   if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return null;
 
@@ -55,8 +53,6 @@ export function buildSelectionAnchor(options: BuildSelectionAnchorOptions): Crea
   if (startOffset < 0 || endOffset > text.length || startOffset >= endOffset) return null;
 
   return {
-    rootType,
-    rootId,
     selectedText: text.slice(startOffset, endOffset).trim(),
     startOffset,
     endOffset,

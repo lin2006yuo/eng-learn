@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import { NotificationReplyInput } from './NotificationReplyInput';
 import type { Notification } from '@/features/notification/hooks/useNotifications';
-import type { RootType } from '@/features/comment/types';
+import { getRootTypeFromId } from '@/features/comment/getRootTypeFromId';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -28,13 +28,17 @@ export function NotificationItem({ notification }: NotificationItemProps) {
   const config = notificationConfig;
   const Icon = config.icon;
 
+  const rootType = getRootTypeFromId(notification.rootId);
+
   const handleClick = useCallback(() => {
-    if (notification.targetType === 'comment' && notification.rootId) {
-      openModal(notification.rootId);
-    } else {
-      router.push(`/pattern/${notification.targetId}`);
-    }
-  }, [notification, router, openModal]);
+    if (!notification.rootId) return;
+    const routeStrategies: Record<string, (id: string) => void> = {
+      pattern: (id: string) => openModal(id),
+      article: (id: string) => router.push(`/articles/${id}`),
+      post: (id: string) => router.push(`/posts/${id}`),
+    };
+    routeStrategies[rootType]?.(notification.rootId);
+  }, [notification.rootId, rootType, openModal, router]);
 
   const handleToggleReply = useCallback(() => {
     setShowReplyInput((prev) => !prev);
@@ -45,7 +49,6 @@ export function NotificationItem({ notification }: NotificationItemProps) {
   }, []);
 
   const isCommentReply = notification.targetType === 'comment';
-  const rootType: RootType = 'pattern';
 
   return (
     <motion.div

@@ -131,16 +131,16 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     if (!result.ok || !result.data) return false;
 
     const newComment = result.data.data;
-    const key = getCommentStoreKey(request.rootType, request.rootId);
+    const key = getCommentStoreKey(newComment.rootType, newComment.rootId);
 
     set((state) => {
       const list = state.comments[key] || [];
 
-      if (request.targetType === 'comment') {
+      if (newComment.targetType === 'comment') {
         return {
           comments: {
             ...state.comments,
-            [key]: addReplyToTree(list, request.targetId, newComment),
+            [key]: addReplyToTree(list, newComment.targetId, newComment),
           },
         };
       }

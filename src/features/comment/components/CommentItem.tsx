@@ -119,7 +119,6 @@ export function CommentItem({
               rootId={targetId}
               rootType={rootType}
               replyToCommentId={comment.id}
-              replyToUserId={comment.userId}
               onReplySuccess={handleReplySuccess}
             />
           </div>

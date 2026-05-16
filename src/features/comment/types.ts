@@ -25,8 +25,6 @@ export interface CommentAnchor {
 }
 
 export interface CreateCommentAnchorRequest {
-  rootType: RootType;
-  rootId: string;
   selectedText: string;
   startOffset: number;
   endOffset: number;
@@ -71,12 +69,8 @@ export interface NotificationItem {
 }
 
 export interface CreateCommentRequest {
-  targetType: CommentTargetType;
   targetId: string;
-  rootType: RootType;
-  rootId: string;
   content: string;
-  replyToUserId?: string;
   anchor?: CreateCommentAnchorRequest;
 }
 

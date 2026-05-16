@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { usePatternCommentModalContext } from '@/shared/hooks/PatternCommentModalContext';
 import { NotificationReplyInput } from './NotificationReplyInput';
 import type { Notification } from '@/features/notification/hooks/useNotifications';
-import type { RootType } from '@/features/comment/types';
+import { getRootTypeFromId } from '@/features/comment/getRootTypeFromId';
 
 interface NotificationListItemProps {
   notification: Notification;
@@ -17,14 +17,17 @@ export function NotificationListItem({ notification, isLast = false }: Notificat
   const router = useRouter();
   const { openModal } = usePatternCommentModalContext();
   const [showReplyInput, setShowReplyInput] = useState(false);
+  const rootType = getRootTypeFromId(notification.rootId);
 
   const handleClick = useCallback(() => {
-    if (notification.targetType === 'comment' && notification.rootId) {
-      openModal(notification.rootId);
-    } else {
-      router.push(`/pattern/${notification.targetId}`);
-    }
-  }, [notification, router, openModal]);
+    if (!notification.rootId) return;
+    const routeStrategies: Record<string, (id: string) => void> = {
+      pattern: (id: string) => openModal(id),
+      article: (id: string) => router.push(`/articles/${id}`),
+      post: (id: string) => router.push(`/posts/${id}`),
+    };
+    routeStrategies[rootType]?.(notification.rootId);
+  }, [notification.rootId, rootType, openModal, router]);
 
   const handleToggleReply = useCallback(() => {
     setShowReplyInput((prev) => !prev);
@@ -34,15 +37,18 @@ export function NotificationListItem({ notification, isLast = false }: Notificat
     setShowReplyInput(false);
   }, []);
 
-  const rootType: RootType = 'pattern';
-
   return (
     <div className={`notif-item px-4 py-4 ${isLast ? '' : 'border-b border-[#E5E5EA]'}`}>
-      <div className="notif-item-header flex items-center gap-2 mb-2">
-        <span className="text-[15px] font-medium text-[#1D1D1F]">
-          {notification.actorName}
+      <div className="notif-item-header flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-[15px] font-medium text-[#1D1D1F]">
+            {notification.actorName}
+          </span>
+          <span className="text-[13px] text-[#6E6E73]">回复了你</span>
+        </div>
+        <span className="text-[13px] text-[#6E6E73] flex-shrink-0">
+          {formatTime(notification.createdAt)}
         </span>
-        <span className="text-[13px] text-[#6E6E73]">回复了你</span>
       </div>
 
       <button
@@ -55,19 +61,24 @@ export function NotificationListItem({ notification, isLast = false }: Notificat
         </span>
       </button>
 
-      <div className="notif-item-time text-[13px] text-[#6E6E73] mb-3">
-        {formatTime(notification.createdAt)}
-      </div>
+      {notification.myReplyContent && (
+        <div className="notif-item-my-reply bg-[#F5F5F7] rounded-[12px] px-3 py-2.5 mb-3">
+          <span className="text-[13px] font-medium text-[#1D1D1F]">我的回复：</span>
+          <span className="text-[13px] text-[#6E6E73]">{notification.myReplyContent}</span>
+        </div>
+      )}
 
-      <div className="notif-item-actions flex items-center gap-4">
-        <button
-          onClick={handleToggleReply}
-          className="flex items-center gap-1 text-[13px] text-[#007AFF] active:opacity-50 transition-opacity"
-        >
-          <Reply size={13} />
-          <span>{showReplyInput ? '取消回复' : '回复'}</span>
-        </button>
-      </div>
+      {!notification.myReplyContent && (
+        <div className="notif-item-actions flex items-center gap-4 mb-3">
+          <button
+            onClick={handleToggleReply}
+            className="flex items-center gap-1 text-[13px] text-[#007AFF] active:opacity-50 transition-opacity"
+          >
+            <Reply size={13} />
+            <span>{showReplyInput ? '取消回复' : '回复'}</span>
+          </button>
+        </div>
+      )}
 
       {showReplyInput && (
         <div className="notif-item-reply mt-3">

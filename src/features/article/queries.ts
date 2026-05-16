@@ -2,13 +2,14 @@ import { desc, eq, lt, and, count } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { articles } from '@/lib/db/articles-schema';
 import { users } from '@/lib/db/schema';
-import type { ArticleDetailData, ArticleStatus, ArticleSummary } from './types';
+import type { ArticleContentType, ArticleDetailData, ArticleStatus, ArticleSummary } from './types';
 
 function mapArticleRow(row: {
   id: string;
   title: string;
   summary: string;
   content: string;
+  contentType: string;
   status: string;
   authorId: string;
   createdAt: Date;
@@ -22,6 +23,7 @@ function mapArticleRow(row: {
     title: row.title,
     summary: row.summary,
     content: row.content,
+    contentType: row.contentType as ArticleContentType,
     status: row.status as ArticleStatus,
     authorId: row.authorId,
     authorName: row.authorNickname || row.authorName || '未知作者',
@@ -40,6 +42,7 @@ export async function fetchPublicArticles(cursor?: string, limit = 20) {
       title: articles.title,
       summary: articles.summary,
       content: articles.content,
+      contentType: articles.contentType,
       status: articles.status,
       authorId: articles.authorId,
       createdAt: articles.createdAt,
@@ -71,6 +74,7 @@ export async function fetchArticleById(articleId: string, includeUnpublished = f
       title: articles.title,
       summary: articles.summary,
       content: articles.content,
+      contentType: articles.contentType,
       status: articles.status,
       authorId: articles.authorId,
       createdAt: articles.createdAt,
@@ -106,6 +110,7 @@ export async function fetchManageArticles(status?: ArticleStatus, authorId?: str
       title: articles.title,
       summary: articles.summary,
       content: articles.content,
+      contentType: articles.contentType,
       status: articles.status,
       authorId: articles.authorId,
       createdAt: articles.createdAt,

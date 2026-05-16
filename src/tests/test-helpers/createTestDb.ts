@@ -96,7 +96,6 @@ const CREATE_TABLES_SQL = `
     root_type TEXT NOT NULL,
     root_id TEXT NOT NULL,
     content TEXT NOT NULL,
-    reply_to_user_id TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   );
@@ -233,7 +232,6 @@ export function createTestDb() {
     content: string;
     rootType: string;
     rootId: string;
-    replyToUserId?: string | null;
   }) {
     const now = new Date();
     await db.insert(patternsSchema.comments).values({

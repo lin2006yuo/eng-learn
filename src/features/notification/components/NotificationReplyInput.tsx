@@ -36,12 +36,8 @@ export function NotificationReplyInput({ rootType, rootId, targetId, actorId, on
 
     setIsSubmitting(true);
     const success = await createComment({
-      targetType: 'comment',
       targetId,
-      rootType,
-      rootId,
       content: content.trim(),
-      replyToUserId: actorId,
     });
 
     if (success) {

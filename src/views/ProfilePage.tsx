@@ -4,6 +4,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUnreadCount } from '@/features/notification';
 import LogoutButton from '@/features/auth/components/LogoutButton';
 import { EditNicknameModal } from '@/features/profile/components/EditNicknameModal';
+import { AvatarEditorModal } from '@/features/profile/components/AvatarEditorModal';
 import { motion, type Variants } from 'framer-motion';
 import {
   Star,
@@ -55,9 +56,10 @@ const itemVariants: Variants = {
 export function ProfilePage() {
   const { user, loading: authLoading, refetch: refetchAuth } = useAuth();
   const [showEditNickname, setShowEditNickname] = useState(false);
+  const [showAvatarEditor, setShowAvatarEditor] = useState(false);
   const { total: unreadCount } = useUnreadCount();
 
-  const handleNicknameUpdated = () => {
+  const handleProfileUpdated = () => {
     void refetchAuth?.();
   };
 
@@ -74,6 +76,7 @@ export function ProfilePage() {
         ) : user ? (
           <LoggedInView
             user={user}
+            onEditAvatar={() => setShowAvatarEditor(true)}
             onEditNickname={() => setShowEditNickname(true)}
             unreadCount={unreadCount}
           />
@@ -86,7 +89,15 @@ export function ProfilePage() {
         open={showEditNickname}
         onClose={() => setShowEditNickname(false)}
         initialNickname={user?.nickname || ''}
-        onSuccess={handleNicknameUpdated}
+        onSuccess={handleProfileUpdated}
+      />
+
+      <AvatarEditorModal
+        open={showAvatarEditor}
+        onClose={() => setShowAvatarEditor(false)}
+        currentImage={user?.image ?? null}
+        username={user?.username || ''}
+        onSuccess={handleProfileUpdated}
       />
     </motion.div>
   );
@@ -114,10 +125,12 @@ function LoadingSkeleton() {
 
 function LoggedInView({
   user,
+  onEditAvatar,
   onEditNickname,
   unreadCount,
 }: {
-  user: { nickname?: string; username: string; role?: string };
+  user: { nickname?: string; username: string; image?: string | null; role?: string };
+  onEditAvatar: () => void;
   onEditNickname: () => void;
   unreadCount: number;
 }) {
@@ -186,12 +199,22 @@ function LoggedInView({
         >
           <div className="flex items-center gap-3">
             <button
-              onClick={onEditNickname}
-              className="w-12 h-12 rounded-full bg-[#1D1D1F] flex items-center justify-center active:opacity-70 transition-opacity"
+              onClick={onEditAvatar}
+              className="profile-page-avatar w-12 h-12 rounded-full overflow-hidden flex items-center justify-center active:opacity-70 transition-opacity"
             >
-              <span className="text-[15px] font-semibold text-white">
-                {initial}
-              </span>
+              {user.image ? (
+                <img
+                  src={user.image}
+                  alt={user.nickname || user.username}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-[#1D1D1F] flex items-center justify-center">
+                  <span className="text-[15px] font-semibold text-white">
+                    {initial}
+                  </span>
+                </div>
+              )}
             </button>
             <div>
               <h1

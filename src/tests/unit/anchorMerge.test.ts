@@ -8,7 +8,7 @@ function createAnchor(startOffset: number, endOffset: number, selectedText: stri
     commentId: `comment-${startOffset}-${endOffset}`,
     rootType: 'pattern',
     rootId: 'pattern-1',
-    blockId: 'block-1',
+    extra: { blockId: 'block-1' },
     selectedText,
     startOffset,
     endOffset,

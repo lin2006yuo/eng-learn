@@ -10,6 +10,7 @@ export interface Notification {
   actorName: string;
   actorAvatar?: string;
   targetContent?: string;
+  myReplyContent?: string;
   isRead: boolean;
   createdAt: string;
 }

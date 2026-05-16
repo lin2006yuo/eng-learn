@@ -2,6 +2,7 @@ import { parseArticlePath, ArticleField } from '@/shared/utils/blockId';
 import type { ArticleDetailData } from '../types';
 import { ArticleMeta } from './ArticleMeta';
 import { ArticleSelectableBody } from './ArticleSelectableBody';
+import { ArticleHtmlBody } from './ArticleHtmlBody';
 
 interface ArticleDetailProps {
   article: ArticleDetailData;
@@ -29,11 +30,15 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
 
       {/* Content Section */}
       <div className="article-detail-body py-6">
-        <ArticleSelectableBody
-          rootId={article.id}
-          dataPath={parseArticlePath(ArticleField.Content)}
-          text={article.content}
-        />
+        {article.contentType === 'html' ? (
+          <ArticleHtmlBody content={article.content} />
+        ) : (
+          <ArticleSelectableBody
+            rootId={article.id}
+            dataPath={parseArticlePath(ArticleField.Content)}
+            text={article.content}
+          />
+        )}
       </div>
     </div>
   );

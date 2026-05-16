@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MessageCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react';
 import { useCommentStore, formatRelativeTime } from '@/features/comment/store/commentStore';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
@@ -16,27 +16,16 @@ interface ReplyItemProps {
   depth?: number;
 }
 
-function countNestedReplies(comment: Comment): number {
-  if (!comment.replies || comment.replies.length === 0) return 0;
-  let count = comment.replies.length;
-  for (const reply of comment.replies) {
-    count += countNestedReplies(reply);
-  }
-  return count;
-}
-
 export function ReplyItem({ reply, targetId, rootType, parentCommentId, depth = 1 }: ReplyItemProps) {
   const { toggleLike, deleteComment } = useCommentStore();
   const { user } = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const isOwnReply = user?.id === reply.userId;
 
   const hasNestedReplies = reply.replies && reply.replies.length > 0;
-  const nestedReplyCount = hasNestedReplies ? countNestedReplies(reply) : 0;
 
   const handleLike = async () => {
     await toggleLike(reply.id, rootType, targetId);
@@ -60,7 +49,7 @@ export function ReplyItem({ reply, targetId, rootType, parentCommentId, depth = 
   return (
     <>
       <div
-        className={`reply-item py-3 px-5 ${
+        className={`reply-item py-3 ${depth < 2 ? 'px-5' : ''} ${
           isDeleting ? 'opacity-50' : ''
         }`}
       >
@@ -153,53 +142,13 @@ export function ReplyItem({ reply, targetId, rootType, parentCommentId, depth = 
               rootId={targetId}
               rootType={rootType}
               replyToCommentId={reply.id}
-              replyToUserId={reply.userId}
               onReplySuccess={handleReplySuccess}
             />
           </div>
         )}
 
-        {hasNestedReplies && depth >= 3 && (
-          <div className="reply-item-nested-replies mt-2">
-            {!isExpanded && nestedReplyCount > 0 && (
-              <button
-                onClick={() => setIsExpanded(true)}
-                className="reply-item-expand-button flex items-center gap-1 text-xs text-[#007AFF] hover:text-[#007AFF]/80 transition-colors"
-              >
-                <ChevronRight size={12} />
-                <span>展开 {nestedReplyCount} 条回复</span>
-              </button>
-            )}
-
-            {isExpanded && (
-              <>
-                <div className="reply-item-expanded space-y-2">
-                  {reply.replies!.map((nestedReply) => (
-                    <ReplyItem
-                      key={nestedReply.id}
-                      reply={nestedReply}
-                      targetId={targetId}
-                      rootType={rootType}
-                      parentCommentId={parentCommentId}
-                      depth={depth}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="reply-item-collapse-button flex items-center gap-1 text-xs text-[#6E6E73] hover:text-[#3A3A3C] transition-colors mt-2"
-                >
-                  <ChevronDown size={12} />
-                  <span>收起回复</span>
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {hasNestedReplies && depth < 3 && (
-          <div className="reply-item-nested-inline mt-2 pl-4 space-y-2">
+        {hasNestedReplies && (
+          <div className="reply-item-nested-inline mt-2 space-y-2">
             {reply.replies!.map((nestedReply) => (
               <ReplyItem
                 key={nestedReply.id}

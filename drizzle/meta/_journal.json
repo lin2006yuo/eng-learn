@@ -8,6 +8,20 @@
       "when": 1776486105034,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1778915745035,
+      "tag": "0001_parallel_mentallo",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1778918209274,
+      "tag": "0002_known_sugar_man",
+      "breakpoints": true
     }
   ]
 }

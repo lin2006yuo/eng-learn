@@ -1,4 +1,5 @@
 export type ArticleStatus = 'draft' | 'published' | 'archived';
+export type ArticleContentType = 'text' | 'html';
 
 export interface ArticleSummary {
   id: string;
@@ -14,6 +15,7 @@ export interface ArticleSummary {
 
 export interface ArticleDetailData extends ArticleSummary {
   content: string;
+  contentType: ArticleContentType;
 }
 
 export interface ArticleListResponse {
@@ -31,5 +33,6 @@ export interface ArticleFormValues {
   title: string;
   summary: string;
   content: string;
+  contentType: ArticleContentType;
   status: ArticleStatus;
 }

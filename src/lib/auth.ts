@@ -37,6 +37,9 @@ export const auth = betterAuth({
     }),
     apiKey({
       enableSessionForAPIKeys: true,
+      rateLimit: {
+        enabled: false,
+      },
       customAPIKeyGetter: (ctx) => {
         const authHeader = ctx.headers?.get('authorization');
         if (authHeader?.startsWith('Bearer ')) {

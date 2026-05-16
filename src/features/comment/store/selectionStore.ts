@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { CreateCommentAnchorRequest } from '@/features/comment/types';
+import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
 
 interface SelectionPosition {
   x: number;
@@ -11,10 +11,14 @@ interface SelectionState {
   position: SelectionPosition | null;
   composerAnchor: CreateCommentAnchorRequest | null;
   composerPosition: SelectionPosition | null;
+  rootId: string | null;
+  rootType: RootType | null;
   setSelection: (
     anchor: CreateCommentAnchorRequest,
     position: SelectionPosition,
-    composerPosition: SelectionPosition
+    composerPosition: SelectionPosition,
+    rootId: string,
+    rootType: RootType,
   ) => void;
   openComposer: () => void;
   clearSelection: () => void;
@@ -27,11 +31,15 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
   position: null,
   composerAnchor: null,
   composerPosition: null,
-  setSelection: (anchor, position, composerPosition) => set({
+  rootId: null,
+  rootType: null,
+  setSelection: (anchor, position, composerPosition, rootId, rootType) => set({
     anchor,
     position,
     composerAnchor: null,
     composerPosition,
+    rootId,
+    rootType,
   }),
   openComposer: () => {
     const { anchor, composerPosition } = get();

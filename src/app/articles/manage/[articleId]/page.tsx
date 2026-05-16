@@ -64,6 +64,7 @@ export default function ManageArticleDetailPage() {
               title: data.title,
               summary: data.summary,
               content: data.content,
+              contentType: data.contentType,
               status: data.status,
             }}
             isSaving={updateArticle.isPending}

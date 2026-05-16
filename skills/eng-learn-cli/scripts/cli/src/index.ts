@@ -3,17 +3,23 @@
  *
  * Fragment Comment Usage:
  *
- * When you select text in a browser UI:
- *   "The [quick brown fox] jumps over the dog"
+ * === Auto-anchor mode (recommended) ===
+ * Only pass --selectedText. CLI auto-fetches source, finds the match, and
+ * computes offsets. If selectedText appears multiple times, it errors with
+ * context — then use manual mode with --prefixText to disambiguate.
  *
- *   selectedText = "quick brown fox"
- *   prefixText   = "The "          (text before selection)
- *   suffixText   = " jumps over"   (text after selection)
+ *   eng-learn comment create \
+ *     --targetType article \
+ *     --targetId <articleId> \
+ *     --rootType article \
+ *     --rootId <articleId> \
+ *     --content "Good point" \
+ *     --dataPath article:content \
+ *     --selectedText "No shit."
  *
- * CLI automatically fetches source text via API and computes startOffset/endOffset.
+ * === Manual anchor mode (for disambiguation) ===
+ * Pass --prefixText and/or --suffixText to pin down a specific occurrence.
  *
- * Examples:
- *   # Article fragment comment
  *   eng-learn comment create \
  *     --targetType article \
  *     --targetId bc3521c2 \
@@ -36,18 +42,6 @@
  *     --selectedText "quick brown fox" \
  *     --prefixText "The " \
  *     --suffixText " jumps over"
- *
- *   # Post fragment comment
- *   eng-learn comment create \
- *     --targetType post \
- *     --targetId <postId> \
- *     --rootType post \
- *     --rootId <postId> \
- *     --content "Good point" \
- *     --dataPath post:content \
- *     --selectedText "学习交流很有用" \
- *     --prefixText "。" \
- *     --suffixText "，大家可以多交流。"
  */
 import { Command } from 'commander';
 import { loadConfig, saveConfig, useLocalConfig } from './config.js';
@@ -55,6 +49,7 @@ import { registerCmd, loginCmd, logoutCmd, whoamiCmd, updateNicknameCmd } from '
 import {
   articleListCmd,
   articleCreateCmd,
+  articleCreateFromContentFileCmd,
   articleGetCmd,
   articleUpdateCmd,
   articleDeleteCmd,
@@ -160,16 +155,37 @@ article
   .description('Create article')
   .requiredOption('--title <title>', 'article title')
   .requiredOption('--summary <summary>', 'article summary')
-  .option('--content <content>', 'article content')
+  .option('--content <content>', 'article content (for contentType=text)')
+  .option('--contentFile <path>', 'file path to read content from (required for contentType=html)')
+  .option('--contentType <type>', 'content type: text or html', 'text')
   .option('--yaml <path>', 'create from YAML file (with optional fragment comments)')
   .requiredOption('--status <status>', 'draft or published')
   .action(async (options: Record<string, string | undefined>) => {
+    const contentType = options.contentType || 'text';
+
     if (options.yaml) {
       await articleCreateFromYamlCmd(options.yaml, getFormat(program));
       return;
     }
+
+    if (contentType === 'html') {
+      if (!options.contentFile) {
+        console.error('Error: --contentFile is required when --contentType is html');
+        process.exit(1);
+      }
+      await articleCreateFromContentFileCmd(
+        options.title as string,
+        options.summary as string,
+        options.contentFile,
+        options.status as string,
+        contentType,
+        getFormat(program)
+      );
+      return;
+    }
+
     if (!options.content) {
-      console.error('Error: Either --content or --yaml is required');
+      console.error('Error: Either --content, --contentFile, or --yaml is required');
       process.exit(1);
     }
     await articleCreateCmd(
@@ -177,6 +193,7 @@ article
       options.summary as string,
       options.content,
       options.status as string,
+      contentType,
       getFormat(program)
     );
   });
@@ -196,12 +213,14 @@ article
   .option('--title <title>', 'new title')
   .option('--summary <summary>', 'new summary')
   .option('--content <content>', 'new content')
+  .option('--contentType <type>', 'content type: text or html')
   .option('--status <status>', 'new status')
   .action(async (id: string, options: Record<string, string>) => {
     const updates: Record<string, unknown> = {};
     if (options.title) updates.title = options.title;
     if (options.summary) updates.summary = options.summary;
     if (options.content) updates.content = options.content;
+    if (options.contentType) updates.contentType = options.contentType;
     if (options.status) updates.status = options.status;
     await articleUpdateCmd(id, updates, getFormat(program));
   });
@@ -335,29 +354,23 @@ comment
   .requiredOption('--rootType <type>', 'root resource type: pattern|article|post|note')
   .requiredOption('--rootId <id>', 'root resource id')
   .requiredOption('--content <content>', 'comment content (1-300 chars)')
-  .option('--replyToUserId <id>', 'reply to specific user id')
-  // Anchor options for fragment comments
   .option('--dataPath <path>', '[anchor] data path, e.g. article:content or pattern:examples.0.en')
   .option('--selectedText <text>', '[anchor] the exact text being commented on')
   .option('--prefixText <text>', '[anchor] text immediately before the selection (used for relocation)')
   .option('--suffixText <text>', '[anchor] text immediately after the selection (used for relocation)')
   .action(async (options: Record<string, string | undefined>) => {
     let anchor: import('./commands/comment.js').AnchorOptions | undefined;
-    if (options.dataPath !== undefined && options.selectedText !== undefined && options.prefixText !== undefined && options.suffixText !== undefined) {
+    if (options.dataPath !== undefined && options.selectedText !== undefined) {
       anchor = {
         dataPath: options.dataPath as string,
         selectedText: options.selectedText as string,
-        prefixText: options.prefixText as string,
-        suffixText: options.suffixText as string,
+        prefixText: options.prefixText,
+        suffixText: options.suffixText,
       };
     }
     await commentCreateCmd(
-      options.targetType as string,
       options.targetId as string,
-      options.rootType as string,
-      options.rootId as string,
       options.content as string,
-      options.replyToUserId as string | undefined,
       anchor,
       getFormat(program)
     );

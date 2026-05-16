@@ -132,7 +132,7 @@ eng-learn comment create \
   --suffixText "，大家可以多交流。"
 
 # Reply to a comment
-eng-learn comment create --targetType comment --targetId <commentId> --rootType article --rootId <articleId> --content "Reply!" --replyToUserId <userId>
+eng-learn comment create --targetType comment --targetId <commentId> --rootType article --rootId <articleId> --content "Reply!"
 
 # Delete comment
 eng-learn comment delete <commentId>

@@ -54,6 +54,7 @@ export async function PUT(
       title: body.title?.trim() || '未命名文章',
       summary: body.summary?.trim() || '请补充文章摘要',
       content: body.content?.trim() || '请补充文章正文',
+      contentType: body.contentType || 'text',
       status,
       publishedAt: status === 'published' ? now : null,
       updatedAt: now,

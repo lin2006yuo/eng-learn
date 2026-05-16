@@ -1,0 +1,45 @@
+article:
+  title: "The Science Behind Habit Formation"
+  summary: "Explore the psychological mechanisms of how habits are formed and how to build good ones."
+  status: published
+  content: |
+    Habits are the invisible architecture of daily life. Research shows that about 40% of our daily actions are not conscious decisions but automatic routines. Understanding how habits work is the first step toward lasting change.
+
+    Every habit follows a simple neurological loop: cue, routine, and reward. The cue triggers your brain to initiate a behavior. The routine is the action itself. The reward reinforces the habit by releasing dopamine, making you crave the cycle again.
+
+    Neuroscientists have discovered that habits are stored in the basal ganglia, a part of the brain that operates even when the rest of the brain is asleep. This explains why you can perform complex tasks like driving without conscious effort.
+
+    To build a new habit, experts recommend starting with an infinitesimal version of the behavior. For example, if you want to exercise daily, start with just one push-up. The key is to reduce friction and make the habit so easy you cannot say no.
+
+    Consistency matters more than intensity. Missing one day is not the problem; missing two days is when the neural pathway starts to weaken. The golden rule is: never miss twice.
+
+  comments:
+    - selectedText: "architecture"
+      content: "architecture (n.): 架构，结构 /ˈɑːrkɪtektʃər/ — 此处比喻习惯是日常生活的'隐形建筑'"
+
+    - selectedText: "automatic routines"
+      content: "automatic routines: 自动化例行程序 — routine (n.): 常规，例行公事 /ruːˈtiːn/"
+
+    - selectedText: "neurological loop"
+      content: "neurological loop: 神经回路 — neuro(神经)+logical(…学的)+loop(循环)"
+
+    - selectedText: "cue, routine, and reward"
+      content: "cue, routine, reward: 提示、例行行为、奖励 — 习惯形成的三要素模型（Charles Duhigg 提出）"
+
+    - selectedText: "dopamine"
+      content: "dopamine (n.): 多巴胺 /ˈdoʊpəmiːn/ — 一种与愉悦和奖励相关的神经递质"
+
+    - selectedText: "basal ganglia"
+      content: "basal ganglia (n.): 基底神经节 /ˈbeɪsəl ˈɡæŋɡliə/ — 大脑深处控制自动行为的结构"
+
+    - selectedText: "infinitesimal"
+      content: "infinitesimal (adj.): 极微小的 /ˌɪnfɪnɪˈtesɪml/ — infinite(无限)+small → 无限小的"
+
+    - selectedText: "friction"
+      content: "friction (n.): 摩擦，阻力 /ˈfrɪkʃən/ — 此处指行动的心理或物理障碍"
+
+    - selectedText: "neural pathway"
+      content: "neural pathway (n.): 神经通路 — neural(神经的)+pathway(路径)，大脑中习惯的'轨迹'"
+
+    - selectedText: "never miss twice"
+      content: "never miss twice: 绝不错过两次 — 习惯养成的黄金法则，宁可偶尔中断，不能连续中断"

@@ -2,11 +2,12 @@ import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { client } from '../client.js';
 import { formatJson } from '../formatters/json.js';
+import { createFragmentComments } from './fragmentComments.js';
 
 interface YamlComment {
   selectedText: string;
-  prefixText: string;
-  suffixText: string;
+  prefixText?: string;
+  suffixText?: string;
   content: string;
 }
 
@@ -54,82 +55,11 @@ export async function postCreateFromYamlCmd(filePath: string, format: 'json' | '
   console.log(formatJson({ ok: true, message: 'Post created', postId }));
 
   if (comments && comments.length > 0) {
-    const results = await createComments(postId, content, comments, format);
+    const results = await createFragmentComments('post', postId, content, comments, format);
     console.log(formatJson({
       ok: true,
       message: `Created ${results.success}/${results.total} comments`,
       failed: results.failed,
     }));
   }
-}
-
-interface CreateCommentsResult {
-  success: number;
-  total: number;
-  failed: Array<{ index: number; selectedText: string; error: string }>;
-}
-
-async function createComments(
-  postId: string,
-  content: string,
-  comments: YamlComment[],
-  format: 'json' | 'table'
-): Promise<CreateCommentsResult> {
-  const result: CreateCommentsResult = { success: 0, total: comments.length, failed: [] };
-
-  for (let i = 0; i < comments.length; i++) {
-    const comment = comments[i];
-    const startOffset = content.indexOf(comment.selectedText);
-    if (startOffset === -1) {
-      result.failed.push({ index: i + 1, selectedText: comment.selectedText, error: 'Text not found in post' });
-      continue;
-    }
-
-    const prefixStart = Math.max(0, startOffset - comment.prefixText.length);
-    const actualPrefix = content.slice(prefixStart, startOffset);
-    if (comment.prefixText && actualPrefix !== comment.prefixText) {
-      result.failed.push({ index: i + 1, selectedText: comment.selectedText, error: `Prefix mismatch: expected "${comment.prefixText}", got "${actualPrefix}"` });
-      continue;
-    }
-
-    const endOffset = startOffset + comment.selectedText.length;
-    const actualSuffix = content.slice(endOffset, endOffset + comment.suffixText.length);
-    if (comment.suffixText && actualSuffix !== comment.suffixText) {
-      result.failed.push({ index: i + 1, selectedText: comment.selectedText, error: `Suffix mismatch: expected "${comment.suffixText}", got "${actualSuffix}"` });
-      continue;
-    }
-
-    const anchor = {
-      rootType: 'post',
-      rootId: postId,
-      selectedText: comment.selectedText,
-      startOffset,
-      endOffset,
-      prefixText: comment.prefixText,
-      suffixText: comment.suffixText,
-      extra: { blockId: 'post:content' },
-    };
-
-    const body = {
-      targetType: 'post',
-      targetId: postId,
-      rootType: 'post',
-      rootId: postId,
-      content: comment.content.trim(),
-      anchor,
-    };
-
-    const res = await client.post('/comments', body);
-    if (!res.ok) {
-      result.failed.push({ index: i + 1, selectedText: comment.selectedText, error: `${res.error} (content length: ${comment.content.trim().length})` });
-      continue;
-    }
-
-    result.success++;
-    if (format === 'json') {
-      console.log(formatJson({ ok: true, comment: (res.data as Record<string, unknown>).anchor }));
-    }
-  }
-
-  return result;
 }

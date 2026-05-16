@@ -17,7 +17,7 @@ import {
   countCommentsByUser,
 } from '@/features/comment/queries';
 import { buildNestedComments, buildFlatComments } from '@/features/comment/transformers';
-import type { CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
+import type { CommentTargetType, CreateCommentAnchorRequest, RootType } from '@/features/comment/types';
 
 function generateId(): string {
   return `c-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -125,22 +125,55 @@ function validateParams(params: {
   return { valid: true };
 }
 
-function validateAnchor(
-  anchor: CreateCommentAnchorRequest | undefined,
-  rootType: RootType,
-  rootId: string,
-) {
+function validateAnchor(anchor: CreateCommentAnchorRequest | undefined) {
   if (!anchor) return { valid: true };
 
   const hasText = anchor.selectedText.trim().length > 0;
   const offsetsValid = anchor.startOffset >= 0 && anchor.endOffset > anchor.startOffset;
-  const rootMatched = anchor.rootType === rootType && anchor.rootId === rootId;
 
-  if (!hasText || !offsetsValid || !rootMatched) {
+  if (!hasText || !offsetsValid) {
     return { valid: false, error: '锚点参数错误' };
   }
 
   return { valid: true };
+}
+
+const TARGET_TYPE_MAP: Record<string, CommentTargetType> = {
+  'article-': 'article',
+  'post-': 'post',
+  'pattern-': 'pattern',
+  'note-': 'note',
+  'c-': 'comment',
+};
+
+function parseTargetType(targetId: string): CommentTargetType {
+  for (const [prefix, type] of Object.entries(TARGET_TYPE_MAP)) {
+    if (targetId.startsWith(prefix)) return type;
+  }
+  throw new Error('无法识别的 targetId 前缀');
+}
+
+async function resolveTargetInfo(targetId: string): Promise<{
+  targetType: CommentTargetType;
+  rootType: RootType;
+  rootId: string;
+}> {
+  const targetType = parseTargetType(targetId);
+
+  if (targetType === 'comment') {
+    const db = getDb();
+    const [parent] = await db
+      .select({ rootType: comments.rootType, rootId: comments.rootId })
+      .from(comments)
+      .where(eq(comments.id, targetId))
+      .limit(1);
+
+    if (!parent) throw new Error('父评论不存在');
+
+    return { targetType: 'comment', rootType: parent.rootType as RootType, rootId: parent.rootId };
+  }
+
+  return { targetType, rootType: targetType as RootType, rootId: targetId };
 }
 
 /**
@@ -268,7 +301,6 @@ export async function GET(request: NextRequest) {
  * - `rootType`       根资源类型 pattern|article|post|note
  * - `rootId`         根资源 ID
  * - `content`        评论内容, 1-300 字符
- * - `replyToUserId`  可选, 指定被回复者用户 ID (默认取父评论作者)
  *
  * Side effects:
  * - targetType=comment 时自动给被回复者创建通知
@@ -285,9 +317,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { targetType, targetId, rootType, rootId, content, replyToUserId, anchor } = body;
+  const { targetId, content, anchor } = body;
 
-  if (!targetType || !targetId || !rootType || !rootId || !content || typeof content !== 'string') {
+  if (!targetId || !content || typeof content !== 'string') {
     return NextResponse.json({ error: '参数错误' }, { status: 400 });
   }
 
@@ -296,7 +328,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '评论内容长度必须在1-300之间' }, { status: 400 });
   }
 
-  const anchorValidation = validateAnchor(anchor, rootType, rootId);
+  let targetType: CommentTargetType;
+  let rootType: RootType;
+  let rootId: string;
+
+  try {
+    const info = await resolveTargetInfo(targetId);
+    targetType = info.targetType;
+    rootType = info.rootType;
+    rootId = info.rootId;
+  } catch {
+    return NextResponse.json({ error: '目标不存在' }, { status: 400 });
+  }
+
+  const anchorValidation = validateAnchor(anchor);
   if (!anchorValidation.valid) {
     return NextResponse.json({ error: anchorValidation.error }, { status: 400 });
   }
@@ -329,8 +374,8 @@ export async function POST(request: NextRequest) {
     await db.insert(commentAnchors).values({
       id: generateAnchorId(),
       commentId: newComment.id,
-      rootType: anchor.rootType,
-      rootId: anchor.rootId,
+      rootType,
+      rootId,
       selectedText: anchor.selectedText.trim(),
       startOffset: anchor.startOffset,
       endOffset: anchor.endOffset,
@@ -350,7 +395,7 @@ export async function POST(request: NextRequest) {
       .where(eq(comments.id, targetId))
       .limit(1);
 
-    const notifyUserId = replyToUserId || parentComment?.userId;
+    const notifyUserId = parentComment?.userId;
     const notifyTargetId = parentComment?.id || targetId;
 
     if (notifyUserId && notifyUserId !== session.user.id) {

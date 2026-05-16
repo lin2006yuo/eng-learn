@@ -10884,6 +10884,7 @@ async function getCurrentUserId() {
 }
 
 // src/commands/article.ts
+var import_fs2 = require("fs");
 function pickFields(rows) {
   return rows.map(({ id, title, summary, authorId }) => ({ id, title, summary, authorId }));
 }
@@ -10901,13 +10902,23 @@ async function articleListCmd(scope, status, format) {
   const rows = pickFields(body.data);
   console.log(format === "table" ? formatTable(rows) : formatJson(rows));
 }
-async function articleCreateCmd(title, summary, content, status, format) {
-  const res = await client.post("/articles", { title, summary, content, status });
+async function articleCreateCmd(title, summary, content, status, contentType, format) {
+  const res = await client.post("/articles", { title, summary, content, status, contentType });
   if (!res.ok) {
     console.error(formatJson({ ok: false, error: res.error }));
     process.exit(1);
   }
   console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
+}
+async function articleCreateFromContentFileCmd(title, summary, filePath, status, contentType, format) {
+  let content;
+  try {
+    content = (0, import_fs2.readFileSync)(filePath, "utf-8");
+  } catch {
+    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
+    process.exit(1);
+  }
+  await articleCreateCmd(title, summary, content, status, contentType, format);
 }
 async function articleGetCmd(id, format) {
   const res = await client.get(`/articles/${id}`);
@@ -10936,267 +10947,102 @@ async function articleDeleteCmd(id, format) {
 }
 
 // src/commands/articleFromYaml.ts
-var import_fs2 = require("fs");
-var import_yaml = __toESM(require_dist(), 1);
-async function articleCreateFromYamlCmd(filePath, format) {
-  let yamlContent;
-  try {
-    yamlContent = (0, import_fs2.readFileSync)(filePath, "utf-8");
-  } catch {
-    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
-    process.exit(1);
-  }
-  let parsed;
-  try {
-    parsed = (0, import_yaml.parse)(yamlContent);
-  } catch {
-    console.error(formatJson({ ok: false, error: "Invalid YAML syntax" }));
-    process.exit(1);
-  }
-  const { title, summary, status, content, comments } = parsed.article;
-  if (!title || !summary || !content || !status) {
-    console.error(formatJson({ ok: false, error: "Missing required fields: title, summary, content, status" }));
-    process.exit(1);
-  }
-  const res = await client.post("/articles", { title, summary, content, status });
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  const articleId = res.data?.data?.id || res.data?.id;
-  console.log(formatJson({ ok: true, message: "Article created", articleId }));
-  if (comments && comments.length > 0) {
-    const results = await createComments(articleId, content, comments, format);
-    console.log(formatJson({
-      ok: true,
-      message: `Created ${results.success}/${results.total} comments`,
-      failed: results.failed
-    }));
-  }
-}
-async function createComments(articleId, content, comments, format) {
-  const result = { success: 0, total: comments.length, failed: [] };
-  for (let i = 0; i < comments.length; i++) {
-    const comment2 = comments[i];
-    const startOffset = content.indexOf(comment2.selectedText);
-    if (startOffset === -1) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: "Text not found in article" });
-      continue;
-    }
-    const prefixStart = Math.max(0, startOffset - comment2.prefixText.length);
-    const actualPrefix = content.slice(prefixStart, startOffset);
-    if (comment2.prefixText && actualPrefix !== comment2.prefixText) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Prefix mismatch: expected "${comment2.prefixText}", got "${actualPrefix}"` });
-      continue;
-    }
-    const endOffset = startOffset + comment2.selectedText.length;
-    const actualSuffix = content.slice(endOffset, endOffset + comment2.suffixText.length);
-    if (comment2.suffixText && actualSuffix !== comment2.suffixText) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Suffix mismatch: expected "${comment2.suffixText}", got "${actualSuffix}"` });
-      continue;
-    }
-    const anchor = {
-      rootType: "article",
-      rootId: articleId,
-      selectedText: comment2.selectedText,
-      startOffset,
-      endOffset,
-      prefixText: comment2.prefixText,
-      suffixText: comment2.suffixText,
-      extra: { blockId: "article:content" }
-    };
-    const body = {
-      targetType: "article",
-      targetId: articleId,
-      rootType: "article",
-      rootId: articleId,
-      content: comment2.content.trim(),
-      anchor
-    };
-    const res = await client.post("/comments", body);
-    if (!res.ok) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `${res.error} (content length: ${comment2.content.trim().length})` });
-      continue;
-    }
-    result.success++;
-    if (format === "json") {
-      console.log(formatJson({ ok: true, comment: res.data.anchor }));
-    }
-  }
-  return result;
-}
-
-// src/commands/postFromYaml.ts
 var import_fs3 = require("fs");
-var import_yaml2 = __toESM(require_dist(), 1);
-async function postCreateFromYamlCmd(filePath, format) {
-  let yamlContent;
-  try {
-    yamlContent = (0, import_fs3.readFileSync)(filePath, "utf-8");
-  } catch {
-    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
-    process.exit(1);
-  }
-  let parsed;
-  try {
-    parsed = (0, import_yaml2.parse)(yamlContent);
-  } catch {
-    console.error(formatJson({ ok: false, error: "Invalid YAML syntax" }));
-    process.exit(1);
-  }
-  const { title, status, content, comments } = parsed.post;
-  if (!title || !content || !status) {
-    console.error(formatJson({ ok: false, error: "Missing required fields: title, content, status" }));
-    process.exit(1);
-  }
-  const res = await client.post("/posts", { title, content, status });
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  const postId = res.data?.data?.id || res.data?.id;
-  console.log(formatJson({ ok: true, message: "Post created", postId }));
-  if (comments && comments.length > 0) {
-    const results = await createComments2(postId, content, comments, format);
-    console.log(formatJson({
-      ok: true,
-      message: `Created ${results.success}/${results.total} comments`,
-      failed: results.failed
-    }));
-  }
-}
-async function createComments2(postId, content, comments, format) {
-  const result = { success: 0, total: comments.length, failed: [] };
-  for (let i = 0; i < comments.length; i++) {
-    const comment2 = comments[i];
-    const startOffset = content.indexOf(comment2.selectedText);
-    if (startOffset === -1) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: "Text not found in post" });
-      continue;
-    }
-    const prefixStart = Math.max(0, startOffset - comment2.prefixText.length);
-    const actualPrefix = content.slice(prefixStart, startOffset);
-    if (comment2.prefixText && actualPrefix !== comment2.prefixText) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Prefix mismatch: expected "${comment2.prefixText}", got "${actualPrefix}"` });
-      continue;
-    }
-    const endOffset = startOffset + comment2.selectedText.length;
-    const actualSuffix = content.slice(endOffset, endOffset + comment2.suffixText.length);
-    if (comment2.suffixText && actualSuffix !== comment2.suffixText) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `Suffix mismatch: expected "${comment2.suffixText}", got "${actualSuffix}"` });
-      continue;
-    }
-    const anchor = {
-      rootType: "post",
-      rootId: postId,
-      selectedText: comment2.selectedText,
-      startOffset,
-      endOffset,
-      prefixText: comment2.prefixText,
-      suffixText: comment2.suffixText,
-      extra: { blockId: "post:content" }
-    };
-    const body = {
-      targetType: "post",
-      targetId: postId,
-      rootType: "post",
-      rootId: postId,
-      content: comment2.content.trim(),
-      anchor
-    };
-    const res = await client.post("/comments", body);
-    if (!res.ok) {
-      result.failed.push({ index: i + 1, selectedText: comment2.selectedText, error: `${res.error} (content length: ${comment2.content.trim().length})` });
-      continue;
-    }
-    result.success++;
-    if (format === "json") {
-      console.log(formatJson({ ok: true, comment: res.data.anchor }));
-    }
-  }
-  return result;
-}
-
-// src/commands/post.ts
-var import_fs4 = require("fs");
-async function postListCmd(scope, format) {
-  const query = scope === "manage" ? "?scope=manage" : "";
-  const res = await client.get(`/posts${query}`);
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  const data = res.data;
-  console.log(format === "table" ? formatTable(data) : formatJson(data));
-}
-async function postCreateCmd(title, content, status, format) {
-  const res = await client.post("/posts", { title, content, status });
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
-}
-async function postGetCmd(id, format) {
-  const res = await client.get(`/posts/${id}`);
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
-}
-async function postUpdateCmd(id, updates, format) {
-  const res = await client.put(`/posts/${id}`, updates);
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
-}
-async function postDeleteCmd(id, format) {
-  const res = await client.delete(`/posts/${id}`);
-  if (!res.ok) {
-    console.error(formatJson({ ok: false, error: res.error }));
-    process.exit(1);
-  }
-  const out = { ok: true, message: "Post deleted" };
-  console.log(format === "table" ? formatTable([out]) : formatJson(out));
-}
-async function postCreateFromTextCmd(title, content, status, format) {
-  await postCreateCmd(title, content, status, format);
-}
-async function postCreateFromFileCmd(title, filePath, status, format) {
-  const content = (0, import_fs4.readFileSync)(filePath, "utf-8");
-  await postCreateCmd(title, content, status, format);
-}
+var import_yaml = __toESM(require_dist(), 1);
 
 // src/utils/anchorOffset.ts
 async function computeAnchorOffset(dataPath, rootType, rootId, selectedText, prefixText, suffixText) {
   const sourceText = await fetchSourceText(dataPath, rootType, rootId);
-  const startOffset = sourceText.indexOf(selectedText);
-  if (startOffset === -1) {
+  if (!prefixText && !suffixText) {
+    return autoAnchor(sourceText, selectedText);
+  }
+  return manualAnchor(sourceText, selectedText, prefixText, suffixText);
+}
+function autoAnchor(sourceText, selectedText) {
+  const occurrences = findAllOccurrences(sourceText, selectedText);
+  if (occurrences.length === 0) {
     throw new Error(
       `Cannot find selectedText "${selectedText}" in the source text.`
     );
   }
+  if (occurrences.length > 1) {
+    const contexts = occurrences.map(
+      (offset, i) => `  [${i + 1}] offset=${offset} ..."${surround(sourceText, offset, selectedText.length, 20)}"...`
+    ).join("\n");
+    throw new Error(
+      `selectedText "${selectedText}" appears ${occurrences.length} times. Please use --prefixText to disambiguate:
+${contexts}`
+    );
+  }
+  const startOffset = occurrences[0];
   const endOffset = startOffset + selectedText.length;
-  if (prefixText) {
-    const actualPrefix = sourceText.slice(Math.max(0, startOffset - prefixText.length), startOffset);
-    if (actualPrefix !== prefixText) {
-      throw new Error(
-        `prefixText mismatch. Expected "${prefixText}", got "${actualPrefix}".`
-      );
-    }
-  }
-  if (suffixText) {
-    const actualSuffix = sourceText.slice(endOffset, endOffset + suffixText.length);
-    if (actualSuffix !== suffixText) {
-      throw new Error(
-        `suffixText mismatch. Expected "${suffixText}", got "${actualSuffix}".`
-      );
-    }
-  }
   return { startOffset, endOffset, sourceText };
+}
+function manualAnchor(sourceText, selectedText, prefixText, suffixText) {
+  const occurrences = findAllOccurrences(sourceText, selectedText);
+  if (occurrences.length === 0) {
+    throw new Error(
+      `Cannot find selectedText "${selectedText}" in the source text.`
+    );
+  }
+  if (!prefixText && !suffixText) {
+    return {
+      startOffset: occurrences[0],
+      endOffset: occurrences[0] + selectedText.length,
+      sourceText
+    };
+  }
+  const match = occurrences.find((offset) => {
+    if (prefixText) {
+      const actual = sourceText.slice(Math.max(0, offset - prefixText.length), offset);
+      if (actual !== prefixText) return false;
+    }
+    if (suffixText) {
+      const actual = sourceText.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length);
+      if (actual !== suffixText) return false;
+    }
+    return true;
+  });
+  if (match !== void 0) {
+    return { startOffset: match, endOffset: match + selectedText.length, sourceText };
+  }
+  const detail = occurrences.map((offset, i) => {
+    const parts = [];
+    if (prefixText) {
+      parts.push(`prefix="${sourceText.slice(Math.max(0, offset - prefixText.length), offset)}"`);
+    }
+    if (suffixText) {
+      parts.push(`suffix="${sourceText.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length)}"`);
+    }
+    return `  [${i + 1}] offset=${offset} ${parts.join(" ")}`;
+  }).join("\n");
+  const expected = [];
+  if (prefixText) expected.push(`prefixText="${prefixText}"`);
+  if (suffixText) expected.push(`suffixText="${suffixText}"`);
+  throw new Error(
+    `Anchor mismatch. Expected ${expected.join(", ")}.
+All occurrences of "${selectedText}":
+${detail}`
+  );
+}
+function findAllOccurrences(sourceText, searchText) {
+  const positions = [];
+  let pos = 0;
+  while (pos < sourceText.length) {
+    const found = sourceText.indexOf(searchText, pos);
+    if (found === -1) break;
+    positions.push(found);
+    pos = found + 1;
+  }
+  return positions;
+}
+function surround(text, offset, length, contextLen) {
+  const start = Math.max(0, offset - contextLen);
+  const end = Math.min(text.length, offset + length + contextLen);
+  let result = text.slice(start, end);
+  if (start > 0) result = "..." + result;
+  if (end < text.length) result = result + "...";
+  return result;
 }
 async function fetchSourceText(dataPath, rootType, rootId) {
   const [, fieldPath] = dataPath.split(":");
@@ -11244,6 +11090,249 @@ function getFieldByPath(obj, path) {
   return current;
 }
 
+// src/commands/fragmentComments.ts
+async function createFragmentComments(rootType, rootId, content, comments, format) {
+  const result = { success: 0, total: comments.length, failed: [] };
+  for (let i = 0; i < comments.length; i++) {
+    const c = comments[i];
+    const idx = i + 1;
+    const resolved = resolveCommentOffset(content, c.selectedText, c.prefixText, c.suffixText, idx);
+    if ("error" in resolved) {
+      result.failed.push(resolved);
+      continue;
+    }
+    const anchor = {
+      rootType,
+      rootId,
+      selectedText: c.selectedText,
+      startOffset: resolved.startOffset,
+      endOffset: resolved.endOffset,
+      prefixText: content.slice(Math.max(0, resolved.startOffset - 20), resolved.startOffset),
+      suffixText: content.slice(resolved.endOffset, Math.min(content.length, resolved.endOffset + 20)),
+      extra: { blockId: `${rootType}:content` }
+    };
+    const body = {
+      targetType: rootType,
+      targetId: rootId,
+      rootType,
+      rootId,
+      content: c.content.trim(),
+      anchor
+    };
+    const res = await client.post("/comments", body);
+    if (!res.ok) {
+      result.failed.push({ index: idx, selectedText: c.selectedText, error: `${res.error}` });
+      continue;
+    }
+    result.success++;
+    if (format === "json") {
+      console.log(formatJson({ ok: true, comment: res.data.anchor }));
+    }
+  }
+  return result;
+}
+function resolveCommentOffset(content, selectedText, prefixText, suffixText, index) {
+  if (!prefixText && !suffixText) return autoResolve(content, selectedText, index);
+  return manualResolve(content, selectedText, prefixText, suffixText, index);
+}
+function autoResolve(content, selectedText, index) {
+  const occurrences = findAllOccurrences(content, selectedText);
+  if (occurrences.length === 0) {
+    return { index, selectedText, error: "Text not found in content" };
+  }
+  if (occurrences.length > 1) {
+    const ctx = occurrences.map(
+      (o, i) => `  [${i + 1}] offset=${o} ..."${surround(content, o, selectedText.length, 20)}"...`
+    ).join("\n");
+    return { index, selectedText, error: `Appears ${occurrences.length} times. Add prefixText to pick one:
+${ctx}` };
+  }
+  return { startOffset: occurrences[0], endOffset: occurrences[0] + selectedText.length };
+}
+function manualResolve(content, selectedText, prefixText, suffixText, index) {
+  const occurrences = findAllOccurrences(content, selectedText);
+  if (occurrences.length === 0) {
+    return { index, selectedText, error: "Text not found in content" };
+  }
+  const match = occurrences.find((offset) => {
+    if (prefixText) {
+      const actual = content.slice(Math.max(0, offset - prefixText.length), offset);
+      if (actual !== prefixText) return false;
+    }
+    if (suffixText) {
+      const actual = content.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length);
+      if (actual !== suffixText) return false;
+    }
+    return true;
+  });
+  if (match !== void 0) {
+    return { startOffset: match, endOffset: match + selectedText.length };
+  }
+  const detail = occurrences.map((offset, i) => {
+    const parts = [];
+    if (prefixText) {
+      parts.push(`prefix="${content.slice(Math.max(0, offset - prefixText.length), offset)}"`);
+    }
+    if (suffixText) {
+      parts.push(`suffix="${content.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length)}"`);
+    }
+    return `  [${i + 1}] offset=${offset} ${parts.join(" ")}`;
+  }).join("\n");
+  return { index, selectedText, error: `Anchor mismatch. None of the ${occurrences.length} occurrences matched.
+${detail}` };
+}
+
+// src/commands/articleFromYaml.ts
+async function articleCreateFromYamlCmd(filePath, format) {
+  let yamlContent;
+  try {
+    yamlContent = (0, import_fs3.readFileSync)(filePath, "utf-8");
+  } catch {
+    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
+    process.exit(1);
+  }
+  let parsed;
+  try {
+    parsed = (0, import_yaml.parse)(yamlContent);
+  } catch {
+    console.error(formatJson({ ok: false, error: "Invalid YAML syntax" }));
+    process.exit(1);
+  }
+  const { title, summary, status, content: inlineContent, contentFile, contentType: yamlContentType, comments } = parsed.article;
+  const contentType = yamlContentType || "text";
+  if (!title || !summary || !status) {
+    console.error(formatJson({ ok: false, error: "Missing required fields: title, summary, status" }));
+    process.exit(1);
+  }
+  let content;
+  if (contentType === "html") {
+    if (!contentFile) {
+      console.error(formatJson({ ok: false, error: "contentFile is required when contentType is html" }));
+      process.exit(1);
+    }
+    try {
+      content = (0, import_fs3.readFileSync)(contentFile, "utf-8");
+    } catch {
+      console.error(formatJson({ ok: false, error: `Cannot read contentFile: ${contentFile}` }));
+      process.exit(1);
+    }
+  } else {
+    if (!inlineContent) {
+      console.error(formatJson({ ok: false, error: "content is required" }));
+      process.exit(1);
+    }
+    content = inlineContent;
+  }
+  const res = await client.post("/articles", { title, summary, content, status, contentType });
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  const articleId = res.data?.data?.id || res.data?.id;
+  console.log(formatJson({ ok: true, message: "Article created", articleId }));
+  if (contentType === "text" && comments && comments.length > 0) {
+    const results = await createFragmentComments("article", articleId, content, comments, format);
+    console.log(formatJson({
+      ok: true,
+      message: `Created ${results.success}/${results.total} comments`,
+      failed: results.failed
+    }));
+  }
+}
+
+// src/commands/postFromYaml.ts
+var import_fs4 = require("fs");
+var import_yaml2 = __toESM(require_dist(), 1);
+async function postCreateFromYamlCmd(filePath, format) {
+  let yamlContent;
+  try {
+    yamlContent = (0, import_fs4.readFileSync)(filePath, "utf-8");
+  } catch {
+    console.error(formatJson({ ok: false, error: `Cannot read file: ${filePath}` }));
+    process.exit(1);
+  }
+  let parsed;
+  try {
+    parsed = (0, import_yaml2.parse)(yamlContent);
+  } catch {
+    console.error(formatJson({ ok: false, error: "Invalid YAML syntax" }));
+    process.exit(1);
+  }
+  const { title, status, content, comments } = parsed.post;
+  if (!title || !content || !status) {
+    console.error(formatJson({ ok: false, error: "Missing required fields: title, content, status" }));
+    process.exit(1);
+  }
+  const res = await client.post("/posts", { title, content, status });
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  const postId = res.data?.data?.id || res.data?.id;
+  console.log(formatJson({ ok: true, message: "Post created", postId }));
+  if (comments && comments.length > 0) {
+    const results = await createFragmentComments("post", postId, content, comments, format);
+    console.log(formatJson({
+      ok: true,
+      message: `Created ${results.success}/${results.total} comments`,
+      failed: results.failed
+    }));
+  }
+}
+
+// src/commands/post.ts
+var import_fs5 = require("fs");
+async function postListCmd(scope, format) {
+  const query = scope === "manage" ? "?scope=manage" : "";
+  const res = await client.get(`/posts${query}`);
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  const data = res.data;
+  console.log(format === "table" ? formatTable(data) : formatJson(data));
+}
+async function postCreateCmd(title, content, status, format) {
+  const res = await client.post("/posts", { title, content, status });
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
+}
+async function postGetCmd(id, format) {
+  const res = await client.get(`/posts/${id}`);
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
+}
+async function postUpdateCmd(id, updates, format) {
+  const res = await client.put(`/posts/${id}`, updates);
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  console.log(format === "table" ? formatTable([res.data]) : formatJson(res.data));
+}
+async function postDeleteCmd(id, format) {
+  const res = await client.delete(`/posts/${id}`);
+  if (!res.ok) {
+    console.error(formatJson({ ok: false, error: res.error }));
+    process.exit(1);
+  }
+  const out = { ok: true, message: "Post deleted" };
+  console.log(format === "table" ? formatTable([out]) : formatJson(out));
+}
+async function postCreateFromTextCmd(title, content, status, format) {
+  await postCreateCmd(title, content, status, format);
+}
+async function postCreateFromFileCmd(title, filePath, status, format) {
+  const content = (0, import_fs5.readFileSync)(filePath, "utf-8");
+  await postCreateCmd(title, content, status, format);
+}
+
 // src/commands/comment.ts
 async function commentListCmd(rootType, rootId, format) {
   const res = await client.get(`/comments?rootType=${rootType}&rootId=${rootId}`);
@@ -11268,9 +11357,20 @@ async function commentListMineCmd(format) {
   const data = res.data;
   console.log(format === "table" ? formatTable(data) : formatJson(data));
 }
-async function commentCreateCmd(targetType, targetId, rootType, rootId, content, replyToUserId, anchor, format) {
-  const body = { targetType, targetId, rootType, rootId, content };
-  if (replyToUserId) body.replyToUserId = replyToUserId;
+function resolveRootInfo(targetId) {
+  const PREFIX_MAP = {
+    "article-": "article",
+    "post-": "post",
+    "pattern-": "pattern"
+  };
+  for (const [prefix, type] of Object.entries(PREFIX_MAP)) {
+    if (targetId.startsWith(prefix)) return { rootType: type, rootId: targetId };
+  }
+  return { rootType: "article", rootId: targetId };
+}
+async function commentCreateCmd(targetId, content, anchor, format) {
+  const { rootType, rootId } = resolveRootInfo(targetId);
+  const body = { targetId, content };
   if (anchor) {
     const { startOffset, endOffset } = await computeAnchorOffset(
       anchor.dataPath,
@@ -11281,8 +11381,6 @@ async function commentCreateCmd(targetType, targetId, rootType, rootId, content,
       anchor.suffixText
     );
     body.anchor = {
-      rootType,
-      rootId,
       selectedText: anchor.selectedText,
       startOffset,
       endOffset,
@@ -11398,13 +11496,29 @@ var article = program2.command("article").description("Article management");
 article.command("list").description("List articles").argument("[scope]", "scope: public or manage", "public").option("--status <status>", "filter by status: draft, published, archived").action(async (scope, options) => {
   await articleListCmd(scope, options.status, getFormat(program2));
 });
-article.command("create").description("Create article").requiredOption("--title <title>", "article title").requiredOption("--summary <summary>", "article summary").option("--content <content>", "article content").option("--yaml <path>", "create from YAML file (with optional fragment comments)").requiredOption("--status <status>", "draft or published").action(async (options) => {
+article.command("create").description("Create article").requiredOption("--title <title>", "article title").requiredOption("--summary <summary>", "article summary").option("--content <content>", "article content (for contentType=text)").option("--contentFile <path>", "file path to read content from (required for contentType=html)").option("--contentType <type>", "content type: text or html", "text").option("--yaml <path>", "create from YAML file (with optional fragment comments)").requiredOption("--status <status>", "draft or published").action(async (options) => {
+  const contentType = options.contentType || "text";
   if (options.yaml) {
     await articleCreateFromYamlCmd(options.yaml, getFormat(program2));
     return;
   }
+  if (contentType === "html") {
+    if (!options.contentFile) {
+      console.error("Error: --contentFile is required when --contentType is html");
+      process.exit(1);
+    }
+    await articleCreateFromContentFileCmd(
+      options.title,
+      options.summary,
+      options.contentFile,
+      options.status,
+      contentType,
+      getFormat(program2)
+    );
+    return;
+  }
   if (!options.content) {
-    console.error("Error: Either --content or --yaml is required");
+    console.error("Error: Either --content, --contentFile, or --yaml is required");
     process.exit(1);
   }
   await articleCreateCmd(
@@ -11412,17 +11526,19 @@ article.command("create").description("Create article").requiredOption("--title 
     options.summary,
     options.content,
     options.status,
+    contentType,
     getFormat(program2)
   );
 });
 article.command("get").description("Get article by id").argument("<id>", "article id").action(async (id) => {
   await articleGetCmd(id, getFormat(program2));
 });
-article.command("update").description("Update article").argument("<id>", "article id").option("--title <title>", "new title").option("--summary <summary>", "new summary").option("--content <content>", "new content").option("--status <status>", "new status").action(async (id, options) => {
+article.command("update").description("Update article").argument("<id>", "article id").option("--title <title>", "new title").option("--summary <summary>", "new summary").option("--content <content>", "new content").option("--contentType <type>", "content type: text or html").option("--status <status>", "new status").action(async (id, options) => {
   const updates = {};
   if (options.title) updates.title = options.title;
   if (options.summary) updates.summary = options.summary;
   if (options.content) updates.content = options.content;
+  if (options.contentType) updates.contentType = options.contentType;
   if (options.status) updates.status = options.status;
   await articleUpdateCmd(id, updates, getFormat(program2));
 });
@@ -11485,9 +11601,9 @@ comment.command("list").description("List comments by root resource").requiredOp
 comment.command("mine").description("List my own comments").action(async () => {
   await commentListMineCmd(getFormat(program2));
 });
-comment.command("create").description("Create comment").requiredOption("--targetType <type>", "target type: pattern|comment").requiredOption("--targetId <id>", "target id (pattern ID or parent comment ID)").requiredOption("--rootType <type>", "root resource type: pattern|article|post|note").requiredOption("--rootId <id>", "root resource id").requiredOption("--content <content>", "comment content (1-300 chars)").option("--replyToUserId <id>", "reply to specific user id").option("--dataPath <path>", "[anchor] data path, e.g. article:content or pattern:examples.0.en").option("--selectedText <text>", "[anchor] the exact text being commented on").option("--prefixText <text>", "[anchor] text immediately before the selection (used for relocation)").option("--suffixText <text>", "[anchor] text immediately after the selection (used for relocation)").action(async (options) => {
+comment.command("create").description("Create comment").requiredOption("--targetType <type>", "target type: pattern|comment").requiredOption("--targetId <id>", "target id (pattern ID or parent comment ID)").requiredOption("--rootType <type>", "root resource type: pattern|article|post|note").requiredOption("--rootId <id>", "root resource id").requiredOption("--content <content>", "comment content (1-300 chars)").option("--dataPath <path>", "[anchor] data path, e.g. article:content or pattern:examples.0.en").option("--selectedText <text>", "[anchor] the exact text being commented on").option("--prefixText <text>", "[anchor] text immediately before the selection (used for relocation)").option("--suffixText <text>", "[anchor] text immediately after the selection (used for relocation)").action(async (options) => {
   let anchor;
-  if (options.dataPath !== void 0 && options.selectedText !== void 0 && options.prefixText !== void 0 && options.suffixText !== void 0) {
+  if (options.dataPath !== void 0 && options.selectedText !== void 0) {
     anchor = {
       dataPath: options.dataPath,
       selectedText: options.selectedText,
@@ -11496,12 +11612,8 @@ comment.command("create").description("Create comment").requiredOption("--target
     };
   }
   await commentCreateCmd(
-    options.targetType,
     options.targetId,
-    options.rootType,
-    options.rootId,
     options.content,
-    options.replyToUserId,
     anchor,
     getFormat(program2)
   );

@@ -7,6 +7,7 @@ export const articles = sqliteTable('articles', {
   title: text('title').notNull(),
   summary: text('summary').notNull(),
   content: text('content').notNull(),
+  contentType: text('content_type').notNull().default('text'),
   authorId: text('author_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

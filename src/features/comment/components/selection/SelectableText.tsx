@@ -29,8 +29,6 @@ export function SelectableText(props: SelectableTextProps) {
     const selection = window.getSelection();
     const nextAnchor = buildSelectionAnchor({
       blockId,
-      rootId,
-      rootType,
       text,
       container,
       selection,
@@ -53,6 +51,8 @@ export function SelectableText(props: SelectableTextProps) {
         x: centerX,
         y: rect.bottom + 12,
       },
+      rootId,
+      rootType,
     );
   }, [blockId, rootId, rootType, text, setSelection]);
 

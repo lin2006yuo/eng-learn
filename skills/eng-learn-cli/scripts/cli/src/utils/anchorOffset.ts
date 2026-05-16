@@ -11,39 +11,119 @@ export async function computeAnchorOffset(
   rootType: string,
   rootId: string,
   selectedText: string,
-  prefixText: string,
-  suffixText: string,
+  prefixText?: string,
+  suffixText?: string,
 ): Promise<AnchorOffsetResult> {
   const sourceText = await fetchSourceText(dataPath, rootType, rootId);
 
-  const startOffset = sourceText.indexOf(selectedText);
-  if (startOffset === -1) {
+  if (!prefixText && !suffixText) {
+    return autoAnchor(sourceText, selectedText);
+  }
+
+  return manualAnchor(sourceText, selectedText, prefixText, suffixText);
+}
+
+function autoAnchor(sourceText: string, selectedText: string): AnchorOffsetResult {
+  const occurrences = findAllOccurrences(sourceText, selectedText);
+
+  if (occurrences.length === 0) {
     throw new Error(
       `Cannot find selectedText "${selectedText}" in the source text.`
     );
   }
 
+  if (occurrences.length > 1) {
+    const contexts = occurrences.map((offset, i) =>
+      `  [${i + 1}] offset=${offset} ..."${surround(sourceText, offset, selectedText.length, 20)}"...`
+    ).join('\n');
+    throw new Error(
+      `selectedText "${selectedText}" appears ${occurrences.length} times. Please use --prefixText to disambiguate:\n${contexts}`
+    );
+  }
+
+  const startOffset = occurrences[0];
   const endOffset = startOffset + selectedText.length;
-
-  if (prefixText) {
-    const actualPrefix = sourceText.slice(Math.max(0, startOffset - prefixText.length), startOffset);
-    if (actualPrefix !== prefixText) {
-      throw new Error(
-        `prefixText mismatch. Expected "${prefixText}", got "${actualPrefix}".`
-      );
-    }
-  }
-
-  if (suffixText) {
-    const actualSuffix = sourceText.slice(endOffset, endOffset + suffixText.length);
-    if (actualSuffix !== suffixText) {
-      throw new Error(
-        `suffixText mismatch. Expected "${suffixText}", got "${actualSuffix}".`
-      );
-    }
-  }
-
   return { startOffset, endOffset, sourceText };
+}
+
+function manualAnchor(
+  sourceText: string,
+  selectedText: string,
+  prefixText?: string,
+  suffixText?: string,
+): AnchorOffsetResult {
+  const occurrences = findAllOccurrences(sourceText, selectedText);
+
+  if (occurrences.length === 0) {
+    throw new Error(
+      `Cannot find selectedText "${selectedText}" in the source text.`
+    );
+  }
+
+  if (!prefixText && !suffixText) {
+    return {
+      startOffset: occurrences[0],
+      endOffset: occurrences[0] + selectedText.length,
+      sourceText,
+    };
+  }
+
+  const match = occurrences.find((offset) => {
+    if (prefixText) {
+      const actual = sourceText.slice(Math.max(0, offset - prefixText.length), offset);
+      if (actual !== prefixText) return false;
+    }
+    if (suffixText) {
+      const actual = sourceText.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length);
+      if (actual !== suffixText) return false;
+    }
+    return true;
+  });
+
+  if (match !== undefined) {
+    return { startOffset: match, endOffset: match + selectedText.length, sourceText };
+  }
+
+  const detail = occurrences.map((offset, i) => {
+    const parts: string[] = [];
+    if (prefixText) {
+      parts.push(`prefix="${sourceText.slice(Math.max(0, offset - prefixText.length), offset)}"`);
+    }
+    if (suffixText) {
+      parts.push(`suffix="${sourceText.slice(offset + selectedText.length, offset + selectedText.length + suffixText.length)}"`);
+    }
+    return `  [${i + 1}] offset=${offset} ${parts.join(' ')}`;
+  }).join('\n');
+
+  const expected: string[] = [];
+  if (prefixText) expected.push(`prefixText="${prefixText}"`);
+  if (suffixText) expected.push(`suffixText="${suffixText}"`);
+
+  throw new Error(
+    `Anchor mismatch. Expected ${expected.join(', ')}.\n` +
+    `All occurrences of "${selectedText}":\n${detail}`
+  );
+}
+
+export function findAllOccurrences(sourceText: string, searchText: string): number[] {
+  const positions: number[] = [];
+  let pos = 0;
+  while (pos < sourceText.length) {
+    const found = sourceText.indexOf(searchText, pos);
+    if (found === -1) break;
+    positions.push(found);
+    pos = found + 1;
+  }
+  return positions;
+}
+
+export function surround(text: string, offset: number, length: number, contextLen: number): string {
+  const start = Math.max(0, offset - contextLen);
+  const end = Math.min(text.length, offset + length + contextLen);
+  let result = text.slice(start, end);
+  if (start > 0) result = '...' + result;
+  if (end < text.length) result = result + '...';
+  return result;
 }
 
 async function fetchSourceText(dataPath: string, rootType: string, rootId: string): Promise<string> {

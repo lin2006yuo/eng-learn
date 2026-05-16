@@ -10,7 +10,6 @@ interface CommentInputProps {
   rootId: string;
   rootType: RootType;
   replyToCommentId?: string;
-  replyToUserId?: string;
   anchor?: CreateCommentAnchorRequest;
   onReplySuccess?: () => void;
   autoFocus?: boolean;
@@ -30,7 +29,6 @@ export function CommentInput(props: CommentInputProps) {
     rootId,
     rootType,
     replyToCommentId,
-    replyToUserId,
     anchor,
     onReplySuccess,
     autoFocus = false,
@@ -67,12 +65,8 @@ export function CommentInput(props: CommentInputProps) {
 
     setIsSubmitting(true);
     const success = await createComment({
-      targetType: replyToCommentId ? 'comment' : rootType,
       targetId: replyToCommentId || rootId,
-      rootType,
-      rootId,
       content: content.trim(),
-      replyToUserId: replyToUserId,
       anchor,
     });
 

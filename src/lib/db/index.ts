@@ -4,8 +4,9 @@ import * as schema from './schema';
 import * as patternsSchema from './patterns-schema';
 import * as articlesSchema from './articles-schema';
 import * as postsSchema from './posts-schema';
+import * as imageCacheSchema from './image-cache-schema';
 
-const combinedSchema = { ...schema, ...patternsSchema, ...articlesSchema, ...postsSchema };
+const combinedSchema = { ...schema, ...patternsSchema, ...articlesSchema, ...postsSchema, ...imageCacheSchema };
 
 let db: ReturnType<typeof drizzle<typeof combinedSchema>>;
 
@@ -31,4 +32,4 @@ export function getDb() {
   return db;
 }
 
-export { schema, patternsSchema, articlesSchema, postsSchema };
+export { schema, patternsSchema, articlesSchema, postsSchema, imageCacheSchema };

@@ -1,0 +1,27 @@
+post:
+  title: "Mock Post for Debug"
+  status: published
+  content: |
+    This is a mock post for debugging fragment comments.
+
+    The word serendipity means finding something good by chance. It comes from a Persian fairy tale about three princes who always made discoveries by accident.
+
+    Another great word is petrichor, the smell of rain on dry earth. Scientists created this word in 1964.
+
+    Finally, there is gobbledygook which means meaningless official language. A Texas congressman invented it in 1944.
+
+  comments:
+    - selectedText: "serendipity"
+      prefixText: "word "
+      suffixText: " means"
+      content: "serendipity (n.): 意外发现美好事物的能力 /ˌserənˈdɪpɪti/"
+
+    - selectedText: "petrichor"
+      prefixText: "word is "
+      suffixText: ", the"
+      content: "petrichor (n.): 雨后泥土的芳香 /ˈpetrɪkɔːr/ — petra(石头)+ichor(神血)"
+
+    - selectedText: "gobbledygook"
+      prefixText: "is "
+      suffixText: " which"
+      content: "gobbledygook (n.): 官样文章 /ˈɡɒbəldiɡuːk/ — 模仿火鸡叫声"

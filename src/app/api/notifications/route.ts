@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { notifications, comments, patterns } from '@/lib/db/patterns-schema';
 import { articles } from '@/lib/db/articles-schema';
 import { users } from '@/lib/db/schema';
-import { eq, desc, lt, and, inArray } from 'drizzle-orm';
+import { eq, desc, lt, and, inArray, asc } from 'drizzle-orm';
 import { getSession } from '@/lib/auth-helpers';
 
 /**
@@ -70,6 +70,25 @@ export async function GET(request: NextRequest) {
     ? result[result.length - 1]?.createdAt.toISOString()
     : undefined;
 
+  const targetIds = result.map(n => n.targetId);
+  let myReplyMap: Map<string, string> = new Map();
+  if (targetIds.length > 0) {
+    const myReplies = await db
+      .select({ targetId: comments.targetId, content: comments.content })
+      .from(comments)
+      .where(
+        and(
+          eq(comments.targetType, 'comment'),
+          inArray(comments.targetId, targetIds),
+          eq(comments.userId, session.user.id),
+        ),
+      )
+      .orderBy(asc(comments.createdAt));
+    myReplies.forEach(r => {
+      myReplyMap.set(r.targetId, r.content);
+    });
+  }
+
   const patternRootIds = [...new Set(result.map(n => n.rootId).filter((id): id is string => !!id && id.startsWith('pattern-')))];
   let patternInfoMap: Map<string, { id: string; title: string; emoji: string }> = new Map();
   if (patternRootIds.length > 0) {
@@ -80,7 +99,7 @@ export async function GET(request: NextRequest) {
     patternInfoMap = new Map(patternRows.map(p => [p.id, p]));
   }
 
-  const articleRootIds = [...new Set(result.filter(n => n.targetType === 'article' && n.rootId).map(n => n.rootId as string))];
+  const articleRootIds = [...new Set(result.map(n => n.rootId).filter((id): id is string => !!id && id.startsWith('article-')))];
   let articleInfoMap: Map<string, { id: string; title: string }> = new Map();
   if (articleRootIds.length > 0) {
     const articleRows = await db
@@ -100,6 +119,7 @@ export async function GET(request: NextRequest) {
     targetId: n.targetId,
     rootId: n.rootId || undefined,
     targetContent: n.targetContent || undefined,
+    myReplyContent: myReplyMap.get(n.targetId) || undefined,
     patternTitle: n.rootId && n.targetType === 'comment' ? patternInfoMap.get(n.rootId)?.title : undefined,
     patternEmoji: n.rootId && n.targetType === 'comment' ? patternInfoMap.get(n.rootId)?.emoji : undefined,
     articleTitle: n.targetType === 'article' ? articleInfoMap.get(n.targetId)?.title : undefined,

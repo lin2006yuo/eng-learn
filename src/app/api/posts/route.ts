@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   const now = new Date();
 
   const db = getDb();
-  const postId = crypto.randomUUID();
+  const postId = 'post-' + crypto.randomUUID();
   await db.insert(posts).values({
     id: postId,
     title,

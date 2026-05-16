@@ -57,16 +57,18 @@ export async function POST(request: NextRequest) {
   const title = body?.title?.trim() || '未命名文章';
   const summary = body?.summary?.trim() || '请补充文章摘要';
   const content = body?.content?.trim() || '请补充文章正文';
+  const contentType = body?.contentType || 'text';
   const status = body?.status || 'draft';
   const now = new Date();
 
   const db = getDb();
-  const articleId = crypto.randomUUID();
+  const articleId = 'article-' + crypto.randomUUID();
   await db.insert(articles).values({
     id: articleId,
     title,
     summary,
     content,
+    contentType,
     status,
     authorId: authResult.userId,
     publishedAt: status === 'published' ? now : null,
