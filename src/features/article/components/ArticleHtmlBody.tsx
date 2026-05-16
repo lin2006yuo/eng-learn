@@ -11,12 +11,15 @@ const HEIGHT_REPORT_SCRIPT = `
 <script>
 (function(){
   var send = function(){
-    var h = Math.max(
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight,
-      document.body.scrollHeight,
-      document.body.offsetHeight
-    );
+    var maxBottom = 0;
+    var children = document.body.children;
+    for (var i = 0; i < children.length; i++) {
+      var r = children[i].getBoundingClientRect();
+      if (r.bottom > maxBottom) maxBottom = r.bottom;
+    }
+    var style = getComputedStyle(document.body);
+    var padB = parseFloat(style.paddingBottom) || 0;
+    var h = Math.ceil(maxBottom + padB);
     parent.postMessage({type:'article-resize',h:h},'*');
   };
   if (window.ResizeObserver) {
